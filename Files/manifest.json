@@ -1,0 +1,13 @@
+{
+	"name": "Bookmark Fixer",
+	"description": "Replaces the link of a bookmark if you're on the recently update",
+	"version": "0.0.1",
+	"manifest_version": 3,
+	"permissions": ["scripting"],
+	"content_scripts": [{
+    	"js": ["scripts/content.js"],
+    	"matches": [
+        	"*://archiveofourown.org/bookmarks?commit=Sort+and+Filter&bookmark_search%5Bsort_column%5D=bookmarkable_date*"
+    	]
+    }]
+}
