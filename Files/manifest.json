@@ -4,11 +4,24 @@
 	"version": "0.1.0",
 	"manifest_version": 3,
 	"permissions": ["scripting"],
-	"content_scripts": [{
-    	"js": ["scripts/lastChapter.js"],
-    	"matches": [
-			"*://archiveofourown.org/bookmarks?commit=Sort+and+Filter&bookmark_search%5Bsort_column%5D=bookmarkable_date*",
-			"*://archiveofourown.org/*"
-    	]
-    }]
+	"content_scripts": [
+		{
+			"js": ["scripts/lastChapter.js"],
+			"matches": [
+				"*://archiveofourown.org/bookmarks?commit=Sort+and+Filter&bookmark_search%5Bsort_column%5D=bookmarkable_date*"
+			]
+		},
+		{
+			"js": ["scripts/markForLater.js"],
+			"matches": [
+				"*://archiveofourown.org/*chapters/*",
+				"*://archiveofourown.org/*works/*",
+				"*://archiveofourown.org/series/*"
+			],
+			"exclude_matches": [
+				"*://archiveofourown.org/*works/*/bookmarks",
+				"*://archiveofourown.org/*works/*/navigate"
+			]
+		}
+	]
 }
