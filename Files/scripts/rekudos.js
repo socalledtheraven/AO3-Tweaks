@@ -1,3 +1,4 @@
+// CONFIG START
 let messages = Array(
     "Extra Kudos <3",
     "This is an extra kudos, since I've already left one. :)",
@@ -5,16 +6,15 @@ let messages = Array(
     "Update kudos!"
 );
 
-// CONFIG START
-const auto = false
+const auto = false;
 // CONFIG END
 
-let kudosButton = document.querySelector("#new_kudo")
-let kudosMessage = document.querySelector("#kudos_message")
+let kudosButton = document.querySelector("#new_kudo");
+let kudosMessage = document.querySelector("#kudos_message");
 if (auto) {
-    kudosButton.addEventListener("click", postComment)
+    kudosButton.addEventListener("click", postComment);
 } else {
-    kudosButton.addEventListener("click", editKudosButton)
+    kudosButton.addEventListener("click", editKudosButton);
 }
 
 function postComment() {
@@ -22,8 +22,8 @@ function postComment() {
         // checks if a kudos has already been left
         if (kudosMessage.textContent.includes("already")) {
             let random = Math.floor(Math.random() * messages.length);
-            let commentBox = document.querySelector(".comment_form")
-            let commentButton = document.querySelector("input[value='Comment']")
+            let commentBox = document.querySelector(".comment_form");
+            let commentButton = document.querySelector("input[value='Comment']");
 
             commentBox.value = messages[random];
             commentButton.click();
@@ -35,9 +35,10 @@ function editKudosButton() {
     setTimeout(function () {
         // checks if a kudos has already been left
         if (kudosMessage.textContent.includes("already")) {
-            let kudosButtonText = document.querySelector("#kudo_submit")
-            kudosButtonText.value = "Rekudos?"
-            kudosButton.addEventListener("click", postComment)
+            // you have to edit the value of a different element or it overwrites the whole form
+            let kudosButtonText = document.querySelector("#kudo_submit");
+            kudosButtonText.value = "Rekudos?";
+            kudosButton.addEventListener("click", postComment);
         }
     }, 0.25 * 1000);
 }
