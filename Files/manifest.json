@@ -22,6 +22,18 @@
 				"*://archiveofourown.org/*works/*/bookmarks",
 				"*://archiveofourown.org/*works/*/navigate"
 			]
+		},
+		{
+			"js": ["scripts/bookmarkNotes.js"],
+			"matches": [
+				"*://archiveofourown.org/*chapters/*",
+				"*://archiveofourown.org/*works/*",
+				"*://archiveofourown.org/series/*"
+			],
+			"exclude_matches": [
+				"*://archiveofourown.org/*works/*/bookmarks",
+				"*://archiveofourown.org/*works/*/navigate"
+			]
 		}
 	]
 }

@@ -53,15 +53,12 @@ function isPrivateFandom(fandomTags) {
 }
 
 const url = window.location.href;
-console.log("1")
-
 
 // creates a new button
 const toReadButton = document.createElement("li");
 const child = document.createElement("a");
 child.text = 'Save as "To Read"'
 child.href = "#";
-console.log(child)
 
 toReadButton.appendChild(child);
 
@@ -70,10 +67,9 @@ if (url.includes("/works/")) {
     const navbar = document.querySelector("ul.navigation.actions.work[role='menu']");
     child.onclick = bookmarkWork;
     navbar.appendChild(toReadButton);
-    console.log(navbar)
+
 } else if (url.includes("/series/")) {
     const navbar = document.querySelector("ul.navigation.actions[role='navigation']");
     child.onclick = bookmarkSeries;
     navbar.appendChild(toReadButton);
-    console.log(navbar)
 }
