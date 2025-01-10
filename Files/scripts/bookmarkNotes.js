@@ -183,43 +183,44 @@ function updateWorkBookmark(url) {
 }
 
 function updateSeriesBookmark(url) {
-    let username;
-    const notesBox = document.getElementById("bookmark_notes");
-    let notesBoxText = "";
-    const statsPanel = document.getElementsByClassName("series meta group")[0];
-    const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
     if (ADD_SERIES_URL_AND_USERNAME) {
+        let seriesTitle = document.getElementsByTagName("h2")[0];
 
-        let seriesTitle = document.getElementsByTagName("h2");
+        const notesBox = document.getElementById("bookmark_notes");
+        let notesBoxText = "<a href=\"" + url + "\">" + seriesTitle.textContent.trim() + "</a> by ";
 
-        const userNames = statsPanel.querySelectorAll('[rel="author"]');
+        const statsPanel = document.getElementsByClassName("series meta group")[0];
+        const usernames = statsPanel.querySelectorAll('[rel="author"]');
 
-
-        seriesTitle = seriesTitle[0];
+        // all of this is presumably calculated so things don't break if the notes isn't there for whatever reason
         if (notesBox) {
-            for(let i = 0; i < userNames.length; i++) {
-                if (userNames[i].textContent.includes("(")) {
-                    let pseud = userNames[i].textContent.split("(");
+            for (let username of usernames) {
+                // detects pseuds
+                if (username.textContent.includes("(")) {
+                    let pseud = username.textContent.split("(");
                     username = pseud[1].trim();
                     pseud = pseud[0].trim();
                     username = username.substring(0, username.length-1);
                     username = "<a href=\"/users/" + username + "/pseuds/" + pseud + "\"> (" + pseud + ") " + username + "</a>";
                 } else {
-                    username = userNames[i].textContent.trim();
+                    username = username.textContent.trim();
                     username ="<a href=\"/users/" + username + "/pseuds/" + username + "\">" + username + "</a>";
                 }
-                if (i === 0) {
-                    notesBoxText = "<a href=\"" + url + "\">" + seriesTitle.textContent.trim() + "</a> by " + username;
-                } else {
-                    notesBoxText = notesBoxText + " & " + username;
-                }
+
+                notesBoxText += username + " & ";
             }
 
+            // to avoid having to use an "i" based for loop, an extra space ampersand space is added to the end, so this removes that
+            notesBoxText = notesBoxText.slice(0, -3)
+            if (NOTES_APPEND_TO_PREVIOUS) {
+                notesBox.value += "\n" + notesBoxText
+            } else {
+                notesBox.value = notesBoxText;
+            }
         }
-
     }
 
-
+    const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
     if (ADD_WORK_COUNT_TAG) {
         const workCount = document.getElementsByClassName("works");
         tagBox.value += ", Works in series: " + workCount[1].textContent;
@@ -227,7 +228,7 @@ function updateSeriesBookmark(url) {
 
     if (ADD_EXACT_WORDCOUNT_TAG_SERIES) {
         const wordCount = document.getElementsByClassName("words");
-        tagBox.value += ", Words in series: " + wordCount[1].textContent;
+        tagBox.value += ", Words in series: " + removeCommas(wordCount[1].textContent);
     }
 
     if (ADD_CUSTOM_TAGS_SERIES) {
@@ -237,25 +238,16 @@ function updateSeriesBookmark(url) {
     if (ADD_CUSTOM_TAGS_FOR_WORKS) {
         tagBox.value += ", " + CUSTOM_TAGS;
     }
+
     if (REC_DEFAULT_SERIES) {
         const recBox = document.getElementById("bookmark_rec");
         recBox.checked = true;
     }
+
     if (PRIVATE_DEFAULT_SERIES) {
         const privateBox = document.getElementById("bookmark_private");
         privateBox.checked = true;
     }
-
-    if (NOTES_APPEND_TO_PREVIOUS) {
-        if (notesBox) {
-            notesBox.value = notesBox.value + "\n" + notesBoxText;
-        }
-    } else {
-        if (notesBox) {
-            notesBox.value = notesBoxText;
-        }
-    }
-
 }
 
 function removeCommas(wordcount) {
@@ -277,6 +269,7 @@ function addTags(tagBox, categorySelector) {
     return tagBox;
 }
 
+// has a problem with the variable name "url" (presumably something else is using it)
 let uri = window.location.href;
 if (uri.includes("/works/")) {
     updateWorkBookmark(uri);
