@@ -37,7 +37,7 @@ const ADD_WORDCOUNT_TAG = true; // Add a tag for the word count from the followi
 const WORDCOUNTS = [1000, 10000, 20000, 50000, 100000, 150000];
 
 const ADD_EXACT_WORDCOUNT_TAG_LIST = true; // Add a tag for special case word counts (ie. 100 words, 1000 words, etc) Does not have to be 3, can be any number of special cases
-const EXACT_WORDCOUNT_TAG_LIST = [100, 1000, 10000]
+const EXACT_WORDCOUNT_TAG_LIST = ["100", "1000", "10000"]
 
 /*SERIES BOOKMARK SETTINGS*/
 
@@ -60,38 +60,45 @@ const PRIVATE_DEFAULT_SERIES = false; // Autocheck the Private checkbox to make 
 /*END SETTINGS*/
 
 
-function Bookmarks4Works(url) {
+function updateWorkBookmark(url) {
     let notesBoxText = "";
-    const notesBox = document.getElementById("bookmark_notes");
 
     if (ADD_URL_AND_USERNAME) {
-        let title = document.getElementsByClassName("title heading");
-        let userName = document.getElementsByClassName("byline heading");
-        userName = userName[0];
-        title = title[0];
-        if (userName.textContent.includes("(")) {
-            let pseud = userName.textContent.split("(");
-            userName = pseud[1].trim();
+        let title = document.getElementsByClassName("title heading")[0];
+        let username = document.getElementsByClassName("byline heading")[0];
+
+        if (username.textContent.includes("(")) {
+            let pseud = username.textContent.split("(");
+            username = pseud[1].trim();
             pseud = pseud[0].trim();
-            userName = userName.substring(0, userName.length-1);
-            notesBoxText = "<a href=\"" + url + "\">" + title.textContent.trim() + "</a> by <a href=\"/users/" + userName + "/pseuds/" + pseud + "\"> (" + pseud + ") " + userName + "</a>";
+            username = username.substring(0, username.length-1);
+            notesBoxText += "<a href=\"" + url + "\">" + title.textContent.trim() + "</a> by <a href=\"/users/" + username + "/pseuds/" + pseud + "\"> (" + pseud + ") " + username + "</a>";
 
         } else {
-            userName = userName.textContent.trim();
-            notesBoxText = "<a href=\"" + url + "\">" + title.textContent.trim() + "</a> by <a href=\"/users/" + userName + "/pseuds/" + userName + "\">" + userName + "</a>";
+            username = username.textContent.trim();
+            notesBoxText += "<a href=\"" + url + "\">" + title.textContent.trim() + "</a> by <a href=\"/users/" + username + "/pseuds/" + username + "\">" + username + "</a>";
         }
     }
 
     if (ADD_SUMMARY) {
         let summary = document.getElementsByClassName("summary");
         if (summary.length !== 0) {
-            summary = summary[0];
-            summary = summary.getElementsByClassName("userstuff");
-            notesBoxText = notesBoxText + "\n\nSummary: " + summary[0].innerHTML;
+            summary = summary[0].getElementsByClassName("userstuff")[0].innerHTML;
+            notesBoxText += "\n\nSummary: " + summary;
             notesBoxText = notesBoxText.replaceAll("</p>","\n").replaceAll("<p>","");
         }
     }
 
+    const notesBox = document.getElementById("bookmark_notes");
+    if (notesBox) {
+        if (NOTES_APPEND_TO_PREVIOUS) {
+            notesBox.value += "\n" + notesBoxText;
+        } else {
+            notesBox.value = notesBoxText;
+        }
+    }
+
+    // the checkboxes
     if (REC_DEFAULT) {
         const recBox = document.getElementById("bookmark_rec");
         recBox.checked = true;
@@ -102,144 +109,80 @@ function Bookmarks4Works(url) {
         privateBox.checked = true;
     }
 
+    // Tag section begins
     const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
-    let i = 0;
 
     if (ADD_CATEGORIES) {
-        const categorys = document.getElementsByClassName("category tags");
-        const categoryTags = categorys[1].getElementsByClassName("tag");
-        i = 0;
-        while(i < categoryTags.length) {
-            tagBox.value = tagBox.value + ", " + categoryTags[i].textContent;
-            i++;
-        }
+        addTags(tagBox, "category tags")
     }
 
     if (ADD_FANDOM_TAGS) {
-        const fandoms = document.getElementsByClassName("fandom tags");
-        const fandomTags = fandoms[1].getElementsByClassName("tag");
-        i = 0;
-        while(i < fandomTags.length) {
-            tagBox.value = tagBox.value + ", " + fandomTags[i].textContent;
-            i++;
-        }
-
+        addTags(tagBox, "fandom tags")
     }
-
 
     if (ADD_CHARACTER_TAGS) {
-        const characters = document.getElementsByClassName("character tags");
-        if (characters.length !== 0) {
-            const characterTags = characters[1].getElementsByClassName("tag");
-            i = 0;
-            while(i < characterTags.length) {
-                tagBox.value = tagBox.value + ", " + characterTags[i].textContent;
-                i++;
-            }
-        }
+        addTags(tagBox, "character tags")
     }
-
 
     if (ADD_RELATIONSHIP_TAGS) {
-        const relationships = document.getElementsByClassName("relationship tags");
-        if (relationships.length !== 0) {
-            const relationshipTags = relationships[1].getElementsByClassName("tag");
-            i = 0;
-            while(i < relationshipTags.length) {
-                tagBox.value = tagBox.value + ", " + relationshipTags[i].textContent;
-                i++;
-            }
-        }
+        addTags(tagBox, "relationship tags")
     }
-
 
     if (ADD_ADDITIONAL_TAGS) {
-        const freeforms = document.getElementsByClassName("freeform tags");
-        if (freeforms.length !== 0) {
-            const freeformTags = freeforms[1].getElementsByClassName("tag");
-            i = 0;
-            while(i < freeformTags.length) {
-                tagBox.value = tagBox.value + ", " + freeformTags[i].textContent;
-                i++;
-            }
-        }
+        addTags(tagBox, "freeform tags")
     }
-
 
     if (ADD_RATING) {
-        const ratings = document.getElementsByClassName("rating tags");
-        const ratingTags = ratings[1].getElementsByClassName("tag");
-        i = 0;
-        while(i < ratingTags.length) {
-            tagBox.value = tagBox.value + ", Rating: " + ratingTags[i].textContent;
-            i++;
-        }
+        addTags(tagBox, "rating tags")
     }
-
 
     if (ADD_ARCHIVE_WARNINGS) {
-        const warnings = document.getElementsByClassName("warning tags");
-        const warningTags = warnings[1].getElementsByClassName("tag");
-        i = 0;
-        while(i < warningTags.length) {
-            tagBox.value = tagBox.value + ", " + warningTags[i].textContent;
-            i++;
-        }
+        addTags(tagBox, "warning tags")
     }
-
 
     if (ADD_CUSTOM_TAGS) {
-        tagBox.value = tagBox.value + ", " + CUSTOM_TAGS
+        tagBox.value += ", " + CUSTOM_TAGS
     }
-    let wordcount = document.getElementsByClassName("words");
-    wordcount = wordcount[1].textContent;
-    wordcount = RemoveCommas(wordcount);
+
+    // the wordcount section begins
+    let wordcount = document.getElementsByClassName("words")[1].textContent;
+    wordcount = removeCommas(wordcount);
 
     if (ADD_EXACT_WORDCOUNT_TAG) {
-        tagBox.value = tagBox.value + ", Word Count:" + wordcount;
+        tagBox.value += ", Word Count:" + wordcount;
     }
 
     if (ADD_WORDCOUNT_TAG) {
+        for (let i = 0; i < WORDCOUNTS.length - 1; i++) {
+            if (wordcount >= WORDCOUNTS[i] && wordcount < WORDCOUNTS[i + 1]) {
+                tagBox.value += ", Word Count: " + WORDCOUNTS[i] + "-" + WORDCOUNTS[i + 1];
+                break;
+            }
+        }
+
+        // handle when the wordcount is less than the smallest wordcount
+        if (wordcount >= WORDCOUNTS[WORDCOUNTS.length - 1]) {
+            tagBox.value += ", Word Count: > " + WORDCOUNTS[WORDCOUNTS.length - 1];
+        }
+
+        // handle when the wordcount is higher than the largest amount
         if (wordcount < WORDCOUNTS[0]) {
-            tagBox.value = tagBox.value + ", Word Count: < " + WORDCOUNTS[0];
-        } else if (wordcount >= WORDCOUNTS[0] && wordcount < WORDCOUNTS[1]) {
-            tagBox.value = tagBox.value + ", Word Count: " + WORDCOUNTS[0] + "-" + WORDCOUNTS[1];
-        } else if (wordcount >= WORDCOUNTS[1] && wordcount < WORDCOUNTS[2]) {
-            tagBox.value = tagBox.value + ", Word Count: " + WORDCOUNTS[1] + "-" + WORDCOUNTS[2];
-        } else if (wordcount >= WORDCOUNTS[2] && wordcount < WORDCOUNTS[3]) {
-            tagBox.value = tagBox.value + ", Word Count: " + WORDCOUNTS[2] + "-" + WORDCOUNTS[3];
-        } else if (wordcount >= WORDCOUNTS[3] && wordcount < WORDCOUNTS[4]) {
-            tagBox.value = tagBox.value + ", Word Count: " + WORDCOUNTS[3] + "-" + WORDCOUNTS[4];
-        } else if (wordcount >= WORDCOUNTS[4] && wordcount < WORDCOUNTS[5]) {
-            tagBox.value = tagBox.value + ", Word Count: " + WORDCOUNTS[4] + "-" + WORDCOUNTS[5];
-        } else if (wordcount >= WORDCOUNTS[5]) {
-            tagBox.value = tagBox.value + ", Word Count: > " + WORDCOUNTS[4];
+            tagBox.value += ", Word Count: < " + WORDCOUNTS[0];
         }
     }
 
     if (ADD_EXACT_WORDCOUNT_TAG_LIST) {
-        var j = 0;
-        while(j < EXACT_WORDCOUNT_TAG_LIST.length) {
-            if (wordcount === EXACT_WORDCOUNT_TAG_LIST[j]) {
-                tagBox.value = tagBox.value + ", Word Count: " + EXACT_WORDCOUNT_TAG_LIST[j];
-                j = EXACT_WORDCOUNT_TAG_LIST.length;
+        for (let exactWordcountTag of EXACT_WORDCOUNT_TAG_LIST) {
+            if (wordcount === exactWordcountTag) {
+                tagBox.value += ", Word Count: " + exactWordcountTag;
             }
-            j++;
         }
     }
 
-    if (NOTES_APPEND_TO_PREVIOUS) {
-        if (notesBox) {
-            notesBox.value = notesBox.value + "\n" + notesBoxText;
-        }
-    } else {
-        if (notesBox) {
-            notesBox.value = notesBoxText;
-        }
-    }
+    tagBox.value += ", "
 }
 
-function Bookmarks4Series(url) {
+function updateSeriesBookmark(url) {
     let username;
     const notesBox = document.getElementById("bookmark_notes");
     let notesBoxText = "";
@@ -279,20 +222,20 @@ function Bookmarks4Series(url) {
 
     if (ADD_WORK_COUNT_TAG) {
         const workCount = document.getElementsByClassName("works");
-        tagBox.value = tagBox.value + ", Works in series: " + workCount[1].textContent;
+        tagBox.value += ", Works in series: " + workCount[1].textContent;
     }
 
     if (ADD_EXACT_WORDCOUNT_TAG_SERIES) {
         const wordCount = document.getElementsByClassName("words");
-        tagBox.value = tagBox.value + ", Words in series: " + wordCount[1].textContent;
+        tagBox.value += ", Words in series: " + wordCount[1].textContent;
     }
 
     if (ADD_CUSTOM_TAGS_SERIES) {
-        tagBox.value = tagBox.value + ", " + CUSTOM_TAGS_SERIES;
+        tagBox.value += ", " + CUSTOM_TAGS_SERIES;
     }
 
     if (ADD_CUSTOM_TAGS_FOR_WORKS) {
-        tagBox.value = tagBox.value + ", " + CUSTOM_TAGS;
+        tagBox.value += ", " + CUSTOM_TAGS;
     }
     if (REC_DEFAULT_SERIES) {
         const recBox = document.getElementById("bookmark_rec");
@@ -315,24 +258,28 @@ function Bookmarks4Series(url) {
 
 }
 
-function RemoveCommas(wordcount) {
+function removeCommas(wordcount) {
     if (wordcount.includes(',')) {
         wordcount = wordcount.replace(',', '');
-    }
-    
-    if (wordcount.includes(',')) {
-        wordcount = RemoveCommas(wordcount);
+        wordcount = removeCommas(wordcount);
     }
 
     return wordcount;
 }
 
-console.log("hi")
+function addTags(tagBox, categorySelector) {
+    const categories = document.getElementsByClassName(categorySelector);
+    const categoryTags = categories[1].getElementsByClassName("tag");
+    for (let tag of categoryTags) {
+        tagBox.value += ", " + tag.textContent;
+    }
+
+    return tagBox;
+}
+
 let uri = window.location.href;
 if (uri.includes("/works/")) {
-    console.log("x")
-    Bookmarks4Works(uri);
+    updateWorkBookmark(uri);
 } else if (uri.includes("/series/")) {
-    console.log("y")
-    Bookmarks4Series(uri);
+    updateSeriesBookmark(uri);
 }
