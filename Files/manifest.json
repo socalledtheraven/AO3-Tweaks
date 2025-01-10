@@ -1,13 +1,14 @@
 {
-	"name": "Bookmark Fixer",
-	"description": "Replaces the link of a bookmark if you're on the recently update",
-	"version": "0.0.1",
+	"name": "AO3 Utilities",
+	"description": "Assorted bits and pieces to improve your Ao3 experience",
+	"version": "0.1.0",
 	"manifest_version": 3,
 	"permissions": ["scripting"],
 	"content_scripts": [{
-    	"js": ["scripts/content.js"],
+    	"js": ["scripts/lastChapter.js"],
     	"matches": [
-        	"*://archiveofourown.org/bookmarks?commit=Sort+and+Filter&bookmark_search%5Bsort_column%5D=bookmarkable_date*"
+			"*://archiveofourown.org/bookmarks?commit=Sort+and+Filter&bookmark_search%5Bsort_column%5D=bookmarkable_date*",
+			"*://archiveofourown.org/*"
     	]
     }]
 }
