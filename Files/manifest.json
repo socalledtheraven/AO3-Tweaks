@@ -1,7 +1,7 @@
 {
 	"name": "AO3 Utilities",
 	"description": "Assorted bits and pieces to improve your Ao3 experience",
-	"version": "0.3.3",
+	"version": "0.4.0",
 	"manifest_version": 3,
 	"permissions": ["scripting"],
 	"content_scripts": [
@@ -37,6 +37,12 @@
 		},
 		{
 			"js": ["scripts/rekudos.js"],
+			"matches": [
+				"*://archiveofourown.org/*works/*"
+			]
+		},
+		{
+			"js": ["scripts/comments.js"],
 			"matches": [
 				"*://archiveofourown.org/*works/*"
 			]
