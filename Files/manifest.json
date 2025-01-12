@@ -53,5 +53,10 @@
 		"32": "images/logo_32.png",
 		"48": "images/logo_48.png",
 		"96": "images/logo_96.png"
+	},
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "ao3tweaks@github.com",
+		},
 	}
 }
