@@ -1,6 +1,6 @@
 {
-	"name": "AO3 Utilities",
-	"description": "Assorted bits and pieces to improve your Ao3 experience",
+	"name": "AO3 Tweaks",
+	"description": "An extension adding various little tweaks to Ao3.",
 	"version": "0.5.2",
 	"manifest_version": 3,
 	"permissions": ["scripting"],
