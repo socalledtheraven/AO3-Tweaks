@@ -1,7 +1,7 @@
 {
 	"name": "AO3 Utilities",
 	"description": "Assorted bits and pieces to improve your Ao3 experience",
-	"version": "0.5.0",
+	"version": "0.5.2",
 	"manifest_version": 3,
 	"permissions": ["scripting"],
 	"content_scripts": [

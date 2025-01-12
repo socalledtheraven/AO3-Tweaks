@@ -6,16 +6,9 @@ let messages = Array(
     "Update kudos!"
 );
 
-const auto = false;
+const AUTO = false;
+const REKUDOS_ACTIVE = true;
 // CONFIG END
-
-let kudosButton = document.querySelector("#new_kudo");
-let kudosMessage = document.querySelector("#kudos_message");
-if (auto) {
-    kudosButton.addEventListener("click", postComment);
-} else {
-    kudosButton.addEventListener("click", editKudosButton);
-}
 
 function postComment() {
     setTimeout(function () {
@@ -41,4 +34,15 @@ function editKudosButton() {
             kudosButton.addEventListener("click", postComment);
         }
     }, 0.25 * 1000);
+}
+
+let kudosButton = document.querySelector("#new_kudo");
+let kudosMessage = document.querySelector("#kudos_message");
+
+if (REKUDOS_ACTIVE) {
+    if (AUTO) {
+        kudosButton.addEventListener("click", postComment);
+    } else {
+        kudosButton.addEventListener("click", editKudosButton);
+    }
 }

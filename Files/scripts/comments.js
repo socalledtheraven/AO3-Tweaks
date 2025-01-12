@@ -1,41 +1,6 @@
-async function fullTextCommentBoxes() {
-    const fullText = document.querySelector(".chapter.bychapter");
-    if (fullText) {
-        console.log("is fulltext")
-        let commentBox = document.querySelector("#add_comment");
-        let chapters = document.querySelector("#chapters");
-        let chapterNodes = chapters.children;
-        let chaptersLength = chapterNodes.length;
-        let chapterUrls = await getChapterUrls();
-
-        for (let i = chaptersLength; i > 0; i--) {
-            let newCommentBox = commentBox.cloneNode(true);
-            newCommentBox.querySelector("form.new_comment").action = chapterUrls[i];
-
-            chapters.insertBefore(newCommentBox, chapterNodes[i]);
-        }
-    }
-}
-
-async function getChapterUrls() {
-    let navigationUrl = window.location.href + "/navigate";
-    let navPageHTML = await getHTML(navigationUrl);
-
-    // this is standard parsing
-    let parser = new DOMParser();
-    let doc = parser.parseFromString(navPageHTML, "text/html");
-
-    // grabs all the things in that list and filters it down to just the urls, then format them appropriately
-    let urls = Array.from(doc.querySelector('ol[role="navigation"]').querySelectorAll("a"));
-    return urls.map((url) => {
-        return "/chapters" + url.href.split("chapters")[1] + "/comments";
-    });
-}
-
-async function getHTML(url) {
-    let response = await fetch(url);
-    return await response.text();
-}
+// CONFIG
+const COMMENT_TEMPLATES = true;
+const EXTRA_COMMENT_BOXES = true;
 
 /* sourced from:
 https://keenmarvellover.tumblr.com/post/632111521465581568/how-to-trick-writers-into-giving-you-more-fanfic,
@@ -165,10 +130,54 @@ const PREWRITTEN_COMMENTS = [
     "❤️",
     "*squeeeeeee*"
 ]
+// CONFIG
+
+async function fullTextCommentBoxes() {
+    // checks if the "chapter by chapter" button is present (to indicate it is currently in fulltext mode
+    const fullText = document.querySelector(".chapter.bychapter");
+    if (fullText) {
+        console.log("is fulltext")
+        let commentBox = document.querySelector("#add_comment");
+        let chapters = document.querySelector("#chapters");
+        let chapterNodes = chapters.children;
+        // we do this because the length will be updated when I'm dynamically inserting new ones
+        let chaptersLength = chapterNodes.length;
+        let chapterUrls = await getChapterUrls();
+
+        for (let i = chaptersLength; i > 0; i--) {
+            let newCommentBox = commentBox.cloneNode(true);
+            newCommentBox.querySelector("form.new_comment").action = chapterUrls[i];
+
+            chapters.insertBefore(newCommentBox, chapterNodes[i]);
+        }
+    }
+}
+
+async function getChapterUrls() {
+    let navigationUrl = window.location.href + "/navigate";
+    let navPageHTML = await getHTML(navigationUrl);
+
+    // this is standard parsing
+    let parser = new DOMParser();
+    let doc = parser.parseFromString(navPageHTML, "text/html");
+
+    // grabs all the things in that list and filters it down to just the urls, then format them appropriately
+    let urls = Array.from(doc.querySelector('ol[role="navigation"]').querySelectorAll("a"));
+    return urls.map((url) => {
+        return "/chapters" + url.href.split("chapters")[1] + "/comments";
+    });
+}
+
+async function getHTML(url) {
+    let response = await fetch(url);
+    return await response.text();
+}
 
 function templateComments() {
     let ul = document.createElement("ul");
 
+    // all the styling here is so that it will look like the actions in terms of spacing
+    // same reason for why I'm bothering with using a ul and lis
     let containerLi1 = document.createElement("li");
     containerLi1.style.listStyle = "none"
     containerLi1.style.display = "inline"
@@ -228,12 +237,16 @@ function autofillComment(templates) {
     commentBox.value = templates[random];
 }
 
+// run this first so the extra buttons are copied to all the other comment boxes
+if (COMMENT_TEMPLATES) {
+    templateComments()
+}
 
-templateComments()
-
-// add config for if this actually does what it's supposed to
-fullTextCommentBoxes().then(
-    function () {
-        console.log("finished");
-    }
-);
+// needs the .then because it's async
+if (EXTRA_COMMENT_BOXES) {
+    fullTextCommentBoxes().then(
+        function () {
+            console.log("");
+        }
+    );
+}

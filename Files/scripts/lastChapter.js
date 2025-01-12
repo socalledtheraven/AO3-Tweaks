@@ -1,3 +1,7 @@
+// CONFIG
+const LAST_CHAPTER_AUTOFILL = true;
+// CONFIG
+
 function main() {
 	// collects all the bookmarks and iterates through them
 	const bookmarks = document.querySelectorAll('[role="article"]');
@@ -19,6 +23,8 @@ function main() {
 }
 
 // runs it when the page loads
-window.onload = function() {
-	main();
-};
+if (LAST_CHAPTER_AUTOFILL) {
+	window.onload = function () {
+		main();
+	};
+}

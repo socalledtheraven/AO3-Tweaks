@@ -2,6 +2,7 @@
 
 /*START SETTINGS: Change these to true/false based on your preferences*/
 /*SETTINGS THAT APPLY TO ALL BOOKMARKS*/
+const BOOKMARK_NOTES_ENABLED = true;
 
 const NOTES_APPEND_TO_PREVIOUS = false; // When editing a pre-existing bookmark, should the pre-existing notes be preserved?
 /*Note: If you toggle this to true, and repeatedly edit the same bookmark, it will repeatedly add the same information to the box, growing it over and over.*/
@@ -67,6 +68,7 @@ function updateWorkBookmark(url) {
         let title = document.getElementsByClassName("title heading")[0];
         let username = document.getElementsByClassName("byline heading")[0];
 
+        // checks for pseuds
         if (username.textContent.includes("(")) {
             let pseud = username.textContent.split("(");
             username = pseud[1].trim();
@@ -85,6 +87,7 @@ function updateWorkBookmark(url) {
         if (summary.length !== 0) {
             summary = summary[0].getElementsByClassName("userstuff")[0].innerHTML;
             notesBoxText += "\n\nSummary: " + summary;
+            // sanitise inputs so they display properly
             notesBoxText = notesBoxText.replaceAll("</p>","\n").replaceAll("<p>","");
         }
     }
@@ -252,6 +255,8 @@ function updateSeriesBookmark(url) {
 
 function removeCommas(wordcount) {
     if (wordcount.includes(',')) {
+        // no, I don't know why this recursively keeps doing this, it was like this in the original script. my best guess
+        // is that in the past, replace only replaced the first match
         wordcount = wordcount.replace(',', '');
         wordcount = removeCommas(wordcount);
     }
@@ -271,8 +276,10 @@ function addTags(tagBox, categorySelector) {
 
 // has a problem with the variable name "url" (presumably something else is using it)
 let uri = window.location.href;
-if (uri.includes("/works/")) {
-    updateWorkBookmark(uri);
-} else if (uri.includes("/series/")) {
-    updateSeriesBookmark(uri);
+if (BOOKMARK_NOTES_ENABLED) {
+    if (uri.includes("/works/")) {
+        updateWorkBookmark(uri);
+    } else if (uri.includes("/series/")) {
+        updateSeriesBookmark(uri);
+    }
 }
