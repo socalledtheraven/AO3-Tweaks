@@ -1,7 +1,7 @@
 {
 	"name": "AO3 Tweaks",
 	"description": "An extension adding various little tweaks to Ao3.",
-	"version": "0.5.2",
+	"version": "0.5.4",
 	"manifest_version": 3,
 	"permissions": ["scripting"],
 	"content_scripts": [
@@ -56,7 +56,7 @@
 	},
 	"browser_specific_settings": {
 		"gecko": {
-			"id": "ao3tweaks@github.com",
-		},
+			"id": "{ad53cfca-a2b3-4d9f-95ae-adcf2fa65479}"
+		}
 	}
 }
