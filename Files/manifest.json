@@ -1,9 +1,8 @@
 {
 	"name": "AO3 Tweaks",
 	"description": "An extension adding various little tweaks to Ao3.",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"manifest_version": 3,
-	"permissions": ["scripting"],
 	"content_scripts": [
 		{
 			"js": ["scripts/lastChapter.js"],
