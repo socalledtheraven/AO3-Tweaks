@@ -6,7 +6,7 @@ let messages = Array(
     "Update kudos!"
 );
 
-const AUTO = false;
+const AUTO = true;
 const REKUDOS_ACTIVE = true;
 // CONFIG END
 

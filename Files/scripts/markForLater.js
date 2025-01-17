@@ -68,7 +68,10 @@ if (MARK_FOR_LATER_ENABLED) {
     const toReadButton = document.createElement("li");
     const child = document.createElement("a");
     child.text = 'Save as "To Read"'
-    child.href = "#";
+    child.href = "";
+    child.onclick = function () {
+        return false;
+    }
 
     toReadButton.appendChild(child);
 

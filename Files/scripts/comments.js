@@ -1,6 +1,6 @@
 // CONFIG
 const COMMENT_TEMPLATES = true;
-const EXTRA_COMMENT_BOXES = true;
+const EXTRA_COMMENT_BOXES = false;
 
 /* sourced from:
 https://keenmarvellover.tumblr.com/post/632111521465581568/how-to-trick-writers-into-giving-you-more-fanfic,
@@ -184,10 +184,11 @@ function templateComments() {
     containerLi1.style.paddingLeft = "0.25em"
 
     let commentTemplateButton = document.createElement("a");
-    commentTemplateButton.href = "#comments";
+    commentTemplateButton.href = "";
     commentTemplateButton.textContent = "Fill comment template";
     commentTemplateButton.onclick = function () {
-        autofillComment(TEMPLATE_COMMENTS)
+        autofillComment(TEMPLATE_COMMENTS);
+        return false;
     };
     containerLi1.appendChild(commentTemplateButton);
 
@@ -202,10 +203,11 @@ function templateComments() {
     containerLi2.style.paddingLeft = "0.25em"
 
     let premadeCommentButton = document.createElement("a");
-    premadeCommentButton.href = "#comments";
+    premadeCommentButton.href = "";
     premadeCommentButton.textContent = "Fill prewritten comment";
     premadeCommentButton.onclick = function () {
-        autofillComment(PREWRITTEN_COMMENTS)
+        autofillComment(PREWRITTEN_COMMENTS);
+        return false;
     };
     containerLi2.appendChild(premadeCommentButton);
 
