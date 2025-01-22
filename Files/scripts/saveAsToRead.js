@@ -1,6 +1,6 @@
 // CONFIG
 const privateFandoms = [""]
-const MARK_FOR_LATER_ENABLED = true;
+const SAVE_AS_TO_READ_ENABLED = true;
 const UNSUB_FROM_WORKS = false;
 // END CONFIG
 
@@ -63,7 +63,7 @@ function isPrivateFandom(fandomTags) {
 
 const url = window.location.href;
 
-if (MARK_FOR_LATER_ENABLED) {
+if (SAVE_AS_TO_READ_ENABLED) {
 // creates a new button
     const toReadButton = document.createElement("li");
     const child = document.createElement("a");
