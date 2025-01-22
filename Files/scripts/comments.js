@@ -1,5 +1,5 @@
 // CONFIG
-const COMMENT_TEMPLATES = false;
+const COMMENT_TEMPLATES = true;
 const EXTRA_COMMENT_BOXES = true;
 
 /* sourced from:
@@ -203,78 +203,90 @@ function sleep(ms) {
 // Code for comment templates begins
 
 function templateComments() {
-    let ul = document.createElement("ul");
+    let commentButtons = document.querySelectorAll("input[value='Comment']");
+    console.log(commentButtons)
+    let commentButtonContainers = Array.from(commentButtons, button => button.parentNode);
+    console.log(commentButtonContainers);
 
-    // all the styling here is so that it will look like the actions in terms of spacing
-    // same reason for why I'm bothering with using a ul and lis
-    let containerLi1 = document.createElement("li");
-    containerLi1.style.listStyle = "none"
-    containerLi1.style.display = "inline"
-    containerLi1.style.paddingLeft = "0.25em"
+    for (let i = 0; i <= commentButtonContainers.length-1; i++) {
+        let container = commentButtonContainers[i];
+        console.log(container)
 
-    let commentTemplateButton = document.createElement("a");
-    commentTemplateButton.textContent = "Fill comment template";
-    commentTemplateButton.href = "";
-    commentTemplateButton.onclick = function () {
-        autofillComment(TEMPLATE_COMMENTS);
-        return false;
-    };
-    containerLi1.appendChild(commentTemplateButton);
+        let ul = document.createElement("ul");
 
-    let paddingLi1 = document.createElement("li");
-    paddingLi1.style.listStyle = "none"
-    paddingLi1.style.display = "inline"
-    paddingLi1.style.paddingLeft = "0.25em"
+        // all the styling here is so that it will look like the actions in terms of spacing
+        // same reason for why I'm bothering with using a ul and lis
+        let containerLi1 = document.createElement("li");
+        containerLi1.style.listStyle = "none"
+        containerLi1.style.display = "inline"
+        containerLi1.style.paddingLeft = "0.25em"
 
-    let containerLi2 = document.createElement("li");
-    containerLi2.style.listStyle = "none"
-    containerLi2.style.display = "inline"
-    containerLi2.style.paddingLeft = "0.25em"
+        let commentTemplateButton = document.createElement("a");
+        commentTemplateButton.textContent = "Fill comment template";
+        commentTemplateButton.href = "";
+        commentTemplateButton.onclick = function () {
+            autofillComment(container, TEMPLATE_COMMENTS);
+            return false;
+        };
+        containerLi1.appendChild(commentTemplateButton);
 
-    let premadeCommentButton = document.createElement("a");
-    premadeCommentButton.textContent = "Fill prewritten comment";
-    premadeCommentButton.href = "";
-    premadeCommentButton.onclick = function () {
-        autofillComment(PREWRITTEN_COMMENTS);
-        return false;
-    };
-    containerLi2.appendChild(premadeCommentButton);
+        let paddingLi1 = document.createElement("li");
+        paddingLi1.style.listStyle = "none"
+        paddingLi1.style.display = "inline"
+        paddingLi1.style.paddingLeft = "0.25em"
 
-    let paddingLi2 = document.createElement("li");
-    paddingLi2.style.listStyle = "none"
-    paddingLi2.style.display = "inline"
-    paddingLi2.style.paddingLeft = "0.25em"
+        let containerLi2 = document.createElement("li");
+        containerLi2.style.listStyle = "none"
+        containerLi2.style.display = "inline"
+        containerLi2.style.paddingLeft = "0.25em"
 
-    let containerLi3 = document.createElement("li");
-    containerLi3.style.listStyle = "none"
-    containerLi3.style.display = "inline"
-    containerLi3.style.paddingLeft = "0.25em"
+        let premadeCommentButton = document.createElement("a");
+        premadeCommentButton.textContent = "Fill prewritten comment";
+        premadeCommentButton.href = "";
+        premadeCommentButton.onclick = function () {
+            autofillComment(container, PREWRITTEN_COMMENTS);
+            return false;
+        };
+        containerLi2.appendChild(premadeCommentButton);
 
-    let commentButton = document.querySelector("input[value='Comment']");
-    let commentButtonContainer = commentButton.parentNode;
-    containerLi3.appendChild(commentButton);
+        let paddingLi2 = document.createElement("li");
+        paddingLi2.style.listStyle = "none"
+        paddingLi2.style.display = "inline"
+        paddingLi2.style.paddingLeft = "0.25em"
 
-    // .cloneNode(true);
-    ul.appendChild(containerLi1);
-    ul.appendChild(paddingLi1);
-    ul.appendChild(containerLi2);
-    ul.appendChild(paddingLi2);
-    ul.appendChild(containerLi3);
-    commentButtonContainer.appendChild(ul);
+        let containerLi3 = document.createElement("li");
+        containerLi3.style.listStyle = "none"
+        containerLi3.style.display = "inline"
+        containerLi3.style.paddingLeft = "0.25em"
+        console.log(commentButtons[i])
+        containerLi3.appendChild(commentButtons[i]);
+
+        // .cloneNode(true);
+        ul.appendChild(containerLi1);
+        ul.appendChild(paddingLi1);
+        ul.appendChild(containerLi2);
+        ul.appendChild(paddingLi2);
+        ul.appendChild(containerLi3);
+        container.appendChild(ul);
+    }
 }
 
-function autofillComment(templates) {
+function autofillComment(parentContainer, templates) {
+    parentContainer = parentContainer.parentNode;
     let random = Math.floor(Math.random() * templates.length);
-    let commentBox = document.querySelector(".comment_form");
+    let commentBox = parentContainer.querySelector(".comment_form");
     commentBox.value = templates[random];
 }
 
-// run this first so the extra buttons are copied to all the other comment boxes
-if (COMMENT_TEMPLATES) {
-    templateComments()
-}
-
-// needs the .then because it's async
+// full text comment boxes is async, so it needs to happen first, so we have to have an overly complicated if structure
 if (EXTRA_COMMENT_BOXES) {
-    fullTextCommentBoxes().then(function (){});
+    fullTextCommentBoxes().then(function (){
+        if (COMMENT_TEMPLATES) {
+            templateComments()
+        }
+    });
+} else {
+    if (COMMENT_TEMPLATES) {
+        templateComments()
+    }
 }
