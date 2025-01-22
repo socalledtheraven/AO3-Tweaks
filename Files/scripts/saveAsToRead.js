@@ -3,6 +3,7 @@ const privateFandoms = [""]
 const SAVE_AS_TO_READ_ENABLED = true;
 const UNSUB_FROM_WORKS = false;
 const REPLACE_MARK_FOR_LATER = true;
+const BACK_TO_ORIGINAL_PAGE = true;
 // END CONFIG
 
 function bookmarkSeries() {
@@ -17,6 +18,7 @@ function bookmarkWork() {
     if (UNSUB_FROM_WORKS) {
         unsubscribe();
     }
+    console.log("called")
 
     const fandoms = document.getElementsByClassName("fandom tags");
 
@@ -33,13 +35,19 @@ function submitBookmark() {
     // this may not play nice with other things modifying the tagbox at bookmarktime
     const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
     tagBox.value += "To Read";
+    console.log(tagBox)
+    console.log(tagBox.value)
 
     const bookmarkGroup = document.getElementById("bookmark-form");
     const bookmarkButton = bookmarkGroup.querySelector("[name='commit']");
+    console.log(bookmarkButton)
     bookmarkButton.click();
-    setTimeout(function() {
-        window.location.href = url;
-    }, (1.0 * 1000));
+
+    if (BACK_TO_ORIGINAL_PAGE) {
+        setTimeout(function () {
+            window.location.href = url;
+        }, (1.0 * 1000));
+    }
 }
 
 // kept in here from migrating my things over from using subscriptions to keep track
@@ -70,18 +78,19 @@ if (SAVE_AS_TO_READ_ENABLED) {
     toReadButton.className = "to_read";
     const child = document.createElement("a");
     child.text = 'Save as "To Read"'
-    // makes it a link in all the important css ways but doesn't actually go anywhere when clicked, just does the function
+    // makes it a link in all the important css ways
     child.href = "";
-    child.onclick = function () {
-        return false;
-    }
 
     toReadButton.appendChild(child);
 
     // switches the function based on series
     if (url.includes("/works/")) {
         const navbar = document.querySelector("ul.navigation.actions.work[role='menu']");
-        child.onclick = bookmarkWork;
+        // makes the link do nothing except the function when clicked
+        child.onclick = function () {
+            bookmarkWork();
+            return false;
+        }
 
         if (REPLACE_MARK_FOR_LATER) {
             const markForLaterButton = navbar.querySelector(".mark");
@@ -91,11 +100,16 @@ if (SAVE_AS_TO_READ_ENABLED) {
                 markForLaterButton.insertAdjacentElement("beforebegin", toReadButton);
                 markForLaterButton.remove();
             }
+        } else {
+            navbar.appendChild(toReadButton);
         }
 
     } else if (url.includes("/series/")) {
         const navbar = document.querySelector("ul.navigation.actions[role='navigation']");
-        child.onclick = bookmarkSeries;
+        child.onclick = function () {
+            bookmarkSeries();
+            return false;
+        }
         navbar.appendChild(toReadButton);
     }
 }

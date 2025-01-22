@@ -184,8 +184,8 @@ function templateComments() {
     containerLi1.style.paddingLeft = "0.25em"
 
     let commentTemplateButton = document.createElement("a");
-    commentTemplateButton.href = "";
     commentTemplateButton.textContent = "Fill comment template";
+    commentTemplateButton.href = "";
     commentTemplateButton.onclick = function () {
         autofillComment(TEMPLATE_COMMENTS);
         return false;
@@ -203,8 +203,8 @@ function templateComments() {
     containerLi2.style.paddingLeft = "0.25em"
 
     let premadeCommentButton = document.createElement("a");
-    premadeCommentButton.href = "";
     premadeCommentButton.textContent = "Fill prewritten comment";
+    premadeCommentButton.href = "";
     premadeCommentButton.onclick = function () {
         autofillComment(PREWRITTEN_COMMENTS);
         return false;
