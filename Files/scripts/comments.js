@@ -1,6 +1,6 @@
 // CONFIG
-const COMMENT_TEMPLATES = true;
-const EXTRA_COMMENT_BOXES = false;
+const COMMENT_TEMPLATES = false;
+const EXTRA_COMMENT_BOXES = true;
 
 /* sourced from:
 https://keenmarvellover.tumblr.com/post/632111521465581568/how-to-trick-writers-into-giving-you-more-fanfic,
@@ -137,16 +137,17 @@ async function fullTextCommentBoxes() {
     const fullText = document.querySelector(".chapter.bychapter");
     if (fullText) {
         console.log("is fulltext")
-        let commentBox = document.querySelector("#add_comment");
         let chapters = document.querySelector("#chapters");
         let chapterNodes = chapters.children;
         // we do this because the length will be updated when I'm dynamically inserting new ones
         let chaptersLength = chapterNodes.length;
         let chapterUrls = await getChapterUrls();
+        let commentBoxes = await getCommentBoxes(chapterUrls);
+        commentBoxes.reverse();
 
         for (let i = chaptersLength; i > 0; i--) {
-            let newCommentBox = commentBox.cloneNode(true);
-            newCommentBox.querySelector("form.new_comment").action = chapterUrls[i];
+            let newCommentBox = commentBoxes[chaptersLength-i];
+            console.log(newCommentBox);
 
             chapters.insertBefore(newCommentBox, chapterNodes[i]);
         }
@@ -154,7 +155,8 @@ async function fullTextCommentBoxes() {
 }
 
 async function getChapterUrls() {
-    let navigationUrl = window.location.href + "/navigate";
+    // sometimes works will have parameters like this
+    let navigationUrl = window.location.href.split("?")[0] + "/navigate";
     let navPageHTML = await getHTML(navigationUrl);
 
     // this is standard parsing
@@ -162,16 +164,43 @@ async function getChapterUrls() {
     let doc = parser.parseFromString(navPageHTML, "text/html");
 
     // grabs all the things in that list and filters it down to just the urls, then format them appropriately
-    let urls = Array.from(doc.querySelector('ol[role="navigation"]').querySelectorAll("a"));
-    return urls.map((url) => {
-        return "/chapters" + url.href.split("chapters")[1] + "/comments";
-    });
+    return Array.from(doc.querySelector('ol[role="navigation"]').querySelectorAll("a"));
+}
+
+async function getCommentBoxes(urls) {
+    let commentBoxes = [];
+    for (let url of urls) {
+        console.log(url)
+        let navPageHTML = await getHTML(url);
+        console.log(navPageHTML)
+
+        // this is standard parsing
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(navPageHTML, "text/html");
+
+        let box = doc.querySelector("#add_comment");
+        console.log(box)
+        commentBoxes.push(box);
+
+        await sleep(500);
+    }
+
+    console.log(commentBoxes)
+    return commentBoxes;
 }
 
 async function getHTML(url) {
     let response = await fetch(url);
     return await response.text();
 }
+
+function sleep(ms) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
+
+// Code for comment templates begins
 
 function templateComments() {
     let ul = document.createElement("ul");
@@ -225,6 +254,7 @@ function templateComments() {
     let commentButtonContainer = commentButton.parentNode;
     containerLi3.appendChild(commentButton);
 
+    // .cloneNode(true);
     ul.appendChild(containerLi1);
     ul.appendChild(paddingLi1);
     ul.appendChild(containerLi2);
@@ -246,9 +276,5 @@ if (COMMENT_TEMPLATES) {
 
 // needs the .then because it's async
 if (EXTRA_COMMENT_BOXES) {
-    fullTextCommentBoxes().then(
-        function () {
-            console.log("");
-        }
-    );
+    fullTextCommentBoxes().then(function (){});
 }
