@@ -11,7 +11,7 @@
 			]
 		},
 		{
-			"js": ["scripts/markForLater.js"],
+			"js": ["scripts/saveAsToRead.js"],
 			"matches": [
 				"*://archiveofourown.org/*chapters/*",
 				"*://archiveofourown.org/*works/*",

@@ -2,6 +2,7 @@
 const privateFandoms = [""]
 const SAVE_AS_TO_READ_ENABLED = true;
 const UNSUB_FROM_WORKS = false;
+const REPLACE_MARK_FOR_LATER = true;
 // END CONFIG
 
 function bookmarkSeries() {
@@ -64,10 +65,12 @@ function isPrivateFandom(fandomTags) {
 const url = window.location.href;
 
 if (SAVE_AS_TO_READ_ENABLED) {
-// creates a new button
+    // creates a new button
     const toReadButton = document.createElement("li");
+    toReadButton.className = "to_read";
     const child = document.createElement("a");
     child.text = 'Save as "To Read"'
+    // makes it a link in all the important css ways but doesn't actually go anywhere when clicked, just does the function
     child.href = "";
     child.onclick = function () {
         return false;
@@ -75,11 +78,20 @@ if (SAVE_AS_TO_READ_ENABLED) {
 
     toReadButton.appendChild(child);
 
-// switches the function based on series
+    // switches the function based on series
     if (url.includes("/works/")) {
         const navbar = document.querySelector("ul.navigation.actions.work[role='menu']");
         child.onclick = bookmarkWork;
-        navbar.appendChild(toReadButton);
+
+        if (REPLACE_MARK_FOR_LATER) {
+            const markForLaterButton = navbar.querySelector(".mark");
+
+            // it might not be there if the user has history turned off
+            if (markForLaterButton) {
+                markForLaterButton.insertAdjacentElement("beforebegin", toReadButton);
+                markForLaterButton.remove();
+            }
+        }
 
     } else if (url.includes("/series/")) {
         const navbar = document.querySelector("ul.navigation.actions[role='navigation']");
