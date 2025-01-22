@@ -18,7 +18,6 @@ function bookmarkWork() {
     if (UNSUB_FROM_WORKS) {
         unsubscribe();
     }
-    console.log("called")
 
     const fandoms = document.getElementsByClassName("fandom tags");
 
@@ -35,12 +34,9 @@ function submitBookmark() {
     // this may not play nice with other things modifying the tagbox at bookmarktime
     const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
     tagBox.value += "To Read";
-    console.log(tagBox)
-    console.log(tagBox.value)
 
     const bookmarkGroup = document.getElementById("bookmark-form");
     const bookmarkButton = bookmarkGroup.querySelector("[name='commit']");
-    console.log(bookmarkButton)
     bookmarkButton.click();
 
     if (BACK_TO_ORIGINAL_PAGE) {
