@@ -1,7 +1,6 @@
 // CONFIG
-const COMMENT_TEMPLATES = false;
+const COMMENT_TEMPLATES = true;
 const EXTRA_COMMENT_BOXES = true;
-const BACK_TO_PLACE = true;
 
 /* sourced from:
 https://keenmarvellover.tumblr.com/post/632111521465581568/how-to-trick-writers-into-giving-you-more-fanfic,
@@ -177,18 +176,6 @@ async function getCommentBoxes(urls) {
         let doc = parser.parseFromString(navPageHTML, "text/html");
 
         let box = doc.querySelector("#add_comment");
-        if (BACK_TO_PLACE) {
-            let commentButton = box.querySelector("input[value='Comment']")
-
-            let title = doc.querySelector("h3.title")
-            let originalUrl = window.location.href.split("?")[0] + "#" + title.parentNode.parentNode.id
-
-            commentButton.addEventListener("click", function () {
-                setTimeout(function () {
-                    window.location.href = originalUrl;
-                }, (0.5 * 1000));
-            });
-        }
         commentBoxes.push(box);
 
         await sleep(0.5);

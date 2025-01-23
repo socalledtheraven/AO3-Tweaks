@@ -24,7 +24,5 @@ function main() {
 
 // runs it when the page loads
 if (LAST_CHAPTER_AUTOFILL) {
-	window.onload = function () {
-		main();
-	};
+	main();
 }

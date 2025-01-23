@@ -3,7 +3,6 @@ const privateFandoms = [""]
 const SAVE_AS_TO_READ_ENABLED = true;
 const UNSUB_FROM_WORKS = false;
 const REPLACE_MARK_FOR_LATER = true;
-const BACK_TO_ORIGINAL_PAGE = true;
 // END CONFIG
 
 function bookmarkSeries() {
@@ -22,7 +21,9 @@ function bookmarkWork() {
     const fandoms = document.getElementsByClassName("fandom tags");
 
     const fandomTags = fandoms[1].getElementsByClassName("tag");
-    if (isPrivateFandom(fandomTags)) {
+    const isPrivateFandom = isInArray(fandomTags);
+
+    if (isPrivateFandom) {
         const privateBox = document.getElementById("bookmark_private");
         privateBox.checked = true;
     }
@@ -38,12 +39,6 @@ function submitBookmark() {
     const bookmarkGroup = document.getElementById("bookmark-form");
     const bookmarkButton = bookmarkGroup.querySelector("[name='commit']");
     bookmarkButton.click();
-
-    if (BACK_TO_ORIGINAL_PAGE) {
-        setTimeout(function () {
-            window.location.href = url;
-        }, (1.0 * 1000));
-    }
 }
 
 // kept in here from migrating my things over from using subscriptions to keep track
@@ -57,9 +52,9 @@ function unsubscribe() {
 }
 
 // literally just an "is in list" function
-function isPrivateFandom(fandomTags) {
-    for (const tag of fandomTags) {
-        if (privateFandoms.indexOf(tag.text) > -1) {
+function isInArray(arr) {
+    for (const elem of arr) {
+        if (privateFandoms.indexOf(elem.text) > -1) {
             return true;
         }
     }
@@ -95,6 +90,8 @@ if (SAVE_AS_TO_READ_ENABLED) {
             if (markForLaterButton) {
                 markForLaterButton.insertAdjacentElement("beforebegin", toReadButton);
                 markForLaterButton.remove();
+            } else {
+                navbar.appendChild(toReadButton);
             }
         } else {
             navbar.appendChild(toReadButton);
