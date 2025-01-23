@@ -1,6 +1,6 @@
 // CONFIG
 const COMMENT_TEMPLATES = true;
-const EXTRA_COMMENT_BOXES = true;
+const EXTRA_COMMENT_BOXES = false;
 
 /* sourced from:
 https://keenmarvellover.tumblr.com/post/632111521465581568/how-to-trick-writers-into-giving-you-more-fanfic,
@@ -170,22 +170,18 @@ async function getChapterUrls() {
 async function getCommentBoxes(urls) {
     let commentBoxes = [];
     for (let url of urls) {
-        console.log(url)
         let navPageHTML = await getHTML(url);
-        console.log(navPageHTML)
 
         // this is standard parsing
         let parser = new DOMParser();
         let doc = parser.parseFromString(navPageHTML, "text/html");
 
         let box = doc.querySelector("#add_comment");
-        console.log(box)
         commentBoxes.push(box);
 
         await sleep(500);
     }
 
-    console.log(commentBoxes)
     return commentBoxes;
 }
 
@@ -204,13 +200,10 @@ function sleep(ms) {
 
 function templateComments() {
     let commentButtons = document.querySelectorAll("input[value='Comment']");
-    console.log(commentButtons)
     let commentButtonContainers = Array.from(commentButtons, button => button.parentNode);
-    console.log(commentButtonContainers);
 
     for (let i = 0; i <= commentButtonContainers.length-1; i++) {
         let container = commentButtonContainers[i];
-        console.log(container)
 
         let ul = document.createElement("ul");
 
@@ -258,7 +251,6 @@ function templateComments() {
         containerLi3.style.listStyle = "none"
         containerLi3.style.display = "inline"
         containerLi3.style.paddingLeft = "0.25em"
-        console.log(commentButtons[i])
         containerLi3.appendChild(commentButtons[i]);
 
         // .cloneNode(true);

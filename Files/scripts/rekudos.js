@@ -6,8 +6,9 @@ let messages = Array(
     "Update kudos!"
 );
 
-const AUTO = true;
+const AUTO = false;
 const REKUDOS_ACTIVE = true;
+const BACK_TO_ORIGINAL_PAGE = true;
 // CONFIG END
 
 function postComment() {
@@ -20,22 +21,26 @@ function postComment() {
 
             commentBox.value = messages[random];
             commentButton.click();
+
+            if (BACK_TO_ORIGINAL_PAGE) {
+                setTimeout(function () {
+                    window.location.href = url;
+                }, (1.0 * 1000));
+            }
         }
     }, 0.25 * 1000);
 }
 
 function editKudosButton() {
     setTimeout(function () {
-        // checks if a kudos has already been left
-        if (kudosMessage.textContent.includes("already")) {
-            // you have to edit the value of a different element or it overwrites the whole form
-            let kudosButtonText = document.querySelector("#kudo_submit");
-            kudosButtonText.value = "Rekudos?";
-            kudosButton.addEventListener("click", postComment);
-        }
+        // you have to edit the value of a different element or it overwrites the whole form
+        let kudosButtonText = document.querySelector("#kudo_submit");
+        kudosButtonText.value = "Rekudos?";
+        kudosButton.addEventListener("click", postComment);
     }, 0.25 * 1000);
 }
 
+const url = window.location.href;
 let kudosButton = document.querySelector("#new_kudo");
 let kudosMessage = document.querySelector("#kudos_message");
 
