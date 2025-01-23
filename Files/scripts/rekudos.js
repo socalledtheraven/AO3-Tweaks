@@ -8,7 +8,7 @@ let messages = Array(
 
 const AUTO = false;
 const REKUDOS_ACTIVE = true;
-const BACK_TO_ORIGINAL_PAGE = true;
+const BACK_TO_CHAPTER = true;
 // CONFIG END
 
 function postComment() {
@@ -22,8 +22,9 @@ function postComment() {
             commentBox.value = messages[random];
             commentButton.click();
 
-            if (BACK_TO_ORIGINAL_PAGE) {
+            if (BACK_TO_CHAPTER) {
                 setTimeout(function () {
+                    // url is defined in saveAsToRead.js
                     window.location.href = url;
                 }, (1.0 * 1000));
             }
@@ -40,7 +41,6 @@ function editKudosButton() {
     }, 0.25 * 1000);
 }
 
-const url = window.location.href;
 let kudosButton = document.querySelector("#new_kudo");
 let kudosMessage = document.querySelector("#kudos_message");
 
