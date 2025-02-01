@@ -132,7 +132,7 @@ const PREWRITTEN_COMMENTS = [
     "❤️",
     "*squeeeeeee*",
     "(✿◠‿◠)", 
-    "I heart this so much!!”\n",
+    "I heart this so much!!”",
     "⊂◉‿◉つ",
     "OMG, the surprise was so sweet!",
     "☆(❁‿❁)☆",

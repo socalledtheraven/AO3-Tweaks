@@ -66,11 +66,11 @@ const url = window.location.href;
 if (SAVE_AS_TO_READ_ENABLED) {
     // creates a new button
     const toReadButton = document.createElement("li");
-    toReadButton.className = "to_read";
+    toReadButton.id = "to_read";
     const child = document.createElement("a");
     child.text = 'Save as "To Read"'
     // makes it a link in all the important css ways
-    child.href = "";
+    child.href = "#to_read";
 
     toReadButton.appendChild(child);
 
