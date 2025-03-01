@@ -98,7 +98,7 @@ function updateWorkBookmark(url) {
         if (NOTES_APPEND_TO_PREVIOUS) {
             let oldNotes = notesBox.value.split("-~-~-~-")[0];
 
-            notesBox.value += oldNotes + "\n-~-~-~-\n" + notesBoxText;
+            notesBox.value = oldNotes + "\n-~-~-~-\n" + notesBoxText;
         } else {
             notesBox.value = "\n-~-~-~-\n" + notesBoxText;
         }
