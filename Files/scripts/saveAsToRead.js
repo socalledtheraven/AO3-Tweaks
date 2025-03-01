@@ -3,6 +3,7 @@ const privateFandoms = [""]
 const SAVE_AS_TO_READ_ENABLED = true;
 const UNSUB_FROM_WORKS = false;
 const REPLACE_MARK_FOR_LATER = true;
+const ADD_PRIV_SAVE_AS = true;
 // END CONFIG
 
 function bookmarkSeries() {
@@ -27,6 +28,17 @@ function bookmarkWork() {
         const privateBox = document.getElementById("bookmark_private");
         privateBox.checked = true;
     }
+
+    submitBookmark();
+}
+
+function privateBookmarkWork() {
+    if (ADD_PRIV_SAVE_AS) {
+        const privateBox = document.getElementById("bookmark_private");
+        privateBox.checked = true;
+    }
+
+    bookmarkWork();
 
     submitBookmark();
 }
@@ -71,17 +83,17 @@ if (SAVE_AS_TO_READ_ENABLED) {
     child.text = 'Save as "To Read"'
     // makes it a link in all the important css ways
     child.href = "#to_read";
+    // makes the link do nothing except the function when clicked
+    child.onclick = function () {
+        bookmarkWork();
+        return false;
+    }
 
     toReadButton.appendChild(child);
 
     // switches the function based on series
     if (url.includes("/works/")) {
         const navbar = document.querySelector("ul.navigation.actions.work[role='menu']");
-        // makes the link do nothing except the function when clicked
-        child.onclick = function () {
-            bookmarkWork();
-            return false;
-        }
 
         if (REPLACE_MARK_FOR_LATER) {
             const markForLaterButton = navbar.querySelector(".mark");
@@ -95,6 +107,23 @@ if (SAVE_AS_TO_READ_ENABLED) {
             }
         } else {
             navbar.appendChild(toReadButton);
+        }
+
+        if (ADD_PRIV_SAVE_AS) {
+            const privToReadButton = document.createElement("li");
+            privToReadButton.id = "priv_to_read";
+            const child2 = document.createElement("a");
+            child2.text = 'Save privately as "To Read"'
+            // makes it a link in all the important css ways
+            child2.href = "#priv_to_read";
+            child2.onclick = function () {
+                privateBookmarkWork();
+                return false;
+            }
+
+            privToReadButton.appendChild(child2);
+
+            navbar.appendChild(privToReadButton);
         }
 
     } else if (url.includes("/series/")) {
