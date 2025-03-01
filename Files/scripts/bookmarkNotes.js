@@ -4,7 +4,7 @@
 /*SETTINGS THAT APPLY TO ALL BOOKMARKS*/
 const BOOKMARK_NOTES_ENABLED = true;
 
-const NOTES_APPEND_TO_PREVIOUS = false; // When editing a pre-existing bookmark, should the pre-existing notes be preserved?
+const NOTES_APPEND_TO_PREVIOUS = true; // When editing a pre-existing bookmark, should the pre-existing notes be preserved?
 /*Note: If you toggle this to true, and repeatedly edit the same bookmark, it will repeatedly add the same information to the box, growing it over and over.*/
 /*This setting is more meant for people who need to go back to their previous bookmarks to add the information this script provides, without losing their old notes.*/
 /*In either case, this script does not run on archiveofourown.org/users/USERNAME/bookmarks pages, so you are able to edit bookmarks there with this on and not re-add the same information again*/
@@ -94,10 +94,13 @@ function updateWorkBookmark(url) {
 
     const notesBox = document.getElementById("bookmark_notes");
     if (notesBox) {
+        // adding a separator for the programmatic notes should allow me to differentiate the two and only copy over real notes
         if (NOTES_APPEND_TO_PREVIOUS) {
-            notesBox.value += "\n" + notesBoxText;
+            let oldNotes = notesBox.value.split("-~-~-~-")[0];
+
+            notesBox.value += oldNotes + "\n-~-~-~-\n" + notesBoxText;
         } else {
-            notesBox.value = notesBoxText;
+            notesBox.value = "\n-~-~-~-\n" + notesBoxText;
         }
     }
 
