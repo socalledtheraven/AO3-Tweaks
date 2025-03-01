@@ -4,12 +4,16 @@ const SAVE_AS_TO_READ_ENABLED = true;
 const UNSUB_FROM_WORKS = false;
 const REPLACE_MARK_FOR_LATER = true;
 const ADD_PRIV_SAVE_AS = true;
+const MARK_AS_READ_BUTTON = true;
 // END CONFIG
 
 function bookmarkSeries() {
     if (UNSUB_FROM_WORKS) {
         unsubscribe();
     }
+
+    markAsToRead();
+
     submitBookmark();
 }
 
@@ -29,6 +33,8 @@ function bookmarkWork() {
         privateBox.checked = true;
     }
 
+    markAsToRead();
+
     submitBookmark();
 }
 
@@ -40,17 +46,33 @@ function privateBookmarkWork() {
 
     bookmarkWork();
 
+    markAsToRead();
+
     submitBookmark();
 }
 
 function submitBookmark() {
-    // this may not play nice with other things modifying the tagbox at bookmarktime
-    const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
-    tagBox.value += "To Read";
-
     const bookmarkGroup = document.getElementById("bookmark-form");
     const bookmarkButton = bookmarkGroup.querySelector("[name='commit']");
     bookmarkButton.click();
+}
+
+function markAsRead(tags) {
+    // this may not play nice with other things modifying the tagbox at bookmarktime
+    const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
+    tagBox.value = tagBox.value.replace("To Read", "");
+
+    let toReadTag = [...document.querySelectorAll("li.added.tag")][tags.indexOf("To Read")]
+    let deleteButton = toReadTag.querySelector(".delete");
+    deleteButton.click();
+
+    submitBookmark();
+}
+
+function markAsToRead() {
+    // this may not play nice with other things modifying the tagbox at bookmarktime
+    const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
+    tagBox.value += "To Read";
 }
 
 // kept in here from migrating my things over from using subscriptions to keep track
@@ -124,6 +146,29 @@ if (SAVE_AS_TO_READ_ENABLED) {
             privToReadButton.appendChild(child2);
 
             navbar.appendChild(privToReadButton);
+        }
+
+        if (MARK_AS_READ_BUTTON) {
+            let tags = [...document.querySelectorAll("li.added.tag")].map((tag) => tag.textContent.replace("×", "").trim());
+
+            if (tags.includes("To Read")) {
+                const markAsReadButton = document.createElement("li");
+                markAsReadButton.id = "mark_as_read";
+                const child3 = document.createElement("a");
+                child3.text = 'Mark as Read'
+                // makes it a link in all the important css ways
+                child3.href = "#mark_as_read";
+                child3.onclick = function () {
+                    markAsRead(tags);
+                    return false;
+                }
+
+                markAsReadButton.appendChild(child3);
+
+                let kudosButton = document.querySelector("#new_kudo");
+                kudosButton.parentElement.insertAdjacentElement("afterend", document.createElement("li"));
+                kudosButton.parentElement.insertAdjacentElement("afterend", markAsReadButton);
+            }
         }
 
     } else if (url.includes("/series/")) {
