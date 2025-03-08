@@ -9,6 +9,7 @@ A chrome extension/firefox addon for a number of little features I want, but can
 
 ## Installation
 [Install for Firefox](https://addons.mozilla.org/en-GB/firefox/addon/ao3-tweaks/)
+
 [Install for Chrome](https://chromewebstore.google.com/detail/ao3-tweaks/olgicoiembcbaihkjdpgbnemmggbkaho)
 
 ## Current list of Tweaks:
