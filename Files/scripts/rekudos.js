@@ -56,7 +56,8 @@ if (REKUDOS_ACTIVE) {
 
     let newKudosButton = document.createElement("a");
     newKudosButton.textContent = "Kudos ♥";
-    newKudosButton.href = "";
+    newKudosButton.id = "#kudos";
+    newKudosButton.href = "#kudos";
 
     if (AUTO) {
         newKudosButton.onclick = function () {
