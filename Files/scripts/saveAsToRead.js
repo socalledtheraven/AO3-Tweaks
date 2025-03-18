@@ -98,41 +98,28 @@ function isInArray(arr) {
 const url = window.location.href;
 
 if (SAVE_AS_TO_READ_ENABLED) {
-    // creates a new button
-    const toReadButton = document.createElement("li");
-    toReadButton.id = "to_read";
-    const child = document.createElement("a");
-    child.text = 'Save as "To Read"'
-    // makes it a link in all the important css ways
-    child.href = "#to_read";
-    // makes the link do nothing except the function when clicked
-    child.onclick = function () {
-        bookmarkWork();
-        return false;
-    }
+    let tags = [...document.querySelectorAll("li.added.tag")].map((tag) => tag.textContent.replace("×", "").trim());
 
-    toReadButton.appendChild(child);
-
-    // switches the function based on series
-    if (url.includes("/works/")) {
-        const navbar = document.querySelector("ul.navigation.actions.work[role='menu']");
-
-        if (REPLACE_MARK_FOR_LATER) {
-            const markForLaterButton = navbar.querySelector(".mark");
-
-            // it might not be there if the user has history turned off
-            if (markForLaterButton) {
-                markForLaterButton.insertAdjacentElement("beforebegin", toReadButton);
-                markForLaterButton.remove();
-            } else {
-                navbar.appendChild(toReadButton);
-            }
-        } else {
-            navbar.appendChild(toReadButton);
+    // the whole idea here is to not show redundant buttons - save as buttons only when it's not already saved, and mark as button only when it can be marked as read
+    if (!tags.includes("To Read")) {
+        // creates a new button
+        const toReadButton = document.createElement("li");
+        toReadButton.id = "to_read";
+        const child = document.createElement("a");
+        child.text = 'Save as "To Read"'
+        // makes it a link in all the important css ways
+        child.href = "#to_read";
+        // makes the link do nothing except the function when clicked
+        child.onclick = function () {
+            bookmarkWork();
+            return false;
         }
 
+        toReadButton.appendChild(child);
+
+        // needs to be outside so the compiler won't yell at me despite the only time this being referenced is inside other ifs with the same condition
+        const privToReadButton = document.createElement("li");
         if (ADD_PRIV_SAVE_AS) {
-            const privToReadButton = document.createElement("li");
             privToReadButton.id = "priv_to_read";
             const child2 = document.createElement("a");
             child2.text = 'Save privately as "To Read"'
@@ -145,38 +132,72 @@ if (SAVE_AS_TO_READ_ENABLED) {
 
             privToReadButton.appendChild(child2);
 
-            navbar.appendChild(privToReadButton);
+            // horrible awful hack for correct alignment because ao3 uses whitespace to handle alignment here for some reason
+            privToReadButton.innerHTML = "\n" + privToReadButton.innerHTML;
         }
 
-        if (MARK_AS_READ_BUTTON) {
-            let tags = [...document.querySelectorAll("li.added.tag")].map((tag) => tag.textContent.replace("×", "").trim());
+        // switches the function based on series
+        if (url.includes("/works/")) {
+            const navbar = document.querySelector("ul.navigation.actions.work[role='menu']");
 
-            if (tags.includes("To Read")) {
-                const markAsReadButton = document.createElement("li");
-                markAsReadButton.id = "mark_as_read";
-                const child3 = document.createElement("a");
-                child3.text = 'Mark as Read'
-                // makes it a link in all the important css ways
-                child3.href = "#mark_as_read";
-                child3.onclick = function () {
-                    markAsRead(tags);
-                    return false;
+            if (REPLACE_MARK_FOR_LATER) {
+                const markForLaterButton = navbar.querySelector(".mark");
+
+                // it might not be there if the user has history turned off
+                if (markForLaterButton) {
+                    markForLaterButton.insertAdjacentElement("beforebegin", toReadButton);
+
+                    if (ADD_PRIV_SAVE_AS) {
+                        markForLaterButton.insertAdjacentElement("beforebegin", privToReadButton);
+                    }
+
+                    markForLaterButton.remove();
+                } else {
+                    navbar.appendChild(toReadButton);
+
+                    if (ADD_PRIV_SAVE_AS) {
+                        navbar.appendChild(privToReadButton);
+                    }
                 }
+            } else {
+                navbar.appendChild(toReadButton);
 
-                markAsReadButton.appendChild(child3);
-
-                let kudosButton = document.querySelector("#new_kudo");
-                kudosButton.parentElement.insertAdjacentElement("afterend", document.createElement("li"));
-                kudosButton.parentElement.insertAdjacentElement("afterend", markAsReadButton);
+                if (ADD_PRIV_SAVE_AS) {
+                    navbar.appendChild(privToReadButton);
+                }
             }
+        } else if (url.includes("/series/")) {
+            const navbar = document.querySelector("ul.navigation.actions[role='navigation']");
+            child.onclick = function () {
+                bookmarkSeries();
+                return false;
+            }
+            navbar.appendChild(toReadButton);
+        }
+    } else {
+        if (MARK_AS_READ_BUTTON) {
+            const markAsReadButton = document.createElement("li");
+            markAsReadButton.id = "mark_as_read";
+            const child3 = document.createElement("a");
+            child3.text = 'Mark as Read'
+            // makes it a link in all the important css ways
+            child3.href = "#mark_as_read";
+            child3.onclick = function () {
+                markAsRead(tags);
+                return false;
+            }
+
+            markAsReadButton.appendChild(child3);
+
+            let kudosButton = document.querySelector("#new_kudo");
+            kudosButton.parentElement.insertAdjacentElement("afterend", document.createElement("li"));
+            kudosButton.parentElement.insertAdjacentElement("afterend", markAsReadButton);
         }
 
-    } else if (url.includes("/series/")) {
-        const navbar = document.querySelector("ul.navigation.actions[role='navigation']");
-        child.onclick = function () {
-            bookmarkSeries();
-            return false;
+        if (REPLACE_MARK_FOR_LATER) {
+            const navbar = document.querySelector("ul.navigation.actions.work[role='menu']");
+            const markForLaterButton = navbar.querySelector(".mark");
+            markForLaterButton.remove();
         }
-        navbar.appendChild(toReadButton);
     }
 }
