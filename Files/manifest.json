@@ -1,12 +1,12 @@
 {
 	"name": "AO3 Tweaks",
 	"description": "An extension adding various little tweaks to Ao3.",
-	"version": "3.5.2",
+	"version": "3.6.0",
 	"manifest_version": 3,
 	"permissions": ["storage"],
 	"content_scripts": [
 		{
-			"js": ["scripts/lastChapter.js"],
+			"js": ["scripts/latestChapter.js"],
 			"matches": [
 				"*://archiveofourown.org/bookmarks?commit=Sort+and+Filter&bookmark_search%5Bsort_column%5D=bookmarkable_date*"
 			]
