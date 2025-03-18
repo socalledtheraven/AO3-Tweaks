@@ -44,11 +44,7 @@ function overrideButton(oldButton, newButton) {
     }
 }
 
-
-if (REKUDOS_ACTIVE) {
-    // jump back to the kudos button
-    let kudosButton = document.querySelector("#new_kudo");
-
+function createNewKudos() {
     let containerLi = document.createElement("li");
     containerLi.style.listStyle = "none"
     containerLi.style.display = "inline"
@@ -59,24 +55,33 @@ if (REKUDOS_ACTIVE) {
     newKudosButton.id = "#kudos";
     newKudosButton.href = "#kudos";
 
-    if (AUTO) {
-        newKudosButton.onclick = function () {
-            let oldKudosButton = document.querySelector("#kudo_submit");
-            oldKudosButton.click();
+    newKudosButton.onclick = function () {
+        let oldKudosButton = document.querySelector("#kudo_submit");
+        oldKudosButton.click();
 
+        if (AUTO) {
             postComment();
-            return false;
-        };
-    } else {
-        newKudosButton.onclick = function () {
-            let oldKudosButton = document.querySelector("#kudo_submit");
-            oldKudosButton.click();
-
+        } else {
             editKudosButton(newKudosButton);
-            return false;
-        };
-    }
+        }
+        return false;
+    };
 
     containerLi.appendChild(newKudosButton);
+
+    return containerLi;
+}
+
+function isLoggedIn() {
+    // when used in an if, this will check for the existence of the element
+    // it's basically being casted to bool
+    return !document.querySelector("#login");
+}
+
+if (isLoggedIn() && REKUDOS_ACTIVE) {
+    // jump back to the kudos button
+    let kudosButton = document.querySelector("#new_kudo");
+    containerLi = createNewKudos();
+
     overrideButton(kudosButton, containerLi);
 }

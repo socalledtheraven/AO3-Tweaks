@@ -322,15 +322,23 @@ function autofillComment(parentContainer, templates) {
     commentBox.value = templates[random];
 }
 
-// full text comment boxes is async, so it needs to happen first, so we have to have an overly complicated if structure
-if (EXTRA_COMMENT_BOXES) {
-    fullTextCommentBoxes().then(function (){
+function isLoggedIn() {
+    // when used in an if, this will check for the existence of the element
+    // it's basically being casted to bool
+    return !document.querySelector("#login");
+}
+
+if (isLoggedIn()) {
+    // full text comment boxes is async, so it needs to happen first, so we have to have an overly complicated if structure
+    if (EXTRA_COMMENT_BOXES) {
+        fullTextCommentBoxes().then(function () {
+            if (COMMENT_TEMPLATES) {
+                templateComments()
+            }
+        });
+    } else {
         if (COMMENT_TEMPLATES) {
             templateComments()
         }
-    });
-} else {
-    if (COMMENT_TEMPLATES) {
-        templateComments()
     }
 }

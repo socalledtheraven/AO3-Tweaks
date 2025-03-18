@@ -277,9 +277,16 @@ function addTags(tagBox, categorySelector) {
     return tagBox;
 }
 
-// has a problem with the variable name "url" (presumably something else is using it)
-let uri = window.location.href;
-if (BOOKMARK_NOTES_ENABLED) {
+function isLoggedIn() {
+    // when used in an if, this will check for the existence of the element
+    // it's basically being casted to bool
+    return !document.querySelector("#login");
+}
+
+
+if (isLoggedIn() && BOOKMARK_NOTES_ENABLED) {
+    // has a problem with the variable name "url" (presumably something else is using it)
+    let uri = window.location.href;
     if (uri.includes("/works/")) {
         updateWorkBookmark(uri);
     } else if (uri.includes("/series/")) {

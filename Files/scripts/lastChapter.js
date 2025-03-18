@@ -22,7 +22,14 @@ function main() {
 	}
 }
 
-// runs it when the page loads
-if (LAST_CHAPTER_AUTOFILL) {
+function isLoggedIn() {
+	// when used in an if, this will check for the existence of the element
+	// it's basically being casted to bool
+	return !document.querySelector("#login");
+}
+
+
+if (isLoggedIn() && LAST_CHAPTER_AUTOFILL) {
+	// runs it when the page loads
 	main();
 }
