@@ -21,18 +21,16 @@ function main() {
 				let latest = document.createElement("a");
 				latest.href = url;
 				latest.text = "(latest)"
-				latest.style.marginLeft = "25px";
-				latest.style.display = "inline-block";
+				latest.style.position = "absolute";
+				latest.style.right = "0";
+				latest.style.top = "4em";
 				latest.style.padding = "5px";
 				latest.style.border = "1px solid"
+				latest.style.color = "#5998D6";
 
-				let links = header.querySelectorAll('a');
-				links.item(0).style.marginRight = "5px";
-				links.item(links.length - 1).style.marginLeft = "5px";
-				links.item(links.length - 1).insertAdjacentElement("afterend", latest);
-
-				header.style.display = "flex";
-				header.style.alignItems = "baseline";
+				let mainHeading = bookmark.querySelector(".header");
+				// add latest to end of mainheading
+				mainHeading.appendChild(latest);
 			}
 		}
 	}
