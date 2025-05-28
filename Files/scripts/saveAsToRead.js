@@ -8,17 +8,21 @@ const MARK_AS_READ_BUTTON = true;
 // END CONFIG
 
 function bookmarkSeries() {
-    if (UNSUB_FROM_WORKS) {
+    let subbed = document.querySelector("#new_subscription");
+    if (UNSUB_FROM_WORKS && subbed) {
         unsubscribe();
     }
 
-    markAsToRead();
+    // this may not play nice with other things modifying the tagbox at bookmarktime
+    const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
+    tagBox.value += ", To Read";
 
     submitBookmark();
 }
 
 function privateBookmarkSeries() {
-    if (UNSUB_FROM_WORKS) {
+    let subbed = document.querySelector("#new_subscription");
+    if (UNSUB_FROM_WORKS && subbed) {
         unsubscribe();
     }
 
@@ -27,48 +31,42 @@ function privateBookmarkSeries() {
         privateBox.checked = true;
     }
 
-    markAsToRead();
+    // this may not play nice with other things modifying the tagbox at bookmarktime
+    const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
+    tagBox.value += ", To Read";
 
     submitBookmark();
 }
 
-function bookmarkWork() {
-    if (UNSUB_FROM_WORKS) {
+function bookmarkWork(button, message) {
+    let subbed = document.querySelector("#new_subscription");
+    if (UNSUB_FROM_WORKS && subbed) {
         unsubscribe();
     }
 
     const fandoms = document.getElementsByClassName("fandom tags");
-
     const fandomTags = fandoms[1].getElementsByClassName("tag");
     const isPrivateFandom = isInArray(fandomTags);
 
-    if (isPrivateFandom) {
-        const privateBox = document.getElementById("bookmark_private");
-        privateBox.checked = true;
-    }
+    const notes = document.getElementById("bookmark_notes")
 
-    markAsToRead();
+    // this may not play nice with other things modifying the tagbox at bookmarktime
+    const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
+    tagBox.value += ", To Read";
 
-    submitBookmark();
+    let url = location.href.split("/");
+    let id = url[url.length-1];
+
+    const privateBox = document.getElementById("bookmark_private");
+
+    submitBookmark(id, isPrivateFandom || privateBox.checked, notes.value, tagBox.value, button, message);
 }
 
-function privateBookmarkWork() {
-    if (ADD_PRIV_SAVE_AS) {
-        const privateBox = document.getElementById("bookmark_private");
-        privateBox.checked = true;
-    }
+function privBookmarkWork(button, message) {
+    const privateBox = document.getElementById("bookmark_private");
+    privateBox.checked = true;
 
-    bookmarkWork();
-
-    markAsToRead();
-
-    submitBookmark();
-}
-
-function submitBookmark() {
-    const bookmarkGroup = document.getElementById("bookmark-form");
-    const bookmarkButton = bookmarkGroup.querySelector("[name='commit']");
-    bookmarkButton.click();
+    bookmarkWork(button, message);
 }
 
 function markAsRead(tags) {
@@ -80,23 +78,16 @@ function markAsRead(tags) {
     let deleteButton = toReadTag.querySelector(".delete");
     deleteButton.click();
 
-    submitBookmark();
-}
+    const fandoms = document.getElementsByClassName("fandom tags");
+    const fandomTags = fandoms[1].getElementsByClassName("tag");
+    const isPrivateFandom = isInArray(fandomTags);
 
-function markAsToRead() {
-    // this may not play nice with other things modifying the tagbox at bookmarktime
-    const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
-    tagBox.value += "To Read";
-}
+    const notes = document.getElementById("bookmark_notes")
 
-// kept in here from migrating my things over from using subscriptions to keep track
-function unsubscribe() {
-    const subscribeButton = document.querySelector("input[value='Unsubscribe']");
-    if (subscribeButton) {
-        setTimeout(function() {
-            subscribeButton.click();
-        }, (0.25 * 1000));
-    }
+    let url = location.href.split("/");
+    let id = url[url.length-1];
+
+    submitBookmark(id, isPrivateFandom || ADD_PRIV_SAVE_AS, notes.value, tagBox.value);
 }
 
 // literally just an "is in list" function
@@ -119,7 +110,7 @@ function createToReadButton() {
     child.href = "#to_read";
     // makes the link do nothing except the function when clicked
     child.onclick = function () {
-        bookmarkWork();
+        bookmarkWork(child, "Saved as \"To Read\"!");
         return false;
     }
 
@@ -128,21 +119,18 @@ function createToReadButton() {
     return toReadButton;
 }
 
-function createPrivateToReadButton(privToReadButton) {
+function createPrivateToReadButton() {
+    let privToReadButton = document.createElement("li");
     privToReadButton.id = "priv_to_read";
     const child2 = document.createElement("a");
     child2.text = 'Save privately as "To Read"'
     // makes it a link in all the important css ways
     child2.href = "#priv_to_read";
     child2.onclick = function () {
-        privateBookmarkWork();
-        return false;
+        privBookmarkWork(child2, "Saved privately as \"To Read\"!");
     }
 
     privToReadButton.appendChild(child2);
-
-    // horrible awful hack for correct alignment because ao3 uses whitespace to handle alignment here for some reason
-    privToReadButton.innerHTML = "\n" + privToReadButton.innerHTML;
 
     return privToReadButton;
 }
@@ -238,7 +226,7 @@ function workNotMarkedForLater() {
     // needs to be outside so the compiler won't yell at me despite the only time this being referenced is inside other ifs with the same condition
     let privToReadButton = document.createElement("li");
     if (ADD_PRIV_SAVE_AS) {
-        privToReadButton = createPrivateToReadButton(privToReadButton);
+        privToReadButton = createPrivateToReadButton();
     }
 
     // switches the function based on series
@@ -251,8 +239,112 @@ function workNotMarkedForLater() {
 
 function isLoggedIn() {
     // when used in an if, this will check for the existence of the element
-    // it's basically being casted to bool
+    // it's basically being cast to bool
     return !document.querySelector("#login");
+}
+
+function submitBookmark(id, isPrivate, bookmarkNotes, bookmarkTags, button, completionMessage) {
+    let token = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+    let pseudID = document.querySelector("input[name='comment[pseud_id]']").getAttribute("value");
+    let privacy = isPrivate ? "1" : "0"
+
+    post("https://archiveofourown.org/works/" + id + "/bookmarks", {
+            "authenticity_token": token,
+            "bookmark[pseud_id]": pseudID,
+            "bookmark[bookmarker_notes]": bookmarkNotes, // url encode the output of bookmarkNotes, if enabled
+            "bookmark[tag_string]": bookmarkTags, // see above
+            "bookmark[collection_names]": "",
+            "bookmark[private]": privacy, // possibly variable
+            "bookmark[rec]": "0",
+            "commit": "Create"
+        }).then((r) => {
+        if (r.ok) {
+            let notice = document.createElement("div");
+            notice.className = "flash notice";
+            notice.textContent = `Work successfully saved as "To Read".`;
+
+            let main = document.querySelector("#main");
+            main.insertAdjacentElement("afterbegin", notice);
+
+            button.textContent = completionMessage;
+            button.onclick = function () {
+                return false;
+            }
+        } else {
+            let notice = document.createElement("div");
+            notice.className = "flash notice error";
+            notice.textContent = "We're sorry! Something went wrong.";
+
+            let main = document.querySelector("#main");
+            main.insertAdjacentElement("afterbegin", notice);
+        }
+    });
+}
+
+function unsubscribe() {
+    let token = document.querySelector("input[name='authenticity_token']").getAttribute("value");
+    let subWorkID = document.querySelector("#subscription_subscribable_id").getAttribute("value");
+    let subType = document.querySelector("#subscription_subscribable_type").getAttribute("value");
+    let subscriptionID = document.querySelector("input[name='authenticity_token']").parentElement.getAttribute("id").split("_");
+    subscriptionID = subscriptionID[subscriptionID.length-1];
+    let userURL = document.querySelector("#greeting").querySelector("ul").querySelector("li").querySelector("a").href;
+
+    post(userURL + "/subscriptions/" + subscriptionID, {
+            "authenticity_token": token,
+            "subscription[subscribable_id]": subWorkID,
+            "subscription[subscribable_type]": subType,
+            "_method": "delete"
+        }).then((r) => {
+            if (r.ok) {
+                let notice = document.createElement("div");
+                notice.className = "flash notice";
+                notice.textContent = `You have successfully unsubscribed from ${document.querySelector(".title.heading").textContent}.`;
+
+                let main = document.querySelector("#main");
+                main.insertAdjacentElement("afterbegin", notice);
+            } else {
+                let notice = document.createElement("div");
+                notice.className = "flash notice error";
+                notice.textContent = "We're sorry! Something went wrong.";
+
+                let main = document.querySelector("#main");
+                main.insertAdjacentElement("afterbegin", notice);
+            }
+    });
+}
+
+function stringify(json) {
+    let s = "";
+    for (const [key, value] of Object.entries(json)) {
+        s += encodeURIComponent(key) + "=" + encodeURIComponent(value) + "&";
+    }
+
+    // remove final & because it gets unnecessarily add
+    return s.substring(0, s.length-1)
+}
+
+function post(url, data) {
+    return fetch(url, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Encoding": "gzip, deflate, br, zstd",
+                "Connection": "keep-alive",
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Host": "archiveofourown.org",
+                "Origin": "https://archiveofourown.org",
+                "Priority": "u=0, i",
+                "Referer": url,
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "same-origin",
+                "Sec-Fetch-User": "?1",
+                "Upgrade-Insecure-Requests": "1",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
+            },
+            body: stringify(data)
+        });
 }
 
 const url = window.location.href;
