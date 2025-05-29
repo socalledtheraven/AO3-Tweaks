@@ -7,7 +7,7 @@ function main() {
 	const bookmarks = document.querySelectorAll('[role="article"]');
 
 	for (const bookmark of bookmarks) {
-		let header = bookmark.querySelector(".heading");
+		let header = bookmark.querySelector(".header");
 		let url = header.querySelector("a").href;
 
 		// checks it's not a series
@@ -16,23 +16,19 @@ function main() {
 
 			// checks that it's not a single-chapter dealie
 			if (latestChapter) {
+				console.log("test1")
 				let url = latestChapter.href;
 
 				let latest = document.createElement("a");
 				latest.href = url;
 				latest.text = "(latest)"
-				latest.style.marginLeft = "25px";
-				latest.style.display = "inline-block";
-				latest.style.padding = "5px";
-				latest.style.border = "1px solid"
+				latest.style.position = "absolute";
+				latest.style.right = 0;
+				latest.style.top = "43px";
+				latest.style.margin = 0;
+				latest.style.color = "#5998D6";
 
-				let links = header.querySelectorAll('a');
-				links.item(0).style.marginRight = "5px";
-				links.item(links.length - 1).style.marginLeft = "5px";
-				links.item(links.length - 1).insertAdjacentElement("afterend", latest);
-
-				header.style.display = "flex";
-				header.style.alignItems = "baseline";
+				header.insertAdjacentElement("beforeend", latest);
 			}
 		}
 	}
@@ -46,5 +42,8 @@ function isLoggedIn() {
 
 if (isLoggedIn() && LATEST_CHAPTER_AUTOFILL) {
 	// runs it when the page loads
+	console.log("loaded2")
 	main();
 }
+
+console.log("loaded")
