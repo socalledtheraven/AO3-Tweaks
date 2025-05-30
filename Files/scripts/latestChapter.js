@@ -23,9 +23,9 @@ function main() {
 				latest.href = url;
 				latest.text = "(latest)"
 				latest.style.position = "absolute";
-				latest.style.right = 0;
+				latest.style.right = "0";
 				latest.style.top = "43px";
-				latest.style.margin = 0;
+				latest.style.margin = "0";
 				latest.style.color = "#5998D6";
 
 				header.insertAdjacentElement("beforeend", latest);

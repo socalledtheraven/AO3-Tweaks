@@ -189,7 +189,6 @@ async function fullTextCommentBoxes() {
     // checks if the "chapter by chapter" button is present (to indicate it is currently in fulltext mode
     const fullText = document.querySelector(".chapter.bychapter");
     if (fullText) {
-        console.log("is fulltext")
         let chapters = document.querySelector("#chapters");
         let chapterNodes = chapters.children;
         // we do this because the length will be updated when I'm dynamically inserting new ones

@@ -269,9 +269,11 @@ function removeCommas(wordcount) {
 
 function addTags(tagBox, categorySelector) {
     const categories = document.getElementsByClassName(categorySelector);
-    const categoryTags = categories[1].getElementsByClassName("tag");
-    for (let tag of categoryTags) {
-        tagBox.value += ", " + tag.textContent;
+    if (categories.length > 0) {
+        const categoryTags = categories[1].getElementsByClassName("tag");
+        for (let tag of categoryTags) {
+            tagBox.value += ", " + tag.textContent;
+        }
     }
 
     return tagBox;

@@ -1,7 +1,7 @@
 {
 	"name": "AO3 Tweaks",
 	"description": "An extension adding various little tweaks to Ao3.",
-	"version": "3.7.2",
+	"version": "3.8.1",
 	"manifest_version": 3,
 	"permissions": ["storage"],
 	"content_scripts": [
@@ -14,9 +14,7 @@
 		{
 			"js": ["scripts/saveAsToRead.js"],
 			"matches": [
-				"*://archiveofourown.org/*chapters/*",
-				"*://archiveofourown.org/*works/*",
-				"*://archiveofourown.org/series/*"
+				"*://archiveofourown.org/*"
 			],
 			"exclude_matches": [
 				"*://archiveofourown.org/*works/*/bookmarks",
@@ -32,7 +30,8 @@
 			],
 			"exclude_matches": [
 				"*://archiveofourown.org/*works/*/bookmarks",
-				"*://archiveofourown.org/*works/*/navigate"
+				"*://archiveofourown.org/*works/*/navigate",
+				"*://archiveofourown.org/*works/search*"
 			]
 		},
 		{

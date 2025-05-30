@@ -15,27 +15,8 @@ function privateBookmarkSeries(button, message) {
 }
 
 function bookmarkSeries(button, message) {
-    let subbed = document.querySelector("#new_subscription");
-    if (UNSUB_FROM_WORKS && subbed) {
-        unsubscribe();
-    }
-
-    const fandoms = document.getElementsByClassName("fandom tags");
-    const fandomTags = fandoms[1].getElementsByClassName("tag");
-    const isPrivateFandom = isInArray(fandomTags);
-
-    const notes = document.getElementById("bookmark_notes")
-
-    let url = location.href.split("/");
-    let id = url[url.length-1];
-
-    const privateBox = document.getElementById("bookmark_private");
-
-    // this may not play nice with other things modifying the tagbox at bookmarktime
-    const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
-    tagBox.value += ", To Read";
-
-    submitBookmark(id, isPrivateFandom || privateBox.checked, notes.value, tagBox.value, button, message);
+    // html is basically the same, they work in both cases
+    bookmarkWork(button, message);
 }
 
 function privateBookmarkWork(button, message) {
@@ -45,31 +26,36 @@ function privateBookmarkWork(button, message) {
     bookmarkWork(button, message);
 }
 
+function privateBookmarkWorkExternal(button, message, doc) {
+    const privateBox = doc.getElementById("bookmark_private");
+    privateBox.checked = true;
+
+    bookmarkWorkExternal(button, message, doc);
+}
+
 function bookmarkWork(button, message) {
     let subbed = document.querySelector("#new_subscription");
     if (UNSUB_FROM_WORKS && subbed) {
-        unsubscribe();
+        unsubscribe(document);
     }
-
-    const fandoms = document.getElementsByClassName("fandom tags");
-    const fandomTags = fandoms[1].getElementsByClassName("tag");
-    const isPrivateFandom = isInArray(fandomTags);
-
-    const notes = document.getElementById("bookmark_notes")
 
     // this may not play nice with other things modifying the tagbox at bookmarktime
     const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
     tagBox.value += ", To Read";
 
-    let url = location.href.split("/");
-    let id = url[url.length-1];
-
-    const privateBox = document.getElementById("bookmark_private");
-
-    submitBookmark(id, isPrivateFandom || privateBox.checked, notes.value, tagBox.value, button, message);
+    submitBookmark(button, message, document);
 }
 
-function markAsRead(tags) {
+function bookmarkWorkExternal(button, message, doc) {
+    let subbed = doc.querySelector("#new_subscription");
+    if (UNSUB_FROM_WORKS && subbed) {
+        unsubscribe(doc);
+    }
+
+    submitBookmark(button, message, doc);
+}
+
+function markAsRead(tags, button, completionMessage) {
     // this may not play nice with other things modifying the tagbox at bookmarktime
     const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
     tagBox.value = tagBox.value.replace("To Read", "");
@@ -78,23 +64,34 @@ function markAsRead(tags) {
     let deleteButton = toReadTag.querySelector(".delete");
     deleteButton.click();
 
-    const fandoms = document.getElementsByClassName("fandom tags");
-    const fandomTags = fandoms[1].getElementsByClassName("tag");
-    const isPrivateFandom = isInArray(fandomTags);
-
-    const notes = document.getElementById("bookmark_notes")
-
-    let url = location.href.split("/");
-    let id = url[url.length-1];
-
-    const privateBox = document.getElementById("bookmark_private");
-
-    submitBookmark(id, isPrivateFandom || privateBox.checked, notes.value, tagBox.value);
+    submitBookmark(button, completionMessage, document);
 }
 
-function submitBookmark(id, isPrivate, bookmarkNotes, bookmarkTags, button, completionMessage) {
-    let token = document.querySelector("meta[name='csrf-token']").getAttribute("content");
-    let pseudID = document.querySelector("input[name='comment[pseud_id]']").getAttribute("value");
+function submitBookmark(button, completionMessage, doc) {
+    const fandoms = doc.getElementsByClassName("fandom tags");
+    const fandomTags = fandoms[1].getElementsByClassName("tag");
+    const isPrivateFandom = isInArray(fandomTags);
+    const privateBox = doc.getElementById("bookmark_private");
+    const isPrivate = isPrivateFandom || privateBox.checked;
+
+    const notes = doc.getElementById("bookmark_notes")
+    const bookmarkNotes = notes.value;
+
+
+    let url = doc.querySelector("li.share").querySelector("a").href.split("/");
+    // the url gets expanded when everyhting is loaded, so we need to take archiveofourown.org/works/... into mind
+    let id = url[4];
+
+    const tagBox = doc.getElementById("bookmark_tag_string_autocomplete");
+    let bookmarkTags;
+    if (tagBox) {
+        bookmarkTags = tagBox.value;
+    } else {
+        bookmarkTags = "To Read";
+    }
+
+    let token = doc.querySelector("meta[name='csrf-token']").getAttribute("content");
+    let pseudID = doc.querySelector("input[name='comment[pseud_id]']").getAttribute("value");
     let privacy = isPrivate ? "1" : "0"
 
     post("https://archiveofourown.org/works/" + id + "/bookmarks", {
@@ -108,11 +105,11 @@ function submitBookmark(id, isPrivate, bookmarkNotes, bookmarkTags, button, comp
         "commit": "Create"
     }).then((r) => {
         if (r.ok) {
-            let notice = document.createElement("div");
+            let notice = doc.createElement("div");
             notice.className = "flash notice";
             notice.textContent = `Work successfully saved as "To Read".`;
 
-            let main = document.querySelector("#main");
+            let main = doc.querySelector("#main");
             main.insertAdjacentElement("afterbegin", notice);
 
             button.textContent = completionMessage;
@@ -120,23 +117,23 @@ function submitBookmark(id, isPrivate, bookmarkNotes, bookmarkTags, button, comp
                 return false;
             }
         } else {
-            let notice = document.createElement("div");
+            let notice = doc.createElement("div");
             notice.className = "flash notice error";
             notice.textContent = "We're sorry! Something went wrong.";
 
-            let main = document.querySelector("#main");
+            let main = doc.querySelector("#main");
             main.insertAdjacentElement("afterbegin", notice);
         }
     });
 }
 
-function unsubscribe() {
-    let token = document.querySelector("input[name='authenticity_token']").getAttribute("value");
-    let subWorkID = document.querySelector("#subscription_subscribable_id").getAttribute("value");
-    let subType = document.querySelector("#subscription_subscribable_type").getAttribute("value");
-    let subscriptionID = document.querySelector("input[name='authenticity_token']").parentElement.getAttribute("id").split("_");
+function unsubscribe(doc) {
+    let token = doc.querySelector("input[name='authenticity_token']").getAttribute("value");
+    let subWorkID = doc.querySelector("#subscription_subscribable_id").getAttribute("value");
+    let subType = doc.querySelector("#subscription_subscribable_type").getAttribute("value");
+    let subscriptionID = doc.querySelector("input[name='authenticity_token']").parentElement.getAttribute("id").split("_");
     subscriptionID = subscriptionID[subscriptionID.length-1];
-    let userURL = document.querySelector("#greeting").querySelector("ul").querySelector("li").querySelector("a").href;
+    let userURL = doc.querySelector("#greeting").querySelector("ul").querySelector("li").querySelector("a").href;
 
     post(userURL + "/subscriptions/" + subscriptionID, {
         "authenticity_token": token,
@@ -145,18 +142,18 @@ function unsubscribe() {
         "_method": "delete"
     }).then((r) => {
         if (r.ok) {
-            let notice = document.createElement("div");
+            let notice = doc.createElement("div");
             notice.className = "flash notice";
-            notice.textContent = `You have successfully unsubscribed from ${document.querySelector(".title.heading").textContent}.`;
+            notice.textContent = `You have successfully unsubscribed from ${doc.querySelector(".title.heading").textContent}.`;
 
-            let main = document.querySelector("#main");
+            let main = doc.querySelector("#main");
             main.insertAdjacentElement("afterbegin", notice);
         } else {
-            let notice = document.createElement("div");
+            let notice = doc.createElement("div");
             notice.className = "flash notice error";
             notice.textContent = "We're sorry! Something went wrong.";
 
-            let main = document.querySelector("#main");
+            let main = doc.querySelector("#main");
             main.insertAdjacentElement("afterbegin", notice);
         }
     });
@@ -182,7 +179,7 @@ function workMarkedForLater(tags) {
         // makes it a link in all the important css ways
         child3.href = "#mark_as_read";
         child3.onclick = function () {
-            markAsRead(tags);
+            markAsRead(tags, child3, "Marked as Read!");
             return false;
         }
 
@@ -192,6 +189,87 @@ function workMarkedForLater(tags) {
         kudosButton.parentElement.insertAdjacentElement("afterend", document.createElement("li"));
         kudosButton.parentElement.insertAdjacentElement("afterend", markAsReadButton);
     }
+}
+
+function createToReadButton(i, url) {
+    // creates a new button
+    const toReadButton = document.createElement("li");
+    toReadButton.id = "to_read";
+
+    const child = document.createElement("a");
+    child.text = 'Save as "To Read"'
+
+
+    // checks if i is nullable (so if it's not passed in or is 0)
+    // hence we start i at 1
+    // this will be our check if it's coming from a work or another page
+    if (i) {
+        child.href = "#to_read_" + i;
+    } else {
+        // makes it a link in all the important css ways
+        child.href = "#to_read";
+    }
+
+    if (i) {
+        child.onclick = async function () {
+            let navPageHTML = await getHTML(url);
+
+            // this is standard parsing
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(navPageHTML, "text/html");
+
+            bookmarkWorkExternal(child, "Saved as \"To Read\"!", doc);
+            // makes the link do nothing except the function when clicked
+            return false;
+        }
+    } else {
+        child.onclick = function () {
+            bookmarkWork(child, "Saved as \"To Read\"!");
+            return false;
+        }
+    }
+
+    toReadButton.appendChild(child);
+
+    return toReadButton;
+}
+
+function createPrivateToReadButton(i, url) {
+    let privToReadButton = document.createElement("li");
+    privToReadButton.id = "priv_to_read";
+
+    const child2 = document.createElement("a");
+    child2.text = 'Save privately as "To Read"'
+    // makes it a link in all the important css ways
+
+    if (i) {
+        child2.href = "#priv_to_read_" + i;
+    } else {
+        child2.href = "#priv_to_read";
+    }
+
+    if (i) {
+        child2.onclick = async function () {
+            let navPageHTML = await getHTML(url);
+
+            // this is standard parsing
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(navPageHTML, "text/html");
+
+            privateBookmarkWorkExternal(child2, "Saved privately as \"To Read\"!", doc);
+            // makes the link do nothing except the function when clicked
+            return false;
+        }
+    } else {
+        child2.onclick = function () {
+            privateBookmarkWork(child2, "Saved as \"To Read\"!");
+            return false;
+        }
+    }
+
+    privToReadButton.appendChild(child2);
+
+    return privToReadButton;
 }
 
 function workNotMarkedForLater() {
@@ -208,41 +286,6 @@ function workNotMarkedForLater() {
         addWorkSaveButtons(toReadButton, privToReadButton);
     } else if (url.includes("/series/")) {
         addSeriesSaveButtons(toReadButton, privToReadButton);
-    }
-
-    function createToReadButton() {
-        // creates a new button
-        const toReadButton = document.createElement("li");
-        toReadButton.id = "to_read";
-        const child = document.createElement("a");
-        child.text = 'Save as "To Read"'
-        // makes it a link in all the important css ways
-        child.href = "#to_read";
-        // makes the link do nothing except the function when clicked
-        child.onclick = function () {
-            bookmarkWork(child, "Saved as \"To Read\"!");
-            return false;
-        }
-
-        toReadButton.appendChild(child);
-
-        return toReadButton;
-    }
-
-    function createPrivateToReadButton() {
-        let privToReadButton = document.createElement("li");
-        privToReadButton.id = "priv_to_read";
-        const child2 = document.createElement("a");
-        child2.text = 'Save privately as "To Read"'
-        // makes it a link in all the important css ways
-        child2.href = "#priv_to_read";
-        child2.onclick = function () {
-            privateBookmarkWork(child2, "Saved privately as \"To Read\"!");
-        }
-
-        privToReadButton.appendChild(child2);
-
-        return privToReadButton;
     }
 
     function addWorkSaveButtons(toReadButton, privToReadButton) {
@@ -301,6 +344,40 @@ function workNotMarkedForLater() {
     }
 }
 
+// OUT OF WORK
+
+function outsideWork() {
+    const works = document.querySelectorAll('li[role="article"]');
+    let i = 1;
+
+    for (const work of works) {
+        let header = work.querySelector(".header");
+        let url = header.querySelector("a").href;
+        let ul = document.createElement("ul");
+        ul.style.display = "flex";
+
+        // checks it's not a series
+        if (url.includes("works")) {
+            let toReadButton = createToReadButton(i, url);
+            toReadButton.className = "actions";
+
+            ul.insertAdjacentElement("beforeend", toReadButton);
+
+            if (ADD_PRIV_SAVE_AS) {
+                let privToReadButton = createPrivateToReadButton(i, url);
+                privToReadButton.className = "actions";
+
+                ul.insertAdjacentElement("beforeend", privToReadButton);
+            }
+        }
+
+        let blockquote = work.querySelector("blockquote");
+        blockquote.insertAdjacentElement("afterend", ul);
+        i++;
+    }
+}
+
+
 function isLoggedIn() {
     // when used in an if, this will check for the existence of the element
     // it's basically being cast to bool
@@ -345,6 +422,7 @@ function post(url, data) {
         });
 }
 
+
 function isInArray(arr) {
     // literally just an "is in list" function
     for (const elem of arr) {
@@ -355,19 +433,35 @@ function isInArray(arr) {
     return false;
 }
 
+async function getHTML(url) {
+    let response = await fetch(url);
+    console.log(response)
+    return await response.text();
+}
+
 
 // MAIN RUN-ON-ENTER STUFF
 
 
+
 const url = window.location.href;
 
-if (isLoggedIn() && SAVE_AS_TO_READ_ENABLED) {
-    let tags = [...document.querySelectorAll("li.added.tag")].map((tag) => tag.textContent.replace("×", "").trim());
+function isWork() {
+    return url.includes("chapters") || (url.includes("works") && !url.includes("search")) && !url.includes("tags") || url.includes("series");
+}
 
-    // the whole idea here is to not show redundant buttons - save as buttons only when it's not already saved, and mark as button only when it can be marked as read
-    if (tags.includes("To Read")) {
-        workMarkedForLater(tags);
+if (isLoggedIn() && SAVE_AS_TO_READ_ENABLED) {
+    if (isWork()) {
+        console.log("work")
+        let tags = [...document.querySelectorAll("li.added.tag")].map((tag) => tag.textContent.replace("×", "").trim());
+
+        // the whole idea here is to not show redundant buttons - save as buttons only when it's not already saved, and mark as button only when it can be marked as read
+        if (tags.includes("To Read")) {
+            workMarkedForLater(tags);
+        } else {
+            workNotMarkedForLater();
+        }
     } else {
-        workNotMarkedForLater();
+        outsideWork()
     }
 }
