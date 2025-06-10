@@ -91,7 +91,7 @@ function submitBookmark(button, completionMessage, doc) {
     }
 
     let token = doc.querySelector("meta[name='csrf-token']").getAttribute("content");
-    let pseudID = doc.querySelector("input[name='comment[pseud_id]']").getAttribute("value");
+    let pseudID = doc.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
     let privacy = isPrivate ? "1" : "0"
 
     post("https://archiveofourown.org/works/" + id + "/bookmarks", {
@@ -104,26 +104,7 @@ function submitBookmark(button, completionMessage, doc) {
         "bookmark[rec]": "0",
         "commit": "Create"
     }).then((r) => {
-        if (r.ok) {
-            let notice = doc.createElement("div");
-            notice.className = "flash notice";
-            notice.textContent = `Work successfully saved as "To Read".`;
-
-            let main = doc.querySelector("#main");
-            main.insertAdjacentElement("afterbegin", notice);
-
-            button.textContent = completionMessage;
-            button.onclick = function () {
-                return false;
-            }
-        } else {
-            let notice = doc.createElement("div");
-            notice.className = "flash notice error";
-            notice.textContent = "We're sorry! Something went wrong.";
-
-            let main = doc.querySelector("#main");
-            main.insertAdjacentElement("afterbegin", notice);
-        }
+        respondToBookmark(r, doc, button, completionMessage);
     });
 }
 
@@ -191,7 +172,7 @@ function workMarkedForLater(tags) {
     }
 }
 
-function createToReadButton(i, url) {
+function createToReadButton(isBookmark, i, url) {
     // creates a new button
     const toReadButton = document.createElement("li");
     toReadButton.id = "to_read";
@@ -234,7 +215,7 @@ function createToReadButton(i, url) {
     return toReadButton;
 }
 
-function createPrivateToReadButton(i, url) {
+function createPrivateToReadButton(isBookmark, i, url) {
     let privToReadButton = document.createElement("li");
     privToReadButton.id = "priv_to_read";
 
@@ -273,12 +254,14 @@ function createPrivateToReadButton(i, url) {
 }
 
 function workNotMarkedForLater() {
-    let toReadButton = createToReadButton();
+    let isBookmark = document.querySelector(".bookmark_form_placement_open").textContent === "Edit Bookmark";
+
+    let toReadButton = createToReadButton(isBookmark);
 
     // needs to be outside so the compiler won't yell at me despite the only time this being referenced is inside other ifs with the same condition
     let privToReadButton = document.createElement("li");
     if (ADD_PRIV_SAVE_AS) {
-        privToReadButton = createPrivateToReadButton();
+        privToReadButton = createPrivateToReadButton(isBookmark);
     }
 
     // switches the function based on series
@@ -374,6 +357,77 @@ function outsideWork() {
         let blockquote = work.querySelector("blockquote");
         blockquote.insertAdjacentElement("afterend", ul);
         i++;
+    }
+}
+
+
+function parseBookmarkPage(doc, button, completionMessage) {
+    let bookmarkID = doc.querySelector("a[data-method='delete']").href.split("/");
+    bookmarkID = bookmarkID[bookmarkID.length-1];
+
+    let token = doc.querySelector("meta[name='csrf-token']").getAttribute("content");
+    let pseudID = doc.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
+
+    let tagString = doc.querySelector(".meta.tags.commas")
+        .textContent
+        .trim()
+        .replaceAll("\n", ",")
+        .trim()
+        .replaceAll("          ", " ");
+
+    if (tagString) {
+        tagString += ", To Read";
+    } else {
+        tagString = "To Read";
+    }
+
+    let notes = doc.querySelector("blockquote.notes")
+        .innerHTML.
+        replaceAll(" ", "+")
+        .replaceAll("\r", "\\r")
+        .replaceAll("\n", "\\n")
+        .replaceAll("\t", "\\t");
+
+    // will delete private recs, because it doesn't seem possible to tell whether one is or not
+    let privacy = doc.querySelector("span.private").title === "Private Bookmark" ? "1" : "0";
+    let rec = doc.querySelector("span.rec").title === "Rec" ? "1" : "0";
+
+
+    post("https://archiveofourown.org/bookmarks" + bookmarkID, {
+        "_method": "put",
+        "authenticity_token": token,
+        "bookmark[pseud_id]": pseudID,
+        "bookmark[bookmarker_notes]": notes, // url encode the output of bookmarkNotes, if enabled
+        "bookmark[tag_string]": tagString, // see above
+        "bookmark[collection_names]": "",
+        "bookmark[private]": privacy, // possibly variable
+        "bookmark[rec]": rec,
+        "commit": "Update"
+    }).then((r) => {
+        respondToBookmark(r, doc, button, completionMessage);
+    });
+}
+
+function respondToBookmark(r, doc, button, completionMessage) {
+    if (r.ok) {
+        let notice = doc.createElement("div");
+        notice.className = "flash notice";
+        notice.textContent = `Work successfully saved as "To Read".`;
+
+        let main = doc.querySelector("#main");
+        main.insertAdjacentElement("afterbegin", notice);
+
+        button.textContent = completionMessage;
+        button.onclick = function () {
+            return false;
+        }
+    } else {
+        let notice = doc.createElement("div");
+        notice.className = "flash notice error";
+        notice.textContent = "We're sorry! Something went wrong.";
+
+        let main = doc.querySelector("#main");
+        main.insertAdjacentElement("afterbegin", notice);
     }
 }
 
