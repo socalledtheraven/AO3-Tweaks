@@ -2,7 +2,23 @@
 const LATEST_CHAPTER_AUTOFILL = true;
 // CONFIG
 
+function addStyles() {
+	const styleSheet = document.createElement("style");
+	styleSheet.textContent = `
+        .latest-link {
+            color: #5998D6 !important;
+        }
+        
+        .latest-link:visited {
+            color: #7F7F7F;
+        }
+    `;
+	document.head.appendChild(styleSheet);
+}
+
 function main() {
+	addStyles();
+
 	// collects all the bookmarks and iterates through them
 	const bookmarks = document.querySelectorAll('[role="article"]');
 
@@ -22,11 +38,11 @@ function main() {
 				let latest = document.createElement("a");
 				latest.href = url;
 				latest.text = "(latest)"
+				latest.className = "latest-link";
 				latest.style.position = "absolute";
 				latest.style.right = "0";
 				latest.style.top = "43px";
 				latest.style.margin = "0";
-				latest.style.color = "#5998D6";
 
 				header.insertAdjacentElement("beforeend", latest);
 			}
