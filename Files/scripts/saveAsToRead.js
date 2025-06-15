@@ -22,7 +22,7 @@ let DOC;
 
 
 function privateBookmarkSeries(button) {
-    const privateBox = document.getElementById("bookmark_private");
+    const privateBox = DOC.getElementById("bookmark_private");
     privateBox.checked = true;
 
     bookmarkSeries(button);
@@ -30,32 +30,13 @@ function privateBookmarkSeries(button) {
 
 function bookmarkSeries(button) {
     // html is basically the same, they work in both cases
-    const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
+    const tagBox = DOC.getElementById("bookmark_tag_string_autocomplete");
     tagBox.value += ", To Read";
 
     console.log("seris")
     let data = getSeriesData();
     createSeriesBookmark(data[0], data[1], data[2], data[3], data[4], data[5], button.id);
 }
-
-function privateBookmarkWorkExternal(button, message, doc) {
-    const privateBox = doc.getElementById("bookmark_private");
-    privateBox.checked = true;
-
-    bookmarkWorkExternal(button, message, doc);
-}
-
-function bookmarkWorkExternal(button, message, doc) {
-    let subbed = doc.querySelector("#new_subscription");
-    if (UNSUB_FROM_WORKS && subbed) {
-        unsubscribe(doc);
-    }
-
-    createBookmark(button, message, doc);
-}
-
-
-// OUT OF WORK
 
 function outsideWork() {
     const works = document.querySelectorAll('li[role="article"]');
@@ -82,57 +63,62 @@ function outsideWork() {
             }
         }
 
-        let blockquote = work.querySelector("blockquote");
-        blockquote.insertAdjacentElement("afterend", ul);
+        let blockquote = work.querySelector("dl.stats");
+        blockquote.insertAdjacentElement("beforebegin", ul);
         i++;
     }
 }
 
 function respondToBookmark(r, type) {
     if (r.ok) {
-        let notice = DOC.createElement("div");
+        // always document rather than DOC because these will always be seen on the page the user is looking at
+        let notice = document.createElement("div");
         notice.className = "flash notice";
         notice.textContent = `Work successfully saved as "To Read".`;
 
-        let main = DOC.querySelector("#main");
+        let main = document.querySelector("#main");
         main.insertAdjacentElement("afterbegin", notice);
 
         let button;
-        let completionMessage;
-        if (type === "to_read") {
-            button = DOC.querySelector(`#${type}`).children[0];
-            completionMessage = SAVE_AS_TO_READ_MESSAGE;
-        } else if (type === "priv_to_read") {
-            button = DOC.querySelector(`#${type}`).children[0];
-            completionMessage = PRIV_SAVE_AS_TO_READ_MESSAGE;
+        console.log(type)
+        if (type.includes("to_read")) {
+            console.log("to_read")
+            button = document.querySelector(`#${type}`).children[0];
+            console.log(button)
+            button.textContent = SAVE_AS_TO_READ_MESSAGE;
+            button.onclick = function () {
+                return false;
+            }
+        } else if (type.includes("priv_to_read")) {
+            console.log("priv_to_read")
+            button = document.querySelector(`#${type}`).children[0];
+            console.log(button)
+            button.textContent = PRIV_SAVE_AS_TO_READ_MESSAGE;
+            button.onclick = function () {
+                return false;
+            }
         } else if (type === "mark_as_read") {
-            button = DOC.querySelector(`#${type}`).children[0];
-            completionMessage = MARK_AS_READ_MESSAGE;
-        }
-        button.textContent = completionMessage;
-        button.onclick = function () {
-            return false;
+            button = document.querySelector(`#${type}`).children[0];
+            button.textContent = MARK_AS_READ_MESSAGE;
+            button.onclick = function () {
+                return false;
+            }
         }
     } else {
-        let notice = DOC.createElement("div");
+        let notice = document.createElement("div");
         notice.className = "flash notice error";
         notice.textContent = "We're sorry! Something went wrong.";
 
-        let main = DOC.querySelector("#main");
+        let main = document.querySelector("#main");
         main.insertAdjacentElement("afterbegin", notice);
     }
 }
-
 
 function isLoggedIn() {
     // when used in an if, this will check for the existence of the element
     // it's basically being cast to bool
     return !document.querySelector("#login");
 }
-
-
-// GENERAL UTILITY FUNCTIONS
-
 
 function stringify(json) {
     let s = "";
@@ -168,7 +154,6 @@ function post(url, data) {
     });
 }
 
-
 function isInArray(arr) {
     // literally just an "is in list" function
     for (const elem of arr) {
@@ -181,16 +166,11 @@ function isInArray(arr) {
 
 async function getHTML(url) {
     let response = await fetch(url);
-    console.log(response)
     return await response.text();
 }
 
-
-// MAIN RUN-ON-ENTER STUFF
-
-
 function isWork() {
-    return URL.includes("chapters") || URL.includes("series") && !URL.includes("tags") || (URL.includes("works") && !URL.includes("search"));
+    return URL.includes("chapters") || (URL.includes("series") && !URL.includes("tags")) || (URL.includes("works") && !URL.includes("search") && !URL.includes("users") && !URL.includes("tags"));
 }
 
 function getTags() {
@@ -201,7 +181,6 @@ function isMarkedForLater() {
     let tags = getTags();
     return tags.includes("To Read");
 }
-
 
 if (isLoggedIn() && SAVE_AS_TO_READ_ENABLED) {
     IS_WORK = isWork();
@@ -214,7 +193,6 @@ if (isLoggedIn() && SAVE_AS_TO_READ_ENABLED) {
         if (IS_MARKED_FOR_LATER) {
             MARK_AS_READ_BUTTON = workMarkedForLater();
         } else {
-            IS_BOOKMARK = document.querySelector(".bookmark_form_placement_open").textContent === "Edit Bookmark";
             let buttons = createSaveButtonElements();
             SAVE_AS_TO_READ_BUTTON = buttons[0];
             if (ADD_PRIV_SAVE_AS) {
@@ -289,12 +267,12 @@ function markAsRead(button) {
 
 function removeToReadTag() {
     let tags = getTags();
-    let toReadTag = [...document.querySelectorAll("li.added.tag")][tags.indexOf("To Read")]
+    let toReadTag = tags[tags.indexOf("To Read")]
     let deleteButton = toReadTag.querySelector(".delete");
     deleteButton.click();
 
     // both are necessary to remove the original tag and prevent it from being readded when the bookmark is sent
-    const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
+    const tagBox = DOC.getElementById("bookmark_tag_string_autocomplete");
     tagBox.value = tagBox.value.replace("To Read", "");
 }
 
@@ -307,7 +285,6 @@ function getWorkData() {
 
     const bookmarkNotes = DOC.getElementById("bookmark_notes").value;
 
-
     let url = DOC.querySelector("li.share").querySelector("a").href.split("/");
     // the url gets expanded when everything is loaded, so we need to take `archiveofourown.org/works/...` into mind
     let id = url[4];
@@ -317,7 +294,7 @@ function getWorkData() {
     if (tagBox) {
         bookmarkTags = tagBox.value;
     } else {
-        bookmarkTags = "To Read";
+        bookmarkTags = "";
     }
 
     let token = DOC.querySelector("meta[name='csrf-token']").getAttribute("content");
@@ -337,12 +314,14 @@ function getBookmarkData() {
     let token = DOC.querySelector("meta[name='csrf-token']").getAttribute("content");
     let pseudID = DOC.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
     console.log("pseudID: " + pseudID)
-    // 2126828671
 
     let bookmarkNotes = DOC.getElementById("bookmark_notes").value.trim();
     console.log("bookmarkNotes: " + bookmarkNotes)
 
     let bookmarkTags = getTags().join(", ");
+    if (bookmarkTags.length === 0) {
+        bookmarkTags = DOC.querySelector("#bookmark_tag_string").value.trim();
+    }
     console.log("bookmarkTags: " + bookmarkTags)
 
     let privacy = DOC.getElementById("bookmark_private").checked ? "1" : "0";
@@ -454,7 +433,7 @@ function createWorkToReadButton() {
 function createExternalToReadButton(i, url) {
     // creates a new button
     const toReadButton = document.createElement("li");
-    toReadButton.id = "to_read";
+    toReadButton.id = "to_read_" + i;
 
     const child = document.createElement("a");
     child.text = 'Save as "To Read"'
@@ -466,10 +445,9 @@ function createExternalToReadButton(i, url) {
 
         // this is standard parsing
         let parser = new DOMParser();
-        let doc = parser.parseFromString(navPageHTML, "text/html");
-        DOC = doc;
+        DOC = parser.parseFromString(navPageHTML, "text/html");
 
-        bookmarkWorkExternal(child, "Saved as \"To Read\"!", doc);
+        bookmarkWork(toReadButton);
         // makes the link do nothing except the function when clicked
         return false;
     };
@@ -479,7 +457,7 @@ function createExternalToReadButton(i, url) {
     return toReadButton;
 }
 
-function createWorkPrivateToReadButton(i, url) {
+function createWorkPrivateToReadButton() {
     let privToReadButton = document.createElement("li");
     privToReadButton.id = "priv_to_read";
 
@@ -496,7 +474,7 @@ function createWorkPrivateToReadButton(i, url) {
 
 function createExternalPrivateToReadButton(i, url) {
     let privToReadButton = document.createElement("li");
-    privToReadButton.id = "priv_to_read";
+    privToReadButton.id = "priv_to_read_" + i;
 
     const child2 = document.createElement("a");
     child2.text = 'Save privately as "To Read"'
@@ -509,10 +487,9 @@ function createExternalPrivateToReadButton(i, url) {
 
         // this is standard parsing
         let parser = new DOMParser();
-        let doc = parser.parseFromString(navPageHTML, "text/html");
-        DOC = doc;
+        DOC = parser.parseFromString(navPageHTML, "text/html");
 
-        privateBookmarkWorkExternal(child2, "Saved privately as \"To Read\"!", doc);
+        privateBookmarkWork(privToReadButton);
         // makes the link do nothing except the function when clicked
         return false;
     }
@@ -617,6 +594,8 @@ function bookmarkWork(button) {
         unsubscribe();
     }
 
+    IS_BOOKMARK = DOC.querySelector(".bookmark_form_placement_open").textContent === "Edit Bookmark";
+
     if (IS_BOOKMARK) {
         console.log("currently bookmarked, updating")
         let data = getBookmarkData();
@@ -625,12 +604,13 @@ function bookmarkWork(button) {
     } else {
         let data = getWorkData();
         data[4] += ", To Read";
+        console.log(button.id)
         createBookmark(data[0], data[1], data[2], data[3], data[4], data[5], button.id);
     }
 }
 
 function privateBookmarkWork(button) {
-    const privateBox = document.getElementById("bookmark_private");
+    const privateBox = DOC.getElementById("bookmark_private");
     privateBox.checked = true;
 
     bookmarkWork(button);
