@@ -1,47 +1,33 @@
-import * as browser from "webextension-polyfill";
+const booleanSettingMappings = {
+    REKUDOS_ACTIVE: "#preference_rekudos_enabled",
+    REKUDOS_AUTO: "#preference_auto_rekudos_enabled",
+}
 
 function saveOptions(e) {
     e.preventDefault();
-    browser.storage.sync.set({
-        color: document.querySelector("#color").value,
-    });
+
+    for (let [key, value] of Object.entries(booleanSettingMappings)) {
+        console.log("setting key " + key + " to " + document.querySelector(value).checked)
+        browser.storage.sync.set({[key]: document.querySelector(value).checked});
+    }
 }
 
 function restoreOptions() {
-    function setCurrentChoice(result) {
-        document.querySelector("#color").value = result.color || "blue";
+    function setCurrentChoice(result, id) {
+        console.log("setting id " + id + " to " + result);
+        document.querySelector(id).checked = result;
     }
 
-    function onError(error) {
-        console.log(`Error: ${error}`);
-    }
-
-    setupSettingsBox();
-
-    let getting = browser.storage.sync.get("color");
-    getting.then(setCurrentChoice, onError);
-}
-
-function setupSettingsBox() {
-    let settingsBox = document.createElement("fieldset");
-
-    let title = document.createElement("legend");
-    title.textContent = "Ao3 Tweaks";
-
-    let heading = document.querySelector('a[title="Misc preferences"]').parentNode.cloneNode(true);
-    heading.textContent = title.textContent;
-
-    let popup = heading.querySelector("a");
-    popup.title = title.textContent + " Preferences";
-    popup.href = browser.runtime.getURL("options.html");
-
-    let ul = document.createElement("ul");
-    for (let setting in settings) {
-        let li = document.createElement("li");
-
+    for (let [key, value] of Object.entries(booleanSettingMappings)) {
+        browser.storage.sync.get(key).then(
+            (r) => {
+                setCurrentChoice(r, value)
+            }, (e) => {
+                console.log(e);
+            });
     }
 }
 
-// document.addEventListener("DOMContentLoaded", restoreOptions);
-// document.querySelector("form").addEventListener("submit", saveOptions);
-
+console.log("loaded")
+document.addEventListener("DOMContentLoaded", restoreOptions);
+document.querySelector("form").addEventListener("submit", saveOptions);

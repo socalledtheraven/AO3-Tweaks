@@ -53,6 +53,9 @@
 		"48": "images/logo_48.png",
 		"96": "images/logo_96.png"
 	},
+	"options_ui": {
+		"page": "options.html"
+	},
 	"browser_specific_settings": {
 		"gecko": {
 			"id": "{ad53cfca-a2b3-4d9f-95ae-adcf2fa65479}"
