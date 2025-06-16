@@ -14,6 +14,7 @@ const URL = window.location.href;
 
 
 function stringify(json) {
+    // turns a JSON document into a single URL-encoded string for sending in POST requests
     let s = "";
     for (const [key, value] of Object.entries(json)) {
         s += encodeURIComponent(key) + "=" + encodeURIComponent(value) + "&";
@@ -24,6 +25,7 @@ function stringify(json) {
 }
 
 function post(url, data) {
+    // a POST request with the associated headers
     return fetch(url, {
         method: "POST",
         credentials: "include",
@@ -48,7 +50,7 @@ function post(url, data) {
 }
 
 function isInArray(arr) {
-    // literally just an "is in list" function
+    // an "is in list" function checking against `PRIVATE_FANDOMS`
     for (const elem of arr) {
         if (PRIVATE_FANDOMS.indexOf(elem.text) > -1) {
             return true;
@@ -57,9 +59,15 @@ function isInArray(arr) {
     return false;
 }
 
-async function getHTML(url) {
+async function getDocument(url) {
+    // gets the HTML and document object of a url
     let response = await fetch(url);
-    return await response.text();
+
+    let navPageHTML = await response.text();
+
+    // this is standard parsing
+    let parser = new DOMParser();
+    return parser.parseFromString(navPageHTML, "text/html");
 }
 
 
@@ -67,6 +75,8 @@ async function getHTML(url) {
 
 
 function createBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privacy, buttonID, series) {
+    // sends off the bookmark request with the data provided
+
     let url;
     if (series) {
         url = "https://archiveofourown.org/series/" + id + "/bookmarks";
@@ -88,6 +98,7 @@ function createBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privacy
 }
 
 function updateBookmark(bookmarkID, token, pseudID, notes, tagString, privacy, rec, buttonID) {
+    // sends an update request with the data
     post("https://archiveofourown.org/bookmarks/" + bookmarkID, {
         "_method": "put",
         "authenticity_token": token,
@@ -104,6 +115,7 @@ function updateBookmark(bookmarkID, token, pseudID, notes, tagString, privacy, r
 }
 
 function respondToBookmark(r, type) {
+    // adds a flash notice to the top of the screen and changes the text of the button
     if (r.ok) {
         // always document rather than doc because these will always be seen on the page the user is looking at
         let notice = document.createElement("div");
@@ -162,16 +174,18 @@ function isWork() {
     return URL.includes("chapters") || (URL.includes("series") && !URL.includes("tags")) || (URL.includes("works") && !URL.includes("search") && !URL.includes("users") && !URL.includes("tags"));
 }
 
+function getTags(doc) {
+    // gives a list of the tags, which can then be joined for a string
+    return [...doc.querySelectorAll("li.added.tag")].map((tag) => tag.textContent.replace("×", "").trim());
+}
+
 function isMarkedForLater() {
     let tags = getTags(document);
     return tags.includes("To Read");
 }
 
-function getTags(doc) {
-    return [...doc.querySelectorAll("li.added.tag")].map((tag) => tag.textContent.replace("×", "").trim());
-}
-
 function removeToReadTag(doc) {
+    // removes the existing tag button
     let tags = getTags(doc);
     let toReadTag = tags[tags.indexOf("To Read")]
     let deleteButton = toReadTag.querySelector(".delete");
@@ -187,6 +201,7 @@ function removeToReadTag(doc) {
 
 
 function createSaveButtonElements() {
+    // not really necessary but nice to separate out functionality
     let toReadButton = createWorkToReadButton(false);
 
     // needs to be outside so the compiler won't yell at me despite the only time this being referenced is inside other ifs with the same condition
@@ -201,23 +216,14 @@ function createSaveButtonElements() {
 function createWorkToReadButton(priv, series) {
     // these will always be on the user-facing page
     const toReadButton = document.createElement("li");
-    if (priv) {
-        toReadButton.id = "priv_to_read";
-    } else {
-        toReadButton.id = "to_read";
-    }
-
     const child = document.createElement("a");
     if (priv) {
+        toReadButton.id = "priv_to_read";
         child.text = 'Save privately as "To Read"'
-    } else {
-        child.text = 'Save as "To Read"'
-    }
-
-    // makes it a link in all the important CSS ways
-    if (priv) {
         child.href = "#priv_to_read";
     } else {
+        toReadButton.id = "to_read";
+        child.text = 'Save as "To Read"'
         child.href = "#to_read";
     }
 
@@ -240,31 +246,19 @@ function createWorkToReadButton(priv, series) {
 function createExternalToReadButton(i, url, series, priv) {
     // creates a new button
     const toReadButton = document.createElement("li");
-    if (priv) {
-        toReadButton.id = "priv_to_read_" + i;
-    } else {
-        toReadButton.id = "to_read_" + i;
-    }
-
     const child = document.createElement("a");
     if (priv) {
+        toReadButton.id = "priv_to_read_" + i;
         child.text = 'Save privately as "To Read"'
-    } else {
-        child.text = 'Save as "To Read"'
-    }
-
-    if (priv) {
         child.href = "#priv_to_read_" + i;
     } else {
+        toReadButton.id = "to_read_" + i;
+        child.text = 'Save as "To Read"'
         child.href = "#to_read_" + i;
     }
 
     child.onclick = async function () {
-        let navPageHTML = await getHTML(url);
-
-        // this is standard parsing
-        let parser = new DOMParser();
-        let doc = parser.parseFromString(navPageHTML, "text/html");
+        let doc = await getDocument(url);
 
         if (series) {
             bookmarkSeries(doc, toReadButton, priv);
@@ -281,26 +275,6 @@ function createExternalToReadButton(i, url, series, priv) {
 }
 
 function addSaveButtons(series, saveButton, privSaveButton) {
-    let navbar;
-    if (series) {
-        navbar = document.querySelector("ul.navigation.actions[role='navigation']");
-    } else {
-        navbar = document.querySelector("ul.navigation.actions.work[role='menu']");
-    }
-
-    if (REPLACE_MARK_FOR_LATER) {
-        let success = replaceMarkForLater(navbar);
-
-        if (!success) {
-            navbar.appendChild(saveButton);
-
-            if (ADD_PRIV_SAVE_AS) {
-                navbar.appendChild(privSaveButton);
-            }
-        }
-    }
-
-
     function replaceMarkForLater(navbar) {
         const markForLaterButton = navbar.querySelector(".mark");
 
@@ -320,9 +294,29 @@ function addSaveButtons(series, saveButton, privSaveButton) {
             return false;
         }
     }
+
+    let navbar;
+    if (series) {
+        navbar = document.querySelector("ul.navigation.actions[role='navigation']");
+    } else {
+        navbar = document.querySelector("ul.navigation.actions.work[role='menu']");
+    }
+
+    if (REPLACE_MARK_FOR_LATER) {
+        let success = replaceMarkForLater(navbar);
+
+        if (!success) {
+            navbar.appendChild(saveButton);
+
+            if (ADD_PRIV_SAVE_AS) {
+                navbar.appendChild(privSaveButton);
+            }
+        }
+    }
 }
 
 function markAsReadButton() {
+    // all the mark as read button functionality in one function
     function createMarkAsReadButton() {
         const markAsReadButton = document.createElement("li");
         markAsReadButton.id = "mark_as_read";
@@ -365,6 +359,7 @@ function markAsReadButton() {
 
 
 function unsubscribe(doc) {
+    // unsubscribes from a story, given a document
     // can probably be left as-is, because it's all self-contained and works fine
     let token = doc.querySelector("input[name='authenticity_token']").getAttribute("value");
     let subWorkID = doc.querySelector("#subscription_subscribable_id").getAttribute("value");
@@ -398,6 +393,7 @@ function unsubscribe(doc) {
 }
 
 function markAsRead(button) {
+    // provides the actual function of a mark as read button
     let doc = document;
 
     removeToReadTag(doc);
