@@ -1,3 +1,5 @@
+// import * as browser from "webextension-polyfill";
+
 const booleanSettingMappings = {
     REKUDOS_ACTIVE: "#preference_rekudos_enabled",
     REKUDOS_AUTO: "#preference_auto_rekudos_enabled",
@@ -5,11 +7,13 @@ const booleanSettingMappings = {
 
 function saveOptions(e) {
     e.preventDefault();
-
+	
     for (let [key, value] of Object.entries(booleanSettingMappings)) {
         console.log("setting key " + key + " to " + document.querySelector(value).checked)
         browser.storage.sync.set({[key]: document.querySelector(value).checked});
     }
+	
+	console.log("saved");
 }
 
 function restoreOptions() {
