@@ -327,17 +327,36 @@ function isLoggedIn() {
     return !document.querySelector("#login");
 }
 
-if (isLoggedIn()) {
-    // full text comment boxes is async, so it needs to happen first, so we have to have an overly complicated if structure
-    if (EXTRA_COMMENT_BOXES) {
-        fullTextCommentBoxes().then(function () {
+console.log("loaded comments.js");
+
+function initializeExtension(settings) {
+    const COMMENT_TEMPLATES = settings["comment_templates"];
+    const EXTRA_COMMENT_BOXES = settings["extra_comment_boxes"];
+
+    console.log("COMMENT_TEMPLATES: " + COMMENT_TEMPLATES);
+    console.log("EXTRA_COMMENT_BOXES: " + EXTRA_COMMENT_BOXES);
+
+    if (isLoggedIn()) {
+        // full text comment boxes is async, so it needs to happen first, so we have to have an overly complicated if structure
+        if (EXTRA_COMMENT_BOXES) {
+            fullTextCommentBoxes().then(function () {
+                if (COMMENT_TEMPLATES) {
+                    templateComments()
+                }
+            });
+        } else {
             if (COMMENT_TEMPLATES) {
                 templateComments()
             }
-        });
-    } else {
-        if (COMMENT_TEMPLATES) {
-            templateComments()
         }
     }
 }
+
+function onError(error) {
+    console.log(`Error: ${error}`);
+}
+
+// Get both settings at once and initialise the extension
+browser.storage.sync.get(["comment_templates", "extra_comment_boxes"])
+    .then(initializeExtension)
+    .catch(onError);

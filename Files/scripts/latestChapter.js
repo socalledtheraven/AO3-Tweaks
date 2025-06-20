@@ -56,10 +56,25 @@ function isLoggedIn() {
 	return !document.querySelector("#login");
 }
 
-if (isLoggedIn() && LATEST_CHAPTER_AUTOFILL) {
-	// runs it when the page loads
-	console.log("loaded2")
-	main();
+console.log("loaded latestChapter.js");
+
+function initializeExtension(settings) {
+	const LATEST_CHAPTER_AUTOFILL = settings["latest_chapter_autofill"];
+
+	console.log("LATEST_CHAPTER_AUTOFILL: " + LATEST_CHAPTER_AUTOFILL);
+
+	if (isLoggedIn() && LATEST_CHAPTER_AUTOFILL) {
+		// runs it when the page loads
+		console.log("loaded2")
+		main();
+	}
 }
 
-console.log("loaded")
+function onError(error) {
+	console.log(`Error: ${error}`);
+}
+
+// Get both settings at once and initialise the extension
+browser.storage.sync.get("latest_chapter_autofill")
+	.then(initializeExtension)
+	.catch(onError);

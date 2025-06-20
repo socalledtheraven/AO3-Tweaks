@@ -1,10 +1,10 @@
 // CONFIG
-const PRIVATE_FANDOMS = [""]
-const SAVE_AS_TO_READ_ENABLED = true;
-const UNSUB_FROM_WORKS = false;
-const REPLACE_MARK_FOR_LATER = true;
-const ADD_PRIV_SAVE_AS = true;
-const CREATE_MARK_AS_READ_BUTTON = true;
+const PRIVATE_FANDOMS = [""];
+let SAVE_AS_TO_READ_ENABLED;
+let UNSUB_FROM_WORKS;
+let REPLACE_MARK_FOR_LATER;
+let ADD_PRIV_SAVE_AS;
+let CREATE_MARK_AS_READ_BUTTON;
 // END CONFIG
 
 const URL = window.location.href;
@@ -559,30 +559,57 @@ function onExternalPage() {
     }
 }
 
-if (isLoggedIn() && SAVE_AS_TO_READ_ENABLED) {
-    if (isWork()) {
-        console.log("work")
-        // the whole idea here is to not show redundant buttons - save as buttons only when it's not already saved, and mark as button only when it can be marked as read
-        if (isMarkedForLater()) {
-            markAsReadButton();
+console.log("loaded saveAsToRead.js");
+
+function initializeExtension(settings) {
+    // needs to be global variables because they are referenced everywhere
+    SAVE_AS_TO_READ_ENABLED = settings["save_as_to_read_enabled"];
+    UNSUB_FROM_WORKS = settings["unsub_from_works"];
+    REPLACE_MARK_FOR_LATER = settings["replace_mark_for_later"];
+    ADD_PRIV_SAVE_AS = settings["add_priv_save_as"];
+    CREATE_MARK_AS_READ_BUTTON = settings["create_mark_as_read_button"];
+
+    console.log("SAVE_AS_TO_READ_ENABLED: " + SAVE_AS_TO_READ_ENABLED);
+    console.log("UNSUB_FROM_WORKS: " + UNSUB_FROM_WORKS);
+    console.log("REPLACE_MARK_FOR_LATER: " + REPLACE_MARK_FOR_LATER);
+    console.log("ADD_PRIV_SAVE_AS: " + ADD_PRIV_SAVE_AS);
+    console.log("CREATE_MARK_AS_READ_BUTTON: " + CREATE_MARK_AS_READ_BUTTON);
+
+
+    if (isLoggedIn() && SAVE_AS_TO_READ_ENABLED) {
+        if (isWork()) {
+            console.log("work")
+            // the whole idea here is to not show redundant buttons - save as buttons only when it's not already saved, and mark as button only when it can be marked as read
+            if (isMarkedForLater()) {
+                markAsReadButton();
+            } else {
+                let buttons = createSaveButtonElements();
+                let saveAsToReadButton = buttons[0];
+
+                let privSaveAsToReadButton;
+                if (ADD_PRIV_SAVE_AS) {
+                    privSaveAsToReadButton = buttons[1];
+                }
+
+                let isSeries = URL.includes("/series/");
+                addSaveButtons(isSeries, saveAsToReadButton, privSaveAsToReadButton);
+
+                if (isSeries) {
+                    // add save as to read buttons for the series before adding all the individual ones
+                    onExternalPage();
+                }
+            }
         } else {
-            let buttons = createSaveButtonElements();
-            let saveAsToReadButton = buttons[0];
-
-            let privSaveAsToReadButton;
-            if (ADD_PRIV_SAVE_AS) {
-                privSaveAsToReadButton = buttons[1];
-            }
-
-            let isSeries = URL.includes("/series/");
-            addSaveButtons(isSeries, saveAsToReadButton, privSaveAsToReadButton);
-
-            if (isSeries) {
-                // add save as to read buttons for the series before adding all the individual ones
-                onExternalPage();
-            }
+            onExternalPage()
         }
-    } else {
-        onExternalPage()
     }
 }
+
+function onError(error) {
+    console.log(`Error: ${error}`);
+}
+
+// Get both settings at once and initialise the extension
+browser.storage.sync.get(["save_as_to_read_enabled", "unsub_from_works", "replace_mark_for_later", "add_priv_save_as", "create_mark_as_read_button"])
+    .then(initializeExtension)
+    .catch(onError);
