@@ -77,11 +77,22 @@ function isLoggedIn() {
 
 console.log("loaded")
 
-let REKUDOS_ACTIVE;
-let x = await browser.storage.sync.get("REKUDOS_ACTIVE");
-console.log(x);
-REKUDOS_ACTIVE = x.REKUDOS_ACTIVE;
-console.log("REKUDOS_ACTIVE: " + REKUDOS_ACTIVE);
+function onGot(item) {
+    console.log(item);
+    let REKUDOS_ACTIVE = false;
+    if (item.REKUDOS_ACTIVE) {
+        REKUDOS_ACTIVE = item.REKUDOS_ACTIVE;
+    }
+
+    console.log("REKUDOS_ACTIVE: " + REKUDOS_ACTIVE);
+}
+
+function onError(error) {
+    console.log(`Error: ${error}`);
+}
+
+const getting = browser.storage.sync.get("REKUDOS_ACTIVE");
+getting.then(onGot, onError);
 
 let AUTO;
 browser.storage.sync.get("REKUDOS_AUTO").then((r) => function () {
