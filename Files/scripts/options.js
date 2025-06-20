@@ -1,8 +1,16 @@
 // import * as browser from "webextension-polyfill";
 
 const booleanSettingMappings = {
-    REKUDOS_ACTIVE: "#preference_rekudos_enabled",
-    REKUDOS_AUTO: "#preference_auto_rekudos_enabled",
+    rekudos_enabled: "#rekudos_enabled",
+    auto_rekudos_enabled: "#auto_rekudos_enabled",
+    comment_templates: "#comment_templates",
+    extra_comment_boxes: "#extra_comment_boxes",
+    latest_chapter_autofill: "#latest_chapter_autofill",
+    save_as_to_read_enabled: "#save_as_to_read_enabled",
+    unsub_from_works: "#unsub_from_works",
+    replace_mark_for_later: "#replace_mark_for_later",
+    add_priv_save_as: "#add_priv_save_as",
+    create_mark_as_read_button: "#create_mark_as_read_button"
 }
 
 function saveOptions(e) {
@@ -33,6 +41,18 @@ function restoreOptions() {
     }
 }
 
-console.log("loaded")
+console.log("loaded options.js")
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
+
+
+let checkalls = document.querySelectorAll(".dom");
+
+for (let checkall of checkalls) {
+    let checkboxes = checkall.parentNode.parentNode.parentNode.querySelector("ul").querySelectorAll(".sub");
+    checkall.onclick = function () {
+        for (let i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].disabled = !this.checked;
+        }
+    }
+}

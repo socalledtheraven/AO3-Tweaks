@@ -10,8 +10,11 @@
             margin: 20px;
             background-color: #f5f5f5;
         }
+        p {
+            font-size: 14px;
+        }
         .container {
-            max-width: 600px;
+            max-width: 900px;
             background: white;
             padding: 20px;
             border-radius: 8px;
@@ -27,26 +30,6 @@
             font-weight: bold;
             padding: 0 10px;
         }
-        .heading {
-            margin: 0 0 15px 0;
-            font-size: 1.1em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .help.symbol.question {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: #007acc;
-            color: white;
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: bold;
-        }
         ul {
             list-style: none;
             padding: 0;
@@ -54,9 +37,23 @@
         }
         li {
             margin-bottom: 10px;
+        }
+
+        .checkbox-label-row {
             display: flex;
             align-items: center;
             gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        div.checkbox-container p,
+        li p {
+            margin: 4px 0 0 0;
+            padding-left: 24px; /* Indent to align with label text */
+        }
+
+        div.checkbox-container {
+            margin-bottom: 10px;
         }
         input[type="checkbox"] {
             margin: 0;
@@ -77,17 +74,6 @@
         .save-button:hover {
             background-color: #005a9e;
         }
-        .status {
-            margin-top: 10px;
-            padding: 8px;
-            border-radius: 4px;
-            display: none;
-        }
-        .status.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
     </style>
 </head>
 <body>
@@ -96,23 +82,91 @@
         
         <form id="options-form">
             <fieldset>
-                <legend>AO3 Tweaks</legend>
-                <h4 class="heading">
-                    AO3 Tweaks
-                    <a class="help symbol question" title="AO3 Tweaks preferences" href="#" id="help-link">
-                        <span>?</span>
-                    </a>
-                </h4>
+                <legend>Rekudos</legend>
+                <div class="checkbox-container">
+                    <div class="checkbox-label-row">
+                        <input type="checkbox" value="1" name="preference[rekudos_enabled]" id="rekudos_enabled" class="dom">
+                        <label for="rekudos_enabled">Enable rekudos (re-kudos) feature</label>
+                    </div>
+                    <p>Adds the option to automatically comment with a variety of supportive messages after you have left kudos the first time.</p>
+                </div>
                 <ul>
                     <li>
-                        <input name="preference[rekudos_enabled]" type="hidden" value="0" autocomplete="off">
-                        <input type="checkbox" value="1" name="preference[rekudos_enabled]" id="preference_rekudos_enabled">
-                        <label for="preference_rekudos_enabled">Enable rekudos (re-kudos) feature</label>
+                        <div class="checkbox-label-row">
+                            <input type="checkbox" disabled class="sub" value="1" name="preference[auto_rekudos_enabled]" id="auto_rekudos_enabled">
+                            <label for="auto_rekudos_enabled">Enable automatic rekudos commenting</label>
+                        </div>
+                        <p>Automatically comments when you click the kudos button after having already left kudos.</p>
+                    </li>
+                </ul>
+            </fieldset>
+
+            <fieldset>
+                <legend>Comments</legend>
+                <div class="checkbox-container">
+                    <div class="checkbox-label-row">
+                        <input type="checkbox" value="1" name="preference[comment_templates]" id="comment_templates">
+                        <label for="comment_templates">Enable comment templates</label>
+                    </div>
+                    <p>Adds a button that shows various templates for things to comment about, if you aren't sure what to say.</p>
+                </div>
+                <div class="checkbox-container">
+                    <div class="checkbox-label-row">
+                        <input type="checkbox" value="1" name="preference[extra_comment_boxes]" id="extra_comment_boxes">
+                        <label for="extra_comment_boxes">Enable extra comment boxes between chapters</label>
+                    </div>
+                    <p>Adds additional comment boxes inbetween chapters, so you don't forget what you wanted to talk about when viewing a fic in fulltext.</p>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Latest Chapter</legend>
+                <div class="checkbox-container">
+                    <div class="checkbox-label-row">
+                        <input type="checkbox" value="1" name="preference[latest_chapter_autofill]" id="latest_chapter_autofill">
+                        <label for="latest_chapter_autofill">Enable latest chapter buttons</label>
+                    </div>
+                    <p>Adds a button on your bookmarks page, when sorted by Date Updated, which takes you to the most recent chapter published, so you can just read what's new.</p>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>To Read</legend>
+                <div class="checkbox-container">
+                    <div class="checkbox-label-row">
+                        <input type="checkbox" value="1" name="preference[save_as_to_read_enabled]" id="save_as_to_read_enabled" class="dom">
+                        <label for="save_as_to_read_enabled">Enable the Save as "To Read" feature</label>
+                    </div>
+                    <p>Adds a button, both to a work's page and the page of a search or filter, that automatically saves that work as a bookmark with the tag "To Read", which can then be looked through with the "Bookmarker's Tags" option at your leisure. Enjoy having much fewer tabs open!</p>
+                </div>
+                <ul>
+                    <li>
+                        <div class="checkbox-label-row">
+                            <input type="checkbox" disabled class="sub" value="1" name="preference[unsub_from_works]" id="unsub_from_works">
+                            <label for="unsub_from_works">Automatically unsubscribe</label>
+                        </div>
+                        <p>Automatically unsubscribes from a saved work, for if you're transferring over from saving works with subscriptions.</p>
                     </li>
                     <li>
-                        <input name="preference[auto_rekudos_enabled]" type="hidden" value="0" autocomplete="off">
-                        <input type="checkbox" value="1" name="preference[auto_rekudos_enabled]" id="preference_auto_rekudos_enabled">
-                        <label for="preference_auto_rekudos_enabled">Enable automatic rekudos commenting</label>
+                        <div class="checkbox-label-row">
+                            <input type="checkbox" disabled class="sub" value="1" name="preference[replace_mark_for_later]" id="replace_mark_for_later">
+                            <label for="replace_mark_for_later">Replace Mark for Later</label>
+                        </div>
+                        <p>Removes the native mark for later buttons, which are superfluous with this addon.</p>
+                    </li>
+                    <li>
+                        <div class="checkbox-label-row">
+                            <input type="checkbox" disabled class="sub" value="1" name="preference[add_priv_save_as]" id="add_priv_save_as">
+                            <label for="add_priv_save_as">Add private saving</label>
+                        </div>
+                        <p>Adds a "Save privately" button, which creates a private bookmark instead, for the works you'd prefer others be unaware you're considering.</p>
+                    </li>
+                    <li>
+                        <div class="checkbox-label-row">
+                            <input type="checkbox" disabled class="sub" value="1" name="preference[create_mark_as_read_button]" id="create_mark_as_read_button">
+                            <label for="create_mark_as_read_button">Create Mark as Read button</label>
+                        </div>
+                        <p>Adds a "Mark as Read" button, which removes the "To Read" tag from the work and leaves it as an ordinary bookmark.</p>
                     </li>
                 </ul>
             </fieldset>

@@ -75,7 +75,7 @@ function isLoggedIn() {
     return !document.querySelector("#login");
 }
 
-console.log("loaded")
+console.log("loaded rekudos.js")
 
 function initializeExtension(settings) {
     const { REKUDOS_ACTIVE = false, REKUDOS_AUTO = false } = settings;
@@ -97,6 +97,6 @@ function onError(error) {
 }
 
 // Get both settings at once and initialise the extension
-browser.storage.sync.get(["REKUDOS_ACTIVE", "REKUDOS_AUTO"])
+browser.storage.sync.get(["rekudos_enabled", "auto_rekudos_enabled"])
     .then(initializeExtension)
     .catch(onError);
