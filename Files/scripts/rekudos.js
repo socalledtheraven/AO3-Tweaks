@@ -79,6 +79,7 @@ console.log("loaded")
 
 let REKUDOS_ACTIVE;
 let getting = browser.storage.sync.get("REKUDOS_ACTIVE");
+console.log(getting)
 getting.then((r) => function () {
     REKUDOS_ACTIVE = r.REKUDOS_ACTIVE;
     console.log("REKUDOS_ACTIVE: " + REKUDOS_ACTIVE);
@@ -86,6 +87,7 @@ getting.then((r) => function () {
 
 let AUTO;
 getting = browser.storage.sync.get("REKUDOS_AUTO");
+console.log(getting)
 getting.then((r) => function () {
     AUTO = r.REKUDOS_AUTO;
     console.log("AUTO: " + AUTO);
