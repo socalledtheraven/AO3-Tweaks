@@ -24,7 +24,7 @@ function postComment() {
 }
 
 function editKudosButton(newKudosButton) {
-    // you have to edit the value of a different element or it overwrites the whole form
+    // you have to edit the value of a different element, or it overwrites the whole form
     newKudosButton.textContent = "Rekudos?";
     newKudosButton.onclick = function () {
         postComment();
@@ -41,7 +41,7 @@ function overrideButton(oldButton, newButton) {
     }
 }
 
-function createNewKudos(REKUDOS_AUTO) {
+function createNewKudos(AUTO) {
     let containerLi = document.createElement("li");
     containerLi.style.listStyle = "none"
     containerLi.style.display = "inline"
@@ -56,7 +56,7 @@ function createNewKudos(REKUDOS_AUTO) {
         let oldKudosButton = document.querySelector("#kudo_submit");
         oldKudosButton.click();
 
-        if (REKUDOS_AUTO) {
+        if (AUTO) {
             postComment();
         } else {
             editKudosButton(newKudosButton);
@@ -71,7 +71,7 @@ function createNewKudos(REKUDOS_AUTO) {
 
 function isLoggedIn() {
     // when used in an if, this will check for the existence of the element
-    // it's basically being casted to bool
+    // it's basically being cast to bool
     return !document.querySelector("#login");
 }
 
@@ -87,6 +87,7 @@ function initializeExtension(settings) {
         // jump back to the kudos button
         let kudosButton = document.querySelector("#new_kudo");
         let containerLi = createNewKudos(REKUDOS_AUTO);
+        console.log("containerLi: " + containerLi);
 
         overrideButton(kudosButton, containerLi);
     }
