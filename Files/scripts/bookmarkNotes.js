@@ -2,60 +2,48 @@
 
 /*START SETTINGS: Change these to true/false based on your preferences*/
 /*SETTINGS THAT APPLY TO ALL BOOKMARKS*/
-const BOOKMARK_NOTES_ENABLED = true;
+let BOOKMARK_NOTES_ENABLED = true;
 
-const NOTES_APPEND_TO_PREVIOUS = true; // When editing a pre-existing bookmark, should the pre-existing notes be preserved?
+let NOTES_APPEND_TO_PREVIOUS = true; // When editing a pre-existing bookmark, should the pre-existing notes be preserved?
 /*Note: If you toggle this to true, and repeatedly edit the same bookmark, it will repeatedly add the same information to the box, growing it over and over.*/
 /*This setting is more meant for people who need to go back to their previous bookmarks to add the information this script provides, without losing their old notes.*/
 /*In either case, this script does not run on archiveofourown.org/users/USERNAME/bookmarks pages, so you are able to edit bookmarks there with this on and not re-add the same information again*/
 
 /*WORK BOOKMARK SETTINGS*/
-const ADD_URL_AND_USERNAME = true; // Add the title of the work and the username (and pseud if applicable) of the creator with relevant links to each to the bookmark notes.
+let ADD_URL_AND_USERNAME = true; // Add the title of the work and the username (and pseud if applicable) of the creator with relevant links to each to the bookmark notes.
 //Note: Highly recommended as bookmark notes are not deleted when a work is deleted, and finding a lost work is easier with the title, username, and url.
 
-const ADD_SUMMARY = true; // Add the summary of the work to the bookmark notes
-
-const REC_DEFAULT= false; // Autocheck the Rec checkbox to make the bookmark a rec
-const PRIVATE_DEFAULT = false; // Autocheck the Private checkbox to make the bookmark private
-
-
-const ADD_CATEGORIES = false; // Add a copy of the relationship categories to the bookmarker tag list
-const ADD_FANDOM_TAGS = true; // Add a copy of the fandom tags to the bookmarker tag list
-const ADD_CHARACTER_TAGS = false; // Add a copy of the character tags to the bookmarker tag list
-const ADD_RELATIONSHIP_TAGS = true; // Add a copy of the relationship tags to the bookmarker tag list
-const ADD_ADDITIONAL_TAGS = false; // Add a copy of the additional/freeform tags to the bookmarker tag list
-const ADD_RATING = false; // Add a copy of the rating (with "Rating: " before it) to the bookmarker tag list
-const ADD_ARCHIVE_WARNINGS = false; // Add a copy of the archive warnings to the bookmarker tag list
-
-const ADD_CUSTOM_TAGS = false; // Add set default tags to bookmarker tag list, default tags listed below
-const CUSTOM_TAGS = "TBR, Example Tag, Example Tag 2"; // List of the default tags the bookmark will be given, comma seperated.
-
-const ADD_EXACT_WORDCOUNT_TAG = false; // Add a tag with the exact word count
-
-const ADD_WORDCOUNT_TAG = true; // Add a tag for the word count from the following set
+let ADD_SUMMARY = true; // Add the summary of the work to the bookmark notes
+let REC_DEFAULT= false; // Autocheck the Rec checkbox to make the bookmark a rec
+let PRIVATE_DEFAULT = false; // Autocheck the Private checkbox to make the bookmark private
+let ADD_CATEGORIES = false; // Add a copy of the relationship categories to the bookmarker tag list
+let ADD_FANDOM_TAGS = true; // Add a copy of the fandom tags to the bookmarker tag list
+let ADD_CHARACTER_TAGS = false; // Add a copy of the character tags to the bookmarker tag list
+let ADD_RELATIONSHIP_TAGS = true; // Add a copy of the relationship tags to the bookmarker tag list
+let ADD_ADDITIONAL_TAGS = false; // Add a copy of the additional/freeform tags to the bookmarker tag list
+let ADD_RATING = false; // Add a copy of the rating (with "Rating: " before it) to the bookmarker tag list
+let ADD_ARCHIVE_WARNINGS = false; // Add a copy of the archive warnings to the bookmarker tag list
+let ADD_CUSTOM_TAGS = false; // Add set default tags to bookmarker tag list, default tags listed below
+let CUSTOM_TAGS = "TBR, Example Tag, Example Tag 2"; // List of the default tags the bookmark will be given, comma seperated.
+let ADD_EXACT_WORDCOUNT_TAG = false; // Add a tag with the exact word count
+let ADD_WORDCOUNT_TAG = true; // Add a tag for the word count from the following set
 //Word count will be split up into 7 groups, edit the list below to change the ranges (default: 1000, 10000, 20000, 50000, 100000, 150000)
 //the ranges will be < the first number, first number - second number, second number - third number, etc and finally > the last number
-const WORDCOUNTS = [1000, 10000, 20000, 50000, 100000, 150000];
-
-const ADD_EXACT_WORDCOUNT_TAG_LIST = true; // Add a tag for special case word counts (ie. 100 words, 1000 words, etc) Does not have to be 3, can be any number of special cases
-const EXACT_WORDCOUNT_TAG_LIST = ["100", "1000", "10000"]
+let WORDCOUNTS = [1000, 10000, 20000, 50000, 100000, 150000];
+let ADD_EXACT_WORDCOUNT_TAG_LIST = true; // Add a tag for special case word counts (ie. 100 words, 1000 words, etc) Does not have to be 3, can be any number of special cases
+let EXACT_WORDCOUNT_TAG_LIST = ["100", "1000", "10000"]
 
 /*SERIES BOOKMARK SETTINGS*/
 
-const ADD_SERIES_URL_AND_USERNAME = true; // Add the title of the series and the username(s) (and pseud(s) if applicable) of the creator(s) with relevant links to each to the bookmark notes.
+let ADD_SERIES_URL_AND_USERNAME = true; // Add the title of the series and the username(s) (and pseud(s) if applicable) of the creator(s) with relevant links to each to the bookmark notes.
 //Highly recommended
-
-const ADD_WORK_COUNT_TAG = true; // Add the number of works in the series to the tags
-
-const ADD_EXACT_WORDCOUNT_TAG_SERIES = true; // Add a tag with the exact word count
-
-const ADD_CUSTOM_TAGS_SERIES = false; // Add set default tags to bookmarker tag list, default tags listed below
-const CUSTOM_TAGS_SERIES = "TBR S, Example Tag S, Example Tag 2 S"; // List of the default tags the bookmark will be given, comma seperated.
-
-const ADD_CUSTOM_TAGS_FOR_WORKS = false; //Add the custom tags that are listed for work bookmarks to series bookmarks too
-
-const REC_DEFAULT_SERIES = false; // Autocheck the Rec checkbox to make the bookmark a rec on series bookmarks
-const PRIVATE_DEFAULT_SERIES = false; // Autocheck the Private checkbox to make the bookmark private on series bookmarks
+let ADD_WORK_COUNT_TAG = true; // Add the number of works in the series to the tags
+let ADD_EXACT_WORDCOUNT_TAG_SERIES = true; // Add a tag with the exact word count
+let ADD_CUSTOM_TAGS_SERIES = false; // Add set default tags to bookmarker tag list, default tags listed below
+let CUSTOM_TAGS_SERIES = "TBR S, Example Tag S, Example Tag 2 S"; // List of the default tags the bookmark will be given, comma seperated.
+let ADD_CUSTOM_TAGS_FOR_WORKS = false; //Add the custom tags that are listed for work bookmarks to series bookmarks too
+let REC_DEFAULT_SERIES = false; // Autocheck the Rec checkbox to make the bookmark a rec on series bookmarks
+let PRIVATE_DEFAULT_SERIES = false; // Autocheck the Private checkbox to make the bookmark private on series bookmarks
 
 
 /*END SETTINGS*/
@@ -285,13 +273,32 @@ function isLoggedIn() {
     return !document.querySelector("#login");
 }
 
+console.log("loaded comments.js");
 
-if (isLoggedIn() && BOOKMARK_NOTES_ENABLED) {
-    // has a problem with the variable name "url" (presumably something else is using it)
-    let uri = window.location.href;
-    if (uri.includes("/works/")) {
-        updateWorkBookmark(uri);
-    } else if (uri.includes("/series/")) {
-        updateSeriesBookmark(uri);
+function initializeExtension(settings) {
+    const COMMENT_TEMPLATES = settings["comment_templates"];
+    const EXTRA_COMMENT_BOXES = settings["extra_comment_boxes"];
+
+    console.log("COMMENT_TEMPLATES: " + COMMENT_TEMPLATES);
+    console.log("EXTRA_COMMENT_BOXES: " + EXTRA_COMMENT_BOXES);
+
+
+    if (isLoggedIn() && BOOKMARK_NOTES_ENABLED) {
+        // has a problem with the variable name "url" (presumably something else is using it)
+        let uri = window.location.href;
+        if (uri.includes("/works/")) {
+            updateWorkBookmark(uri);
+        } else if (uri.includes("/series/")) {
+            updateSeriesBookmark(uri);
+        }
     }
 }
+
+function onError(error) {
+    console.log(`Error: ${error}`);
+}
+
+// Get both settings at once and initialise the extension
+browser.storage.sync.get(["comment_templates", "extra_comment_boxes"])
+    .then(initializeExtension)
+    .catch(onError);

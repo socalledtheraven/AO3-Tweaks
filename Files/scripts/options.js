@@ -10,7 +10,26 @@ const booleanSettingMappings = {
     unsub_from_works: "#unsub_from_works",
     replace_mark_for_later: "#replace_mark_for_later",
     add_priv_save_as: "#add_priv_save_as",
-    create_mark_as_read_button: "#create_mark_as_read_button"
+    create_mark_as_read_button: "#create_mark_as_read_button",
+    bookmark_notes_enabled: "#bookmark_notes_enabled",
+    notes_append_to_previous: "#notes_append_to_previous",
+    add_url_and_username: "#add_url_and_username",
+    add_summary: "#add_summary",
+    rec_default: "#rec_default",
+    private_default: "#private_default",
+    add_categories: "#add_categories",
+    add_fandom_tags: "#add_fandom_tags",
+    add_character_tags: "#add_character_tags",
+    add_relationship_tags: "#add_relationship_tags",
+    add_additional_tags: "#add_additional_tags",
+    add_rating: "#add_rating",
+    add_archive_warnings: "#add_archive_warnings",
+    add_exact_wordcount_tag: "#add_exact_wordcount_tag",
+    add_series_url_and_username: "#add_series_url_and_username",
+    add_work_count_tag: "#add_work_count_tag",
+    add_exact_wordcount_tag_series: "#add_exact_wordcount_tag_series",
+    rec_default_series: "#rec_default_series",
+    private_default_series: "#private_default_series"
 }
 
 function saveOptions(e) {
@@ -53,6 +72,15 @@ for (let checkall of checkalls) {
     checkall.onclick = function () {
         for (let i = 0; i < checkboxes.length; i++) {
             checkboxes[i].disabled = !this.checked;
+        }
+    }
+
+    console.log(checkall);
+    console.log(checkall.checked);
+    if (checkall.checked) {
+        console.log("checkall is checked, enabling all checkboxes")
+        for (let i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].disabled = false;
         }
     }
 }
