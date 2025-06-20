@@ -78,11 +78,10 @@ function isLoggedIn() {
 console.log("loaded")
 
 let REKUDOS_ACTIVE;
-browser.storage.sync.get("REKUDOS_ACTIVE").then((r) => function () {
-    console.log(r);
-    REKUDOS_ACTIVE = r.REKUDOS_ACTIVE;
-    console.log("REKUDOS_ACTIVE: " + REKUDOS_ACTIVE);
-}, console.error);
+let x = await browser.storage.sync.get("REKUDOS_ACTIVE");
+console.log(x);
+REKUDOS_ACTIVE = x.REKUDOS_ACTIVE;
+console.log("REKUDOS_ACTIVE: " + REKUDOS_ACTIVE);
 
 let AUTO;
 browser.storage.sync.get("REKUDOS_AUTO").then((r) => function () {
