@@ -77,34 +77,26 @@ function isLoggedIn() {
 
 console.log("loaded")
 
-function onGot(item) {
-    console.log(item);
-    let REKUDOS_ACTIVE = false;
-    if (item.REKUDOS_ACTIVE) {
-        REKUDOS_ACTIVE = item.REKUDOS_ACTIVE;
-    }
+function initializeExtension(settings) {
+    const { REKUDOS_ACTIVE = false, REKUDOS_AUTO = false } = settings;
 
     console.log("REKUDOS_ACTIVE: " + REKUDOS_ACTIVE);
+    console.log("REKUDOS_AUTO: " + REKUDOS_AUTO);
+
+    if (isLoggedIn() && REKUDOS_ACTIVE) {
+        // jump back to the kudos button
+        let kudosButton = document.querySelector("#new_kudo");
+        let containerLi = createNewKudos(REKUDOS_AUTO);
+
+        overrideButton(kudosButton, containerLi);
+    }
 }
 
 function onError(error) {
     console.log(`Error: ${error}`);
 }
 
-const getting = browser.storage.sync.get("REKUDOS_ACTIVE");
-getting.then(onGot, onError);
-
-let AUTO;
-browser.storage.sync.get("REKUDOS_AUTO").then((r) => function () {
-    console.log(r);
-    AUTO = r.REKUDOS_AUTO;
-    console.log("AUTO: " + AUTO);
-}, console.error);
-
-if (isLoggedIn() && REKUDOS_ACTIVE) {
-    // jump back to the kudos button
-    let kudosButton = document.querySelector("#new_kudo");
-    containerLi = createNewKudos();
-
-    overrideButton(kudosButton, containerLi);
-}
+// Get both settings at once and initialise the extension
+browser.storage.sync.get(["REKUDOS_ACTIVE", "REKUDOS_AUTO"])
+    .then(initializeExtension)
+    .catch(onError);
