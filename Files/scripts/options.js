@@ -18,17 +18,18 @@ function saveOptions(e) {
 
 function restoreOptions() {
     function setCurrentChoice(result, id) {
+        console.log(result);
         console.log("setting id " + id + " to " + result);
         document.querySelector(id).checked = result;
     }
 
     for (let [key, value] of Object.entries(booleanSettingMappings)) {
         browser.storage.sync.get(key).then(
-            (r) => {
-                setCurrentChoice(r, value)
-            }, (e) => {
+            (result) => setCurrentChoice(result[key], value),
+            (e) => {
                 console.log(e);
-            });
+            }
+        );
     }
 }
 

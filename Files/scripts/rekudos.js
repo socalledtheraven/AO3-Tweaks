@@ -7,9 +7,6 @@ let messages = Array(
     "Update kudos!",
     "Double kudos!"
 );
-
-const REKUDOS_ACTIVE = true;
-const AUTO = false;
 // CONFIG END
 
 function postComment() {
@@ -77,6 +74,20 @@ function isLoggedIn() {
     // it's basically being casted to bool
     return !document.querySelector("#login");
 }
+
+let REKUDOS_ACTIVE;
+let getting = browser.storage.sync.get("REKUDOS_ACTIVE");
+getting.then((r) => function () {
+    REKUDOS_ACTIVE = r.REKUDOS_ACTIVE;
+    console.log("REKUDOS_ACTIVE: " + REKUDOS_ACTIVE);
+}, console.error);
+
+let AUTO;
+getting = browser.storage.sync.get("REKUDOS_AUTO");
+getting.then((r) => function () {
+    AUTO = r.REKUDOS_AUTO;
+    console.log("AUTO: " + AUTO);
+}, console.error);
 
 if (isLoggedIn() && REKUDOS_ACTIVE) {
     // jump back to the kudos button
