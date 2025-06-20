@@ -41,7 +41,7 @@ function overrideButton(oldButton, newButton) {
     }
 }
 
-function createNewKudos() {
+function createNewKudos(REKUDOS_AUTO) {
     let containerLi = document.createElement("li");
     containerLi.style.listStyle = "none"
     containerLi.style.display = "inline"
@@ -56,7 +56,7 @@ function createNewKudos() {
         let oldKudosButton = document.querySelector("#kudo_submit");
         oldKudosButton.click();
 
-        if (AUTO) {
+        if (REKUDOS_AUTO) {
             postComment();
         } else {
             editKudosButton(newKudosButton);
