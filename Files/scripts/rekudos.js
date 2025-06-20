@@ -78,7 +78,9 @@ function isLoggedIn() {
 console.log("loaded rekudos.js")
 
 function initializeExtension(settings) {
-    const { REKUDOS_ACTIVE = false, REKUDOS_AUTO = false } = settings;
+    console.log(settings)
+    const REKUDOS_ACTIVE = settings["rekudos_enabled"];
+    const REKUDOS_AUTO = settings["auto_rekudos_enabled"];
 
     console.log("REKUDOS_ACTIVE: " + REKUDOS_ACTIVE);
     console.log("REKUDOS_AUTO: " + REKUDOS_AUTO);
