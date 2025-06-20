@@ -2,48 +2,48 @@
 
 /*START SETTINGS: Change these to true/false based on your preferences*/
 /*SETTINGS THAT APPLY TO ALL BOOKMARKS*/
-let BOOKMARK_NOTES_ENABLED = true;
+let BOOKMARK_NOTES_ENABLED;
 
-let NOTES_APPEND_TO_PREVIOUS = true; // When editing a pre-existing bookmark, should the pre-existing notes be preserved?
+let NOTES_APPEND_TO_PREVIOUS; // When editing a pre-existing bookmark, should the pre-existing notes be preserved?
 /*Note: If you toggle this to true, and repeatedly edit the same bookmark, it will repeatedly add the same information to the box, growing it over and over.*/
 /*This setting is more meant for people who need to go back to their previous bookmarks to add the information this script provides, without losing their old notes.*/
 /*In either case, this script does not run on archiveofourown.org/users/USERNAME/bookmarks pages, so you are able to edit bookmarks there with this on and not re-add the same information again*/
 
 /*WORK BOOKMARK SETTINGS*/
-let ADD_URL_AND_USERNAME = true; // Add the title of the work and the username (and pseud if applicable) of the creator with relevant links to each to the bookmark notes.
+let ADD_URL_AND_USERNAME; // Add the title of the work and the username (and pseud if applicable) of the creator with relevant links to each to the bookmark notes.
 //Note: Highly recommended as bookmark notes are not deleted when a work is deleted, and finding a lost work is easier with the title, username, and url.
 
-let ADD_SUMMARY = true; // Add the summary of the work to the bookmark notes
-let REC_DEFAULT= false; // Autocheck the Rec checkbox to make the bookmark a rec
-let PRIVATE_DEFAULT = false; // Autocheck the Private checkbox to make the bookmark private
-let ADD_CATEGORIES = false; // Add a copy of the relationship categories to the bookmarker tag list
-let ADD_FANDOM_TAGS = true; // Add a copy of the fandom tags to the bookmarker tag list
-let ADD_CHARACTER_TAGS = false; // Add a copy of the character tags to the bookmarker tag list
-let ADD_RELATIONSHIP_TAGS = true; // Add a copy of the relationship tags to the bookmarker tag list
-let ADD_ADDITIONAL_TAGS = false; // Add a copy of the additional/freeform tags to the bookmarker tag list
-let ADD_RATING = false; // Add a copy of the rating (with "Rating: " before it) to the bookmarker tag list
-let ADD_ARCHIVE_WARNINGS = false; // Add a copy of the archive warnings to the bookmarker tag list
-let ADD_CUSTOM_TAGS = false; // Add set default tags to bookmarker tag list, default tags listed below
+let ADD_SUMMARY; // Add the summary of the work to the bookmark notes
+let REC_DEFAULT; // Autocheck the Rec checkbox to make the bookmark a rec
+let PRIVATE_DEFAULT; // Autocheck the Private checkbox to make the bookmark private
+let ADD_CATEGORIES; // Add a copy of the relationship categories to the bookmarker tag list
+let ADD_FANDOM_TAGS; // Add a copy of the fandom tags to the bookmarker tag list
+let ADD_CHARACTER_TAGS; // Add a copy of the character tags to the bookmarker tag list
+let ADD_RELATIONSHIP_TAGS; // Add a copy of the relationship tags to the bookmarker tag list
+let ADD_ADDITIONAL_TAGS; // Add a copy of the additional/freeform tags to the bookmarker tag list
+let ADD_RATING; // Add a copy of the rating (with "Rating: " before it) to the bookmarker tag list
+let ADD_ARCHIVE_WARNINGS; // Add a copy of the archive warnings to the bookmarker tag list
+let ADD_CUSTOM_TAGS; // Add set default tags to bookmarker tag list, default tags listed below
 let CUSTOM_TAGS = "TBR, Example Tag, Example Tag 2"; // List of the default tags the bookmark will be given, comma seperated.
-let ADD_EXACT_WORDCOUNT_TAG = false; // Add a tag with the exact word count
-let ADD_WORDCOUNT_TAG = true; // Add a tag for the word count from the following set
+let ADD_EXACT_WORDCOUNT_TAG; // Add a tag with the exact word count
+let ADD_WORDCOUNT_TAG; // Add a tag for the word count from the following set
 //Word count will be split up into 7 groups, edit the list below to change the ranges (default: 1000, 10000, 20000, 50000, 100000, 150000)
 //the ranges will be < the first number, first number - second number, second number - third number, etc and finally > the last number
 let WORDCOUNTS = [1000, 10000, 20000, 50000, 100000, 150000];
-let ADD_EXACT_WORDCOUNT_TAG_LIST = true; // Add a tag for special case word counts (ie. 100 words, 1000 words, etc) Does not have to be 3, can be any number of special cases
+let ADD_EXACT_WORDCOUNT_TAG_LIST; // Add a tag for special case word counts (ie. 100 words, 1000 words, etc) Does not have to be 3, can be any number of special cases
 let EXACT_WORDCOUNT_TAG_LIST = ["100", "1000", "10000"]
 
 /*SERIES BOOKMARK SETTINGS*/
 
-let ADD_SERIES_URL_AND_USERNAME = true; // Add the title of the series and the username(s) (and pseud(s) if applicable) of the creator(s) with relevant links to each to the bookmark notes.
+let ADD_SERIES_URL_AND_USERNAME; // Add the title of the series and the username(s) (and pseud(s) if applicable) of the creator(s) with relevant links to each to the bookmark notes.
 //Highly recommended
-let ADD_WORK_COUNT_TAG = true; // Add the number of works in the series to the tags
-let ADD_EXACT_WORDCOUNT_TAG_SERIES = true; // Add a tag with the exact word count
-let ADD_CUSTOM_TAGS_SERIES = false; // Add set default tags to bookmarker tag list, default tags listed below
+let ADD_WORK_COUNT_TAG; // Add the number of works in the series to the tags
+let ADD_EXACT_WORDCOUNT_TAG_SERIES; // Add a tag with the exact word count
+let ADD_CUSTOM_TAGS_SERIES; // Add set default tags to bookmarker tag list, default tags listed below
 let CUSTOM_TAGS_SERIES = "TBR S, Example Tag S, Example Tag 2 S"; // List of the default tags the bookmark will be given, comma seperated.
-let ADD_CUSTOM_TAGS_FOR_WORKS = false; //Add the custom tags that are listed for work bookmarks to series bookmarks too
-let REC_DEFAULT_SERIES = false; // Autocheck the Rec checkbox to make the bookmark a rec on series bookmarks
-let PRIVATE_DEFAULT_SERIES = false; // Autocheck the Private checkbox to make the bookmark private on series bookmarks
+let ADD_CUSTOM_TAGS_FOR_WORKS; //Add the custom tags that are listed for work bookmarks to series bookmarks too
+let REC_DEFAULT_SERIES; // Autocheck the Rec checkbox to make the bookmark a rec on series bookmarks
+let PRIVATE_DEFAULT_SERIES; // Autocheck the Private checkbox to make the bookmark private on series bookmarks
 
 
 /*END SETTINGS*/
@@ -273,15 +273,48 @@ function isLoggedIn() {
     return !document.querySelector("#login");
 }
 
-console.log("loaded comments.js");
+console.log("loaded bookmarkNotes.js");
 
 function initializeExtension(settings) {
-    const COMMENT_TEMPLATES = settings["comment_templates"];
-    const EXTRA_COMMENT_BOXES = settings["extra_comment_boxes"];
+    BOOKMARK_NOTES_ENABLED = settings["bookmark_notes_enabled"];
+    NOTES_APPEND_TO_PREVIOUS = settings["notes_append_to_previous"];
+    ADD_URL_AND_USERNAME = settings["add_url_and_username"];
+    ADD_SUMMARY = settings["add_summary"];
+    REC_DEFAULT = settings["rec_default"];
+    PRIVATE_DEFAULT = settings["private_default"];
+    ADD_CATEGORIES = settings["add_categories"];
+    ADD_FANDOM_TAGS = settings["add_fandom_tags"];
+    ADD_CHARACTER_TAGS = settings["add_character_tags"];
+    ADD_RELATIONSHIP_TAGS = settings["add_relationship_tags"];
+    ADD_ADDITIONAL_TAGS = settings["add_additional_tags"];
+    ADD_RATING = settings["add_rating"];
+    ADD_ARCHIVE_WARNINGS = settings["add_archive_warnings"];
+    ADD_EXACT_WORDCOUNT_TAG = settings["add_exact_wordcount_tag"];
+    ADD_SERIES_URL_AND_USERNAME = settings["add_series_url_and_username"];
+    ADD_WORK_COUNT_TAG = settings["add_work_count_tag"];
+    ADD_EXACT_WORDCOUNT_TAG_SERIES = settings["add_exact_wordcount_tag_series"];
+    REC_DEFAULT_SERIES = settings["rec_default_series"];
+    PRIVATE_DEFAULT_SERIES = settings["private_default_series"];
 
-    console.log("COMMENT_TEMPLATES: " + COMMENT_TEMPLATES);
-    console.log("EXTRA_COMMENT_BOXES: " + EXTRA_COMMENT_BOXES);
-
+    console.log("BOOKMARK_NOTES_ENABLED" + BOOKMARK_NOTES_ENABLED);
+    console.log("NOTES_APPEND_TO_PREVIOUS" + NOTES_APPEND_TO_PREVIOUS);
+    console.log("ADD_URL_AND_USERNAME" + ADD_URL_AND_USERNAME);
+    console.log("ADD_SUMMARY" + ADD_SUMMARY);
+    console.log("REC_DEFAULT" + REC_DEFAULT);
+    console.log("PRIVATE_DEFAULT" + PRIVATE_DEFAULT);
+    console.log("ADD_CATEGORIES" + ADD_CATEGORIES);
+    console.log("ADD_FANDOM_TAGS" + ADD_FANDOM_TAGS);
+    console.log("ADD_CHARACTER_TAGS" + ADD_CHARACTER_TAGS);
+    console.log("ADD_RELATIONSHIP_TAGS" + ADD_RELATIONSHIP_TAGS);
+    console.log("ADD_ADDITIONAL_TAGS" + ADD_ADDITIONAL_TAGS);
+    console.log("ADD_RATING" + ADD_RATING);
+    console.log("ADD_ARCHIVE_WARNINGS" + ADD_ARCHIVE_WARNINGS);
+    console.log("ADD_EXACT_WORDCOUNT_TAG" + ADD_EXACT_WORDCOUNT_TAG);
+    console.log("ADD_SERIES_URL_AND_USERNAME" + ADD_SERIES_URL_AND_USERNAME);
+    console.log("ADD_WORK_COUNT_TAG" + ADD_WORK_COUNT_TAG);
+    console.log("ADD_EXACT_WORDCOUNT_TAG_SERIES" + ADD_EXACT_WORDCOUNT_TAG_SERIES);
+    console.log("REC_DEFAULT_SERIES" + REC_DEFAULT_SERIES);
+    console.log("PRIVATE_DEFAULT_SERIES: " + PRIVATE_DEFAULT_SERIES);
 
     if (isLoggedIn() && BOOKMARK_NOTES_ENABLED) {
         // has a problem with the variable name "url" (presumably something else is using it)
@@ -299,6 +332,26 @@ function onError(error) {
 }
 
 // Get both settings at once and initialise the extension
-browser.storage.sync.get(["comment_templates", "extra_comment_boxes"])
+browser.storage.sync.get([
+    "bookmark_notes_enabled",
+    "notes_append_to_previous",
+    "add_url_and_username",
+    "add_summary",
+    "rec_default",
+    "private_default",
+    "add_categories",
+    "add_fandom_tags",
+    "add_character_tags",
+    "add_relationship_tags",
+    "add_additional_tags",
+    "add_rating",
+    "add_archive_warnings",
+    "add_exact_wordcount_tag",
+    "add_series_url_and_username",
+    "add_work_count_tag",
+    "add_exact_wordcount_tag_series",
+    "rec_default_series",
+    "private_default_series"
+])
     .then(initializeExtension)
     .catch(onError);
