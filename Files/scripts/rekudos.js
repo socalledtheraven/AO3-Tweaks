@@ -75,6 +75,8 @@ function isLoggedIn() {
     return !document.querySelector("#login");
 }
 
+console.log("loaded")
+
 let REKUDOS_ACTIVE;
 let getting = browser.storage.sync.get("REKUDOS_ACTIVE");
 getting.then((r) => function () {
