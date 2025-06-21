@@ -203,15 +203,32 @@ async function getChapterUrls() {
     // sometimes works will have parameters like this
     let navigationUrl = window.location.href.split("?")[0] + "/navigate";
     let doc = await getDocument(navigationUrl);
+    let links = Array.from(doc.querySelector('ol[role="navigation"]').querySelectorAll("a"));
 
     // grabs all the things in that list and filters it down to just the urls, then format them appropriately
-    return Array.from(doc.querySelector('ol[role="navigation"]').querySelectorAll("a"));
+    return links.map(link => {
+        // Extract the chapter ID from URLs like "/works/62424268/chapters/159744247"
+        let href = link.getAttribute('href');
+        let chapterMatch = href.match(/chapters\/(\d+)/);
+
+        if (chapterMatch) {
+            let chapterId = chapterMatch[1];
+            return `https://archiveofourown.org/chapters/${chapterId}/comments`;
+        }
+
+        return href; // fallback in case the format is unexpected
+    });
 }
 
 async function getCommentBox(i, url) {
     const box = document.querySelector("#add_comment");
     let commentBox = box.cloneNode(true);
     let button = commentBox.querySelector('input[name="commit"]');
+    button.remove();
+    button = document.createElement("input");
+    button.type = "submit";
+    button.value = "Comment";
+    button.name = "commit";
     button.id = "comment_button_" + i;
 
     button.onclick = function () {
@@ -232,6 +249,9 @@ async function getCommentBox(i, url) {
                 }
         });
     }
+
+    let group = commentBox.querySelectorAll("ul li");
+    group[group.length-1].appendChild(button);
 
     return commentBox;
 }
