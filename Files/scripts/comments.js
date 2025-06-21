@@ -1,7 +1,3 @@
-// CONFIG
-const COMMENT_TEMPLATES = true;
-const EXTRA_COMMENT_BOXES = true;
-
 /* sourced from:
 https://keenmarvellover.tumblr.com/post/632111521465581568/how-to-trick-writers-into-giving-you-more-fanfic,
 https://www.reddit.com/r/AO3/comments/1ervacj/how_to_write_good_comments/,
@@ -194,11 +190,9 @@ async function fullTextCommentBoxes() {
         // we do this because the length will be updated when I'm dynamically inserting new ones
         let chaptersLength = chapterNodes.length;
         let chapterUrls = await getChapterUrls();
-        let commentBoxes = await getCommentBoxes(chapterUrls);
-        commentBoxes.reverse();
 
         for (let i = chaptersLength; i > 0; i--) {
-            let newCommentBox = commentBoxes[chaptersLength-i];
+            let newCommentBox = await getCommentBox(i, chapterUrls[i-1]);
 
             chapters.insertBefore(newCommentBox, chapterNodes[i]);
         }
@@ -208,43 +202,85 @@ async function fullTextCommentBoxes() {
 async function getChapterUrls() {
     // sometimes works will have parameters like this
     let navigationUrl = window.location.href.split("?")[0] + "/navigate";
-    let navPageHTML = await getHTML(navigationUrl);
-
-    // this is standard parsing
-    let parser = new DOMParser();
-    let doc = parser.parseFromString(navPageHTML, "text/html");
+    let doc = await getDocument(navigationUrl);
 
     // grabs all the things in that list and filters it down to just the urls, then format them appropriately
     return Array.from(doc.querySelector('ol[role="navigation"]').querySelectorAll("a"));
 }
 
-async function getCommentBoxes(urls) {
-    let commentBoxes = [];
-    for (let url of urls) {
-        let navPageHTML = await getHTML(url);
+async function getCommentBox(i, url) {
+    const box = document.querySelector("#add_comment");
+    let commentBox = box.cloneNode(true);
+    let button = commentBox.querySelector('input[name="commit"]');
+    button.id = "comment_button_" + i;
 
-        // this is standard parsing
-        let parser = new DOMParser();
-        let doc = parser.parseFromString(navPageHTML, "text/html");
+    button.onclick = function () {
+        let token = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+        let pseudID = document.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
 
-        let box = doc.querySelector("#add_comment");
-        commentBoxes.push(box);
-
-        await sleep(0.5);
+        post(url, {
+                "authenticity_token": token,
+                "comment[pseud_id]": pseudID,
+                "comment[comment_content]": commentBox.querySelector("textarea").value,
+                "controller_name": "chapters",
+                "commit": "Comment"
+            }).then((r) => {
+                if (r.ok) {
+                    button.textContent = "Commented!";
+                } else {
+                    button.textContent = "Comment failed";
+                }
+        });
     }
 
-    return commentBoxes;
+    return commentBox;
 }
 
-async function getHTML(url) {
+async function getDocument(url) {
+    // gets the HTML and document object of a url
     let response = await fetch(url);
-    return await response.text();
+
+    let navPageHTML = await response.text();
+
+    // this is standard parsing
+    let parser = new DOMParser();
+    return parser.parseFromString(navPageHTML, "text/html");
 }
 
-function sleep(ms) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms*1000);
+function post(url, data) {
+    // a POST request with the associated headers
+    return fetch(url, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+            "Connection": "keep-alive",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Host": "archiveofourown.org",
+            "Origin": "https://archiveofourown.org",
+            "Priority": "u=0, i",
+            "Referer": url,
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-User": "?1",
+            "Upgrade-Insecure-Requests": "1",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
+        },
+        body: stringify(data)
     });
+}
+
+function stringify(json) {
+    // turns a JSON document into a single URL-encoded string for sending in POST requests
+    let s = "";
+    for (const [key, value] of Object.entries(json)) {
+        s += encodeURIComponent(key) + "=" + encodeURIComponent(value) + "&";
+    }
+
+    // remove the final "&" because it gets unnecessarily added
+    return s.substring(0, s.length-1)
 }
 
 // Code for comment templates begins
@@ -323,7 +359,7 @@ function autofillComment(parentContainer, templates) {
 
 function isLoggedIn() {
     // when used in an if, this will check for the existence of the element
-    // it's basically being casted to bool
+    // it's basically being cast to bool
     return !document.querySelector("#login");
 }
 
