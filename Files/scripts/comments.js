@@ -223,11 +223,10 @@ async function getChapterUrls() {
 async function getCommentBox(i, url) {
     const box = document.querySelector("#add_comment");
     let commentBox = box.cloneNode(true);
+	commentBox.id = "add_comment_" + i;
     let button = commentBox.querySelector('input[name="commit"]');
-    let newButton = document.createElement("input");
-    newButton.type = "submit";
-    newButton.value = "Comment";
-    newButton.name = "commit";
+    let newButton = document.createElement("a");
+    newButton.textContent = "Comment";
     newButton.id = "comment_button_" + i;
 
     newButton.onclick = function () {
