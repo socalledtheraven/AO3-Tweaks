@@ -250,8 +250,8 @@ async function getCommentBox(i, url) {
         });
     }
 
-    let group = commentBox.querySelectorAll("ul li");
-    group[group.length-1].appendChild(button);
+    let group = commentBox.querySelector("p.submit.actions");
+    group.appendChild(button);
 
     return commentBox;
 }
