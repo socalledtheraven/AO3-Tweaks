@@ -224,14 +224,13 @@ async function getCommentBox(i, url) {
     const box = document.querySelector("#add_comment");
     let commentBox = box.cloneNode(true);
     let button = commentBox.querySelector('input[name="commit"]');
-    button.remove();
-    button = document.createElement("input");
-    button.type = "submit";
-    button.value = "Comment";
-    button.name = "commit";
-    button.id = "comment_button_" + i;
+    let newButton = document.createElement("input");
+    newButton.type = "submit";
+    newButton.value = "Comment";
+    newButton.name = "commit";
+    newButton.id = "comment_button_" + i;
 
-    button.onclick = function () {
+    newButton.onclick = function () {
         let token = document.querySelector("meta[name='csrf-token']").getAttribute("content");
         let pseudID = document.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
 
@@ -243,17 +242,25 @@ async function getCommentBox(i, url) {
                 "commit": "Comment"
             }).then((r) => {
                 if (r.ok) {
-                    button.textContent = "Commented!";
+                    newButton.textContent = "Commented!";
                 } else {
-                    button.textContent = "Comment failed";
+                    newButton.textContent = "Comment failed";
                 }
         });
     }
 
-    let group = commentBox.querySelector("p.submit.actions");
-    group.appendChild(button);
+    overrideButton(button, newButton);
 
     return commentBox;
+}
+
+function overrideButton(oldButton, newButton) {
+    if (oldButton) {
+        oldButton.insertAdjacentElement("beforebegin", newButton);
+
+        // hide it but allow it to be clicked
+        oldButton.style.display = 'none';
+    }
 }
 
 async function getDocument(url) {
