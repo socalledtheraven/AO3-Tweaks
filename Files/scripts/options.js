@@ -51,6 +51,8 @@ function saveOptions(e) {
 
 function restoreOptions() {
     function setCurrentChoice(result, id) {
+        console.log("result: " + result);
+        console.log("id: " + id);
         if (typeof result === "boolean") {
             console.log("setting id " + id + " to " + result);
             let elem = document.querySelector(id);
@@ -76,6 +78,7 @@ function restoreOptions() {
     }
 
     for (let [key, value] of Object.entries(booleanSettingMappings)) {
+        console.log("getting key " + key);
         browser.storage.sync.get(key).then(
             (result) => setCurrentChoice(result[key], value),
             (e) => {
