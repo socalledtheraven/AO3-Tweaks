@@ -1,15 +1,4 @@
-// CONFIG START
-
-let messages = Array(
-    "Extra Kudos <3",
-    "This is an extra kudos, since I've already left one. :)",
-    "I just wanted to leave another kudos <3",
-    "Update kudos!",
-    "Double kudos!"
-);
-// CONFIG END
-
-function postComment() {
+function postComment(messages) {
     let kudosMessage = document.querySelector("#kudos_message");
 
     // checks if a kudos has already been left
@@ -23,11 +12,11 @@ function postComment() {
     }
 }
 
-function editKudosButton(newKudosButton) {
+function editKudosButton(newKudosButton, messages) {
     // you have to edit the value of a different element, or it overwrites the whole form
     newKudosButton.textContent = "Rekudos?";
     newKudosButton.onclick = function () {
-        postComment();
+        postComment(messages);
         return false;
     };
 }
@@ -41,7 +30,7 @@ function overrideButton(oldButton, newButton) {
     }
 }
 
-function createNewKudos(AUTO) {
+function createNewKudos(AUTO, messages) {
     let containerLi = document.createElement("li");
     containerLi.style.listStyle = "none"
     containerLi.style.display = "inline"
@@ -57,9 +46,9 @@ function createNewKudos(AUTO) {
         oldKudosButton.click();
 
         if (AUTO) {
-            postComment();
+            postComment(messages);
         } else {
-            editKudosButton(newKudosButton);
+            editKudosButton(newKudosButton, messages);
         }
         return false;
     };
@@ -80,14 +69,16 @@ console.log("loaded rekudos.js")
 function initializeExtension(settings) {
     const REKUDOS_ACTIVE = settings["rekudos_enabled"];
     const REKUDOS_AUTO = settings["auto_rekudos_enabled"];
+    const messages = settings["rekudos_messages"];
 
     console.log("REKUDOS_ACTIVE: " + REKUDOS_ACTIVE);
     console.log("REKUDOS_AUTO: " + REKUDOS_AUTO);
+    console.log("messages: " + messages);
 
     if (isLoggedIn() && REKUDOS_ACTIVE) {
         // jump back to the kudos button
         let kudosButton = document.querySelector("#new_kudo");
-        let containerLi = createNewKudos(REKUDOS_AUTO);
+        let containerLi = createNewKudos(REKUDOS_AUTO, messages);
         console.log("containerLi: " + containerLi);
 
         overrideButton(kudosButton, containerLi);

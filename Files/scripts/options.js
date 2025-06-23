@@ -3,6 +3,7 @@
 const booleanSettingMappings = {
     rekudos_enabled: "#rekudos_enabled",
     auto_rekudos_enabled: "#auto_rekudos_enabled",
+    rekudos_messages: "#rekudos_messages",
     comment_templates: "#comment_templates",
     extra_comment_boxes: "#extra_comment_boxes",
     latest_chapter_autofill: "#latest_chapter_autofill",
@@ -36,8 +37,13 @@ function saveOptions(e) {
     e.preventDefault();
 	
     for (let [key, value] of Object.entries(booleanSettingMappings)) {
-        console.log("setting key " + key + " to " + document.querySelector(value).checked)
-        browser.storage.sync.set({[key]: document.querySelector(value).checked});
+        if (document.querySelector(value).type === "checkbox") {
+            console.log("setting key " + key + " to " + document.querySelector(value).checked)
+            browser.storage.sync.set({[key]: document.querySelector(value).checked});
+        } else if (document.querySelector(value).type === "textarea") {
+            console.log("setting key " + key + " to " + document.querySelector(value).textContent)
+            browser.storage.sync.set({[key]: document.querySelector(value).textContent});
+        }
     }
 	
 	console.log("saved");
@@ -45,9 +51,28 @@ function saveOptions(e) {
 
 function restoreOptions() {
     function setCurrentChoice(result, id) {
-        console.log(result);
-        console.log("setting id " + id + " to " + result);
-        document.querySelector(id).checked = result;
+        if (typeof result === "boolean") {
+            console.log("setting id " + id + " to " + result);
+            let elem = document.querySelector(id);
+            elem.checked = result;
+
+            if (elem.classList.contains("dom") && result) {
+                let checkboxes = elem.parentNode.parentNode.parentNode.querySelector("ul").querySelectorAll(".sub");
+                for (let i = 0; i < checkboxes.length; i++) {
+                    checkboxes[i].disabled = false;
+                }
+
+                elem.onclick = function () {
+                    for (let i = 0; i < checkboxes.length; i++) {
+                        checkboxes[i].disabled = !this.checked;
+                    }
+                }
+            }
+        } else if (typeof result === "string") {
+            console.log("setting id " + id + " to " + result);
+            let elem = document.querySelector(id);
+            elem.textContent = result;
+        }
     }
 
     for (let [key, value] of Object.entries(booleanSettingMappings)) {
@@ -63,24 +88,3 @@ function restoreOptions() {
 console.log("loaded options.js")
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
-
-
-let checkalls = document.querySelectorAll(".dom");
-
-for (let checkall of checkalls) {
-    let checkboxes = checkall.parentNode.parentNode.parentNode.querySelector("ul").querySelectorAll(".sub");
-    checkall.onclick = function () {
-        for (let i = 0; i < checkboxes.length; i++) {
-            checkboxes[i].disabled = !this.checked;
-        }
-    }
-
-    console.log(checkall);
-    console.log(checkall.checked);
-    if (checkall.checked) {
-        console.log("checkall is checked, enabling all checkboxes")
-        for (let i = 0; i < checkboxes.length; i++) {
-            checkboxes[i].disabled = false;
-        }
-    }
-}
