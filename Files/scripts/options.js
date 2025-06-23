@@ -52,11 +52,13 @@ function saveOptions(e) {
 function restoreOptions() {
     function setCurrentChoice(result, id) {
         let elem = document.querySelector(id);
+        console.log(elem);
         if (elem.tagName === "CHECKBOX") {
             console.log("setting id " + id + " to " + result);
             elem.checked = result;
 
             if (elem.classList.contains("dom") && result) {
+                console.log("subing list")
                 let checkboxes = elem.parentNode.parentNode.parentNode.querySelector("ul").querySelectorAll(".sub");
                 for (let i = 0; i < checkboxes.length; i++) {
                     checkboxes[i].disabled = false;
