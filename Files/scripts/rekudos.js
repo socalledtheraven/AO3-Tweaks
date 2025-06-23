@@ -6,8 +6,12 @@ function postComment(messages) {
         let random = Math.floor(Math.random() * messages.length);
         let commentBox = document.querySelector(".comment_form");
         let commentButton = document.querySelector("input[value='Comment']");
-
-        commentBox.value = messages[random];
+		
+		if (messages.length == 1) {
+			commentBox.value = messages;
+		} else {
+			commentBox.value = messages[random];
+		}
         commentButton.click();
     }
 }
@@ -69,7 +73,7 @@ console.log("loaded rekudos.js")
 function initializeExtension(settings) {
     const REKUDOS_ACTIVE = settings["rekudos_enabled"];
     const REKUDOS_AUTO = settings["auto_rekudos_enabled"];
-    const messages = settings["rekudos_messages"];
+    const messages = settings["rekudos_messages"].split("\n");
 
     console.log("REKUDOS_ACTIVE: " + REKUDOS_ACTIVE);
     console.log("REKUDOS_AUTO: " + REKUDOS_AUTO);
@@ -90,6 +94,6 @@ function onError(error) {
 }
 
 // Get both settings at once and initialise the extension
-browser.storage.sync.get(["rekudos_enabled", "auto_rekudos_enabled"])
+browser.storage.sync.get(["rekudos_enabled", "auto_rekudos_enabled", "rekudos_messages"])
     .then(initializeExtension)
     .catch(onError);
