@@ -91,3 +91,17 @@ function restoreOptions() {
 console.log("loaded options.js")
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
+
+
+for (let value of Object.values(booleanSettingMappings)) {
+    let elem = document.querySelector(value);
+    if (elem.classList.contains("dom")) {
+        let checkboxes = elem.parentNode.parentNode.parentNode.querySelector("ul").querySelectorAll(".sub");
+
+        elem.onclick = function () {
+            for (let i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].disabled = !this.checked;
+            }
+        }
+    }
+}
