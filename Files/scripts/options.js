@@ -51,11 +51,9 @@ function saveOptions(e) {
 
 function restoreOptions() {
     function setCurrentChoice(result, id) {
-        console.log("result: " + result);
-        console.log("id: " + id);
-        if (typeof result === "boolean") {
+        let elem = document.querySelector(id);
+        if (elem.tagName === "CHECKBOX") {
             console.log("setting id " + id + " to " + result);
-            let elem = document.querySelector(id);
             elem.checked = result;
 
             if (elem.classList.contains("dom") && result) {
@@ -70,9 +68,8 @@ function restoreOptions() {
                     }
                 }
             }
-        } else if (typeof result === "string") {
+        } else if (elem.tagName === "TEXTAREA") {
             console.log("setting id " + id + " to " + result);
-            let elem = document.querySelector(id);
             elem.textContent = result;
         }
     }
