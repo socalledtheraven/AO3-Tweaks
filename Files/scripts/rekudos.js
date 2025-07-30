@@ -1,26 +1,71 @@
-function postComment(messages) {
+function postComment(messages, button) {
     let kudosMessage = document.querySelector("#kudos_message");
 
     // checks if a kudos has already been left
     if (kudosMessage.textContent.includes("already")) {
-        let random = Math.floor(Math.random() * messages.length);
-        let commentBox = document.querySelector(".comment_form");
-        let commentButton = document.querySelector("input[value='Comment']");
-		
-		if (messages.length === 1) {
-			commentBox.value = messages;
-		} else {
-			commentBox.value = messages[random];
-		}
-        commentButton.click();
+        let comment;
+
+        if (messages.length === 1) {
+            comment = messages;
+        } else {
+            let random = Math.floor(Math.random() * messages.length);
+            comment = messages[random];
+        }
+
+        sendComment(comment, button);
     }
+}
+
+function sendComment(comment, button) {
+    let url = window.location.href + "/comments";
+    let token = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+    let pseudID = document.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
+
+    post(url, {
+        "authenticity_token": token,
+        "comment[pseud_id]": pseudID,
+        "comment[comment_content]": comment,
+        "controller_name": "chapters",
+        "commit": "Comment"
+    }).then((r) => {
+        if (r.ok) {
+            button.textContent = "Left extra kudos!";
+        } else {
+            button.textContent = "Rekudos failed, try again later.";
+        }
+    });
+}
+
+function post(url, data) {
+    // a POST request with the associated headers
+    return fetch(url, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+            "Connection": "keep-alive",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Host": "archiveofourown.org",
+            "Origin": "https://archiveofourown.org",
+            "Priority": "u=0, i",
+            "Referer": url,
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-User": "?1",
+            "Upgrade-Insecure-Requests": "1",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
+        },
+        body: stringify(data)
+    });
 }
 
 function editKudosButton(newKudosButton, messages) {
     // you have to edit the value of a different element, or it overwrites the whole form
     newKudosButton.textContent = "Rekudos?";
     newKudosButton.onclick = function () {
-        postComment(messages);
+        postComment(messages, newKudosButton);
         return false;
     };
 }
@@ -50,7 +95,7 @@ function createNewKudos(AUTO, messages) {
         oldKudosButton.click();
 
         if (AUTO) {
-            postComment(messages);
+            postComment(messages, oldKudosButton);
         } else {
             editKudosButton(newKudosButton, messages);
         }
