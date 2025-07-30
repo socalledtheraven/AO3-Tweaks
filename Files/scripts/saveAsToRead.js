@@ -1,5 +1,6 @@
 // CONFIG
-const PRIVATE_FANDOMS = [""];
+let ENABLE_PRIVATE_FANDOMS;
+let PRIVATE_FANDOMS;
 let SAVE_AS_TO_READ_ENABLED;
 let UNSUB_FROM_WORKS;
 let REPLACE_MARK_FOR_LATER;
@@ -247,14 +248,17 @@ function createExternalToReadButton(i, url, series, priv) {
     // creates a new button
     const toReadButton = document.createElement("li");
     const child = document.createElement("a");
+    const workID = url.split("/")[4];
+    console.log(workID)
+
     if (priv) {
-        toReadButton.id = "priv_to_read_" + i;
+        toReadButton.id = "priv_to_read_" + workID;
         child.text = 'Save privately as "To Read"'
-        child.href = "#priv_to_read_" + i;
+        child.href = "#priv_to_read_" + workID;
     } else {
-        toReadButton.id = "to_read_" + i;
+        toReadButton.id = "to_read_" + workID;
         child.text = 'Save as "To Read"'
-        child.href = "#to_read_" + i;
+        child.href = "#to_read_" + workID;
     }
 
     child.onclick = async function () {
@@ -451,7 +455,7 @@ function getWorkData(doc) {
     const fandomTags = fandoms[1].getElementsByClassName("tag");
     const isPrivateFandom = isInArray(fandomTags);
     const privateBox = doc.getElementById("bookmark_private");
-    const isPrivate = isPrivateFandom || privateBox.checked;
+    const isPrivate = (isPrivateFandom && ENABLE_PRIVATE_FANDOMS) || privateBox.checked;
 
     const bookmarkNotes = doc.getElementById("bookmark_notes").value;
 
@@ -567,6 +571,8 @@ function initializeExtension(settings) {
     UNSUB_FROM_WORKS = settings["unsub_from_works"];
     REPLACE_MARK_FOR_LATER = settings["replace_mark_for_later"];
     ADD_PRIV_SAVE_AS = settings["add_priv_save_as"];
+    ENABLE_PRIVATE_FANDOMS = settings["enable_private_fandoms"];
+    PRIVATE_FANDOMS = settings["private_fandoms"];
     CREATE_MARK_AS_READ_BUTTON = settings["create_mark_as_read_button"];
 
     console.log("SAVE_AS_TO_READ_ENABLED: " + SAVE_AS_TO_READ_ENABLED);
@@ -610,6 +616,12 @@ function onError(error) {
 }
 
 // Get both settings at once and initialise the extension
-browser.storage.sync.get(["save_as_to_read_enabled", "unsub_from_works", "replace_mark_for_later", "add_priv_save_as", "create_mark_as_read_button"])
-    .then(initializeExtension)
+browser.storage.sync.get([
+        "save_as_to_read_enabled",
+        "unsub_from_works",
+        "add_priv_save_as",
+        "enable_private_fandoms",
+        "private_fandoms",
+        "create_mark_as_read_button"
+    ]).then(initializeExtension)
     .catch(onError);

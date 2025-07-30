@@ -7,7 +7,7 @@ function postComment(messages) {
         let commentBox = document.querySelector(".comment_form");
         let commentButton = document.querySelector("input[value='Comment']");
 		
-		if (messages.length == 1) {
+		if (messages.length === 1) {
 			commentBox.value = messages;
 		} else {
 			commentBox.value = messages[random];

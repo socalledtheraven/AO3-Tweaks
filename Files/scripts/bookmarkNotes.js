@@ -295,6 +295,8 @@ function initializeExtension(settings) {
     ADD_EXACT_WORDCOUNT_TAG_SERIES = settings["add_exact_wordcount_tag_series"];
     REC_DEFAULT_SERIES = settings["rec_default_series"];
     PRIVATE_DEFAULT_SERIES = settings["private_default_series"];
+    ADD_CUSTOM_TAGS = settings["add_custom_tags"];
+    CUSTOM_TAGS = settings["custom_tags"];
 
     console.log("BOOKMARK_NOTES_ENABLED" + BOOKMARK_NOTES_ENABLED);
     console.log("NOTES_APPEND_TO_PREVIOUS" + NOTES_APPEND_TO_PREVIOUS);
@@ -351,7 +353,9 @@ browser.storage.sync.get([
     "add_work_count_tag",
     "add_exact_wordcount_tag_series",
     "rec_default_series",
-    "private_default_series"
+    "private_default_series",
+    "add_custom_tags",
+    "custom_tags"
 ])
     .then(initializeExtension)
     .catch(onError);

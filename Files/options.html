@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="width=device-width, initial-scale=1.0">
         <title>AO3 Tweaks Options</title>
         <style>
             body {
@@ -13,6 +13,22 @@
                 border-color: #222;
                 outline: #111;
                 box-shadow: none;
+                overflow: hidden;
+            }
+
+            .flash-notice {
+                border: 1px solid #222;
+                margin: 0.643em auto;
+                padding: 0.25em 0.375em;
+                clear: right;
+                border-radius: 0.25em;
+                word-wrap: break-word;
+                text-align: center;
+            }
+
+            a {
+                color: #eee;
+                font-size: 13px;
             }
 
             p, .for-text {
@@ -112,13 +128,13 @@
                 <legend>Rekudos</legend>
                 <div class="checkbox-container">
                     <div class="checkbox-label-row">
-                        <input type="checkbox" value="1" name="preference[rekudos_enabled]" id="rekudos_enabled" class="dom">
+                        <input type="checkbox" value="1" id="rekudos_enabled" class="dom">
                         <label for="rekudos_enabled">Enable rekudos (re-kudos) feature</label>
                     </div>
                     <p>Adds the option to automatically comment with a variety of supportive messages after you have left kudos the first time.</p>
                     <label for="rekudos_messages" class="for-text">These messages will appear:</label>
                     <br>
-                    <textarea name="preference[rekudos_messages]" id="rekudos_messages" cols="50" rows="15">
+                    <textarea id="rekudos_messages" cols="50" rows="15">
 Extra Kudos <3
 This is an extra kudos, since I've already left one. :)
 I just wanted to leave another kudos <3
@@ -128,7 +144,7 @@ Double kudos!</textarea>
                 <ul>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[auto_rekudos_enabled]" id="auto_rekudos_enabled">
+                            <input type="checkbox" disabled class="sub" value="1" id="auto_rekudos_enabled">
                             <label for="auto_rekudos_enabled">Enable automatic rekudos commenting</label>
                         </div>
                         <p>Automatically comments when you click the kudos button after having already left kudos.</p>
@@ -140,13 +156,20 @@ Double kudos!</textarea>
                 <legend>Comments</legend>
                 <div class="checkbox-container">
                     <div class="checkbox-label-row">
-                        <input type="checkbox" value="1" name="preference[comment_templates]" id="comment_templates">
+                        <input type="checkbox" value="1" id="comment_templates">
                         <label for="comment_templates">Enable comment templates</label>
                     </div>
                     <p>Adds a button that shows various templates for things to comment about, and prewritten gushing comments, if you aren't sure what to say.</p>
+                    <p>These were sourced from: </p>
+                    <ul>
+                        <li><a href="https://keenmarvellover.tumblr.com/post/632111521465581568/how-to-trick-writers-into-giving-you-more-fanfic">https://keenmarvellover.tumblr.com/post/632111521465581568/how-to-trick-writers-into-giving-you-more-fanfic</a></li>
+                        <li><a href="https://www.reddit.com/r/AO3/comments/1ervacj/how_to_write_good_comments/">https://www.reddit.com/r/AO3/comments/1ervacj/how_to_write_good_comments/</a></li>
+                        <li><a href="https://dawnfelagund.tumblr.com/post/170618220828/101-comment-starters">https://dawnfelagund.tumblr.com/post/170618220828/101-comment-starters</a></li>
+                        <li><a href="https://keenmarvellover.tumblr.com/post/638597844666925056/levynite-phantoms-lair-joanielspeak">https://keenmarvellover.tumblr.com/post/638597844666925056/levynite-phantoms-lair-joanielspeak</a></li>
+                    </ul>
                     <label for="template_comments" class="for-text">These templates will appear:</label>
                     <br>
-                    <textarea name="preference[template_comments]" id="template_comments" cols="50" rows="15">
+                    <textarea id="template_comments" cols="50" rows="15">
 [lavish praise]
 [inside fandom joke]
 [quote fave part] [fill in keysmash]
@@ -253,7 +276,7 @@ The [emotion] in this story really resonated with me because […]
 [Plot point/Character] felt realistic to me because of my experience with […]</textarea>
                     <label for="prewritten_comments" class="for-text">These prewritten comments will appear:</label>
                     <br>
-                    <textarea name="preference[prewritten_comments]" id="prewritten_comments" cols="50" rows="15">
+                    <textarea id="prewritten_comments" cols="50" rows="15">
 I love you
 *assorted keysmashing*
 h OW DA RE
@@ -322,10 +345,10 @@ This fish is delicious</textarea>
                 </div>
                 <div class="checkbox-container">
                     <div class="checkbox-label-row">
-                        <input type="checkbox" value="1" name="preference[extra_comment_boxes]" id="extra_comment_boxes">
+                        <input type="checkbox" value="1" id="extra_comment_boxes">
                         <label for="extra_comment_boxes">Enable extra comment boxes between chapters</label>
                     </div>
-                    <p>Adds additional comment boxes inbetween chapters, so you don't forget what you wanted to talk about when viewing a fic in fulltext.</p>
+                    <p>Adds additional comment boxes between chapters, so you don't forget what you wanted to talk about when viewing a fic in fulltext.</p>
                 </div>
             </fieldset>
 
@@ -333,10 +356,10 @@ This fish is delicious</textarea>
                 <legend>Latest Chapter</legend>
                 <div class="checkbox-container">
                     <div class="checkbox-label-row">
-                        <input type="checkbox" value="1" name="preference[latest_chapter_autofill]" id="latest_chapter_autofill">
+                        <input type="checkbox" value="1" id="latest_chapter_autofill">
                         <label for="latest_chapter_autofill">Enable latest chapter buttons</label>
                     </div>
-                    <p>Adds a button on your bookmarks page, when sorted by Date Updated, which takes you to the most recent chapter published, so you can just read what's new.</p>
+                    <p>Adds a button on your bookmarks page, when sorted by Date Updated, which takes you to the most recent chapter published, so you can read only what's new.</p>
                 </div>
             </fieldset>
 
@@ -344,7 +367,7 @@ This fish is delicious</textarea>
                 <legend>To Read</legend>
                 <div class="checkbox-container">
                     <div class="checkbox-label-row">
-                        <input type="checkbox" value="1" name="preference[save_as_to_read_enabled]" id="save_as_to_read_enabled" class="dom">
+                        <input type="checkbox" value="1" id="save_as_to_read_enabled" class="dom">
                         <label for="save_as_to_read_enabled">Enable the Save as "To Read" feature</label>
                     </div>
                     <p>Adds a button, both to a work's page and the page of a search or filter, that automatically saves that work as a bookmark with the tag "To Read", which can then be looked through with the "Bookmarker's Tags" option at your leisure. Enjoy having much fewer tabs open!</p>
@@ -352,38 +375,38 @@ This fish is delicious</textarea>
                 <ul>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[unsub_from_works]" id="unsub_from_works">
+                            <input type="checkbox" disabled class="sub" value="1" id="unsub_from_works">
                             <label for="unsub_from_works">Automatically unsubscribe</label>
                         </div>
                         <p>Automatically unsubscribes from a saved work, for if you're transferring over from saving works with subscriptions.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[replace_mark_for_later]" id="replace_mark_for_later">
+                            <input type="checkbox" disabled class="sub" value="1" id="replace_mark_for_later">
                             <label for="replace_mark_for_later">Replace Mark for Later</label>
                         </div>
                         <p>Removes the native mark for later buttons, which are superfluous with this addon.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[add_priv_save_as]" id="add_priv_save_as">
+                            <input type="checkbox" disabled class="sub" value="1" id="add_priv_save_as">
                             <label for="add_priv_save_as">Add private saving</label>
                         </div>
                         <p>Adds a "Save privately" button, which creates a private bookmark instead, for the works you'd prefer others be unaware you're considering.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[except_private_fandoms]" id="except_private_fandoms">
-                            <label for="except_private_fandoms">Automatic private saving</label>
+                            <input type="checkbox" disabled class="sub" value="1" id="enable_private_fandoms">
+                            <label for="enable_private_fandoms">Automatic private saving</label>
                         </div>
                         <p>When saving works from a particularly scandalous fandom, automatically saves them privately.</p>
                         <label for="private_fandoms" class="for-text">These fandoms will be private:</label>
                         <br>
-                        <textarea name="preference[private_fandoms]" id="private_fandoms" cols="50" rows="15"></textarea>
+                        <textarea id="private_fandoms" cols="50" rows="15"></textarea>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[create_mark_as_read_button]" id="create_mark_as_read_button">
+                            <input type="checkbox" disabled class="sub" value="1" id="create_mark_as_read_button">
                             <label for="create_mark_as_read_button">Create Mark as Read button</label>
                         </div>
                         <p>Adds a "Mark as Read" button, which removes the "To Read" tag from the work and leaves it as an ordinary bookmark.</p>
@@ -395,7 +418,7 @@ This fish is delicious</textarea>
                 <legend>Bookmark Notes</legend>
                 <div class="checkbox-container">
                     <div class="checkbox-label-row">
-                        <input type="checkbox" value="1" name="preference[bookmark_notes_enabled]" id="bookmark_notes_enabled" class="dom">
+                        <input type="checkbox" value="1" id="bookmark_notes_enabled" class="dom">
                         <label for="bookmark_notes_enabled">Enable the Bookmark Notes feature</label>
                     </div>
                     <p>Adds the details of each work to the bookmark's notes. Useful for if a work is deleted after the fact.</p>
@@ -403,91 +426,101 @@ This fish is delicious</textarea>
                 <ul>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[notes_append_to_previous]" id="notes_append_to_previous">
+                            <input type="checkbox" disabled checked class="sub" value="1" id="notes_append_to_previous">
                             <label for="notes_append_to_previous">Add Previous Notes</label>
                         </div>
                         <p>Carries over your existing notes when updating bookmarks.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[add_url_and_username]" id="add_url_and_username">
+                            <input type="checkbox" disabled class="sub" value="1" id="add_url_and_username">
                             <label for="add_url_and_username">Add url and username</label>
                         </div>
                         <p>Add the title of the work and the username (and pseud if applicable) of the creator, with relevant links to each, to the bookmark notes. Highly recommended, as bookmark notes are not deleted when a work is deleted, and finding a lost work is easier with the title, username, and url.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[add_summary]" id="add_summary">
+                            <input type="checkbox" disabled class="sub" value="1" id="add_summary">
                             <label for="add_summary">Add summary</label>
                         </div>
                         <p>Adds the summary of the work to the notes.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[rec_default]" id="rec_default">
+                            <input type="checkbox" disabled class="sub" value="1" id="rec_default">
                             <label for="rec_default">Recommend by default</label>
                         </div>
                         <p>Autocheck the Rec checkbox to make the bookmark a rec.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[private_default]" id="private_default">
+                            <input type="checkbox" disabled class="sub" value="1" id="private_default">
                             <label for="private_default">Private by default</label>
                         </div>
                         <p>Autocheck the Private checkbox to make the bookmark private.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[add_categories]" id="add_categories">
+                            <input type="checkbox" disabled class="sub" value="1" id="add_categories">
                             <label for="add_categories">Add relationship categories</label>
                         </div>
                         <p>Add a copy of the relationship categories to the bookmarker tag list.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[add_fandom_tags]" id="add_fandom_tags">
+                            <input type="checkbox" disabled class="sub" value="1" id="add_fandom_tags">
                             <label for="add_fandom_tags">Add fandom tags</label>
                         </div>
                         <p>Add a copy of the fandom tags to the bookmarker tag list.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[add_character_tags]" id="add_character_tags">
+                            <input type="checkbox" disabled class="sub" value="1" id="add_character_tags">
                             <label for="add_character_tags">Add character tags</label>
                         </div>
                         <p>Add a copy of the character tags to the bookmarker tag list.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[add_relationship_tags]" id="add_relationship_tags">
+                            <input type="checkbox" disabled class="sub" value="1" id="add_relationship_tags">
                             <label for="add_relationship_tags">Add relationship tags</label>
                         </div>
                         <p>Add a copy of the relationship tags to the bookmarker tag list.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[add_additional_tags]" id="add_additional_tags">
+                            <input type="checkbox" disabled class="sub" value="1" id="add_additional_tags">
                             <label for="add_additional_tags">Add additional tags</label>
                         </div>
                         <p>Add a copy of the additional/freeform tags to the bookmarker tag list.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[add_rating]" id="add_rating">
+                            <input type="checkbox" disabled class="sub" value="1" id="add_rating">
                             <label for="add_rating">Add rating</label>
                         </div>
                         <p>Add a copy of the rating (with "Rating: " before it) to the bookmarker tag list.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[add_archive_warnings]" id="add_archive_warnings">
+                            <input type="checkbox" disabled class="sub" value="1" id="add_archive_warnings">
                             <label for="add_archive_warnings">Add archive warnings</label>
                         </div>
                         <p>Add a copy of the archive warnings to the bookmarker tag list.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[add_exact_wordcount_tag]" id="add_exact_wordcount_tag">
+                            <input type="checkbox" disabled class="sub" value="1" id="add_custom_tags">
+                            <label for="add_custom_tags">Add custom tags</label>
+                        </div>
+                        <p>Add pre-specified tags to any bookmarks saved this way.</p>
+                        <label for="custom_tags" class="for-text">These messages will appear:</label>
+                        <br>
+                        <textarea id="custom_tags" cols="50" rows="15"></textarea>
+                    </li>
+                    <li>
+                        <div class="checkbox-label-row">
+                            <input type="checkbox" disabled class="sub" value="1" id="add_exact_wordcount_tag">
                             <label for="add_exact_wordcount_tag">Add word count</label>
                         </div>
                         <p>Add a tag with the exact word count.</p>
@@ -496,7 +529,7 @@ This fish is delicious</textarea>
 
                 <div class="checkbox-container">
                     <div class="checkbox-label-row">
-                        <input type="checkbox" value="1" name="preference[series_notes_enabled]" id="series_notes_enabled" class="dom">
+                        <input type="checkbox" value="1" id="series_notes_enabled" class="dom">
                         <label for="series_notes_enabled">Enable the Series Notes feature</label>
                     </div>
                     <p>Adds the details of each series to the bookmark's notes. Useful for if a series is deleted after the fact.</p>
@@ -504,35 +537,35 @@ This fish is delicious</textarea>
                 <ul>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[add_series_url_and_username]" id="add_series_url_and_username">
+                            <input type="checkbox" disabled class="sub" value="1" id="add_series_url_and_username">
                             <label for="add_series_url_and_username">Add title and author</label>
                         </div>
                         <p>Add the title of the series and the username(s) (and pseud(s) if applicable) of the creator(s) with relevant links to each to the bookmark notes.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[add_work_count_tag]" id="add_work_count_tag">
+                            <input type="checkbox" disabled class="sub" value="1" id="add_work_count_tag">
                             <label for="add_work_count_tag">Add number of works</label>
                         </div>
                         <p>Add the number of works in the series to the tags.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[add_exact_wordcount_tag_series]" id="add_exact_wordcount_tag_series">
+                            <input type="checkbox" disabled class="sub" value="1" id="add_exact_wordcount_tag_series">
                             <label for="add_exact_wordcount_tag_series">Add word count</label>
                         </div>
                         <p>Add a tag with the exact word count.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[rec_default_series]" id="rec_default_series">
+                            <input type="checkbox" disabled class="sub" value="1" id="rec_default_series">
                             <label for="rec_default_series">Recommend by default</label>
                         </div>
                         <p>Autocheck the Rec checkbox to make the bookmark a rec on series bookmarks.</p>
                     </li>
                     <li>
                         <div class="checkbox-label-row">
-                            <input type="checkbox" disabled class="sub" value="1" name="preference[private_default_series]" id="private_default_series">
+                            <input type="checkbox" disabled class="sub" value="1" id="private_default_series">
                             <label for="private_default_series">Private by default</label>
                         </div>
                         <p>Autocheck the Private checkbox to make the bookmark private on series bookmarks.</p>
@@ -541,6 +574,7 @@ This fish is delicious</textarea>
             </fieldset>
 
             <button type="submit" class="save-button">Save Options</button>
+            <div class="flash-notice" hidden>Saved!</div>
         </form>
         <!-- <script type="application/javascript" src="../node_modules/webextension-polyfill/dist/browser-polyfill.js"></script> -->
         <script src="scripts/options.js"></script>

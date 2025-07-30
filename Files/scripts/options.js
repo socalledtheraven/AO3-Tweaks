@@ -5,12 +5,16 @@ const booleanSettingMappings = {
     auto_rekudos_enabled: "#auto_rekudos_enabled",
     rekudos_messages: "#rekudos_messages",
     comment_templates: "#comment_templates",
+    template_comments: "#template_comments",
+    prewritten_comments: "#prewritten_comments",
     extra_comment_boxes: "#extra_comment_boxes",
     latest_chapter_autofill: "#latest_chapter_autofill",
     save_as_to_read_enabled: "#save_as_to_read_enabled",
     unsub_from_works: "#unsub_from_works",
     replace_mark_for_later: "#replace_mark_for_later",
     add_priv_save_as: "#add_priv_save_as",
+    enable_private_fandoms: "#enable_private_fandoms",
+    private_fandoms: "#private_fandoms",
     create_mark_as_read_button: "#create_mark_as_read_button",
     bookmark_notes_enabled: "#bookmark_notes_enabled",
     notes_append_to_previous: "#notes_append_to_previous",
@@ -25,6 +29,8 @@ const booleanSettingMappings = {
     add_additional_tags: "#add_additional_tags",
     add_rating: "#add_rating",
     add_archive_warnings: "#add_archive_warnings",
+    add_custom_tags: "#add_custom_tags",
+    custom_tags: "#custom_tags",
     add_exact_wordcount_tag: "#add_exact_wordcount_tag",
     add_series_url_and_username: "#add_series_url_and_username",
     add_work_count_tag: "#add_work_count_tag",
@@ -35,7 +41,7 @@ const booleanSettingMappings = {
 
 function saveOptions(e) {
     e.preventDefault();
-	
+
     for (let [key, value] of Object.entries(booleanSettingMappings)) {
         if (document.querySelector(value).type === "checkbox") {
             console.log("setting key " + key + " to " + document.querySelector(value).checked)
@@ -45,8 +51,13 @@ function saveOptions(e) {
             browser.storage.sync.set({[key]: document.querySelector(value).textContent});
         }
     }
-	
-	console.log("saved");
+
+    console.log("saved");
+
+    let notice = document.querySelector(".flash-notice");
+    notice.removeAttribute("hidden");
+    // notice.style.transform = "scale(1.05)";
+    // notice.style.transition = "transform 0.2s ease-in-out";
 }
 
 function restoreOptions() {
