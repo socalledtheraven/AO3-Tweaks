@@ -13,7 +13,6 @@
                 border-color: #222;
                 outline: #111;
                 box-shadow: none;
-                overflow: hidden;
             }
 
             .flash-notice {
@@ -24,6 +23,26 @@
                 border-radius: 0.25em;
                 word-wrap: break-word;
                 text-align: center;
+            }
+
+            .flash-notice.pulse-once {
+                /* The animation will run once and last for 0.5 seconds */
+                animation: pulse-effect 0.25s forwards;
+            }
+
+            @keyframes pulse-effect {
+                /* Start slightly smaller */
+                0% {
+                    transform: scale(1);
+                }
+                /* Scale up to create the pulse effect */
+                50% {
+                    transform: scale(1.2);
+                }
+                /* Return to the original size */
+                100% {
+                    transform: scale(1);
+                }
             }
 
             a {

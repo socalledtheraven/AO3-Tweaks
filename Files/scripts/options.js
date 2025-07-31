@@ -55,9 +55,14 @@ function saveOptions(e) {
     console.log("saved");
 
     let notice = document.querySelector(".flash-notice");
-    notice.removeAttribute("hidden");
-    // notice.style.transform = "scale(1.05)";
-    // notice.style.transition = "transform 0.2s ease-in-out";
+    notice.hidden = false;
+    notice.classList.add('pulse-once');
+
+    // Hide the notice after 1 second (1000 milliseconds)
+    setTimeout(() => {
+        // It's good practice to remove the class so it can be re-added on subsequent clicks
+        notice.classList.remove('pulse-once');
+    }, 1000);
 }
 
 function restoreOptions() {
