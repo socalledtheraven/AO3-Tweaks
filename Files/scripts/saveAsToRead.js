@@ -651,7 +651,6 @@ function initializeExtension(settings) {
                 console.log("not marked for later, adding save as to read buttons")
                 let buttons = createSaveButtonElements();
                 let saveAsToReadButton = buttons[0];
-                console.log(saveAsToReadButton)
 
                 let privSaveAsToReadButton;
                 if (ADD_PRIV_SAVE_AS) {

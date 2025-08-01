@@ -120,15 +120,10 @@ function initializeExtension(settings) {
     const REKUDOS_AUTO = settings["auto_rekudos_enabled"];
     const messages = settings["rekudos_messages"].split("\n");
 
-    console.log("REKUDOS_ACTIVE: " + REKUDOS_ACTIVE);
-    console.log("REKUDOS_AUTO: " + REKUDOS_AUTO);
-    console.log("messages: " + messages);
-
     if (isLoggedIn() && REKUDOS_ACTIVE) {
         // jump back to the kudos button
         let kudosButton = document.querySelector("#new_kudo");
         let containerLi = createNewKudos(REKUDOS_AUTO, messages);
-        console.log("containerLi: " + containerLi);
 
         overrideButton(kudosButton, containerLi);
     }

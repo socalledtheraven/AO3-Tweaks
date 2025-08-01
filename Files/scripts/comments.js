@@ -217,9 +217,6 @@ function initializeExtension(settings) {
     const TEMPLATE_COMMENTS = settings["template_comments"];
     const PREWRITTEN_COMMENTS = settings["prewritten_comments"];
 
-    console.log("COMMENT_TEMPLATES: " + COMMENT_TEMPLATES);
-    console.log("EXTRA_COMMENT_BOXES: " + EXTRA_COMMENT_BOXES);
-
     if (isLoggedIn()) {
         // full text comment boxes is async, so it needs to happen first, so we have to have an overly complicated if structure
         if (EXTRA_COMMENT_BOXES) {

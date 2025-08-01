@@ -298,26 +298,6 @@ function initializeExtension(settings) {
     ADD_CUSTOM_TAGS = settings["add_custom_tags"];
     CUSTOM_TAGS = settings["custom_tags"];
 
-    console.log("BOOKMARK_NOTES_ENABLED" + BOOKMARK_NOTES_ENABLED);
-    console.log("NOTES_APPEND_TO_PREVIOUS" + NOTES_APPEND_TO_PREVIOUS);
-    console.log("ADD_URL_AND_USERNAME" + ADD_URL_AND_USERNAME);
-    console.log("ADD_SUMMARY" + ADD_SUMMARY);
-    console.log("REC_DEFAULT" + REC_DEFAULT);
-    console.log("PRIVATE_DEFAULT" + PRIVATE_DEFAULT);
-    console.log("ADD_CATEGORIES" + ADD_CATEGORIES);
-    console.log("ADD_FANDOM_TAGS" + ADD_FANDOM_TAGS);
-    console.log("ADD_CHARACTER_TAGS" + ADD_CHARACTER_TAGS);
-    console.log("ADD_RELATIONSHIP_TAGS" + ADD_RELATIONSHIP_TAGS);
-    console.log("ADD_ADDITIONAL_TAGS" + ADD_ADDITIONAL_TAGS);
-    console.log("ADD_RATING" + ADD_RATING);
-    console.log("ADD_ARCHIVE_WARNINGS" + ADD_ARCHIVE_WARNINGS);
-    console.log("ADD_EXACT_WORDCOUNT_TAG" + ADD_EXACT_WORDCOUNT_TAG);
-    console.log("ADD_SERIES_URL_AND_USERNAME" + ADD_SERIES_URL_AND_USERNAME);
-    console.log("ADD_WORK_COUNT_TAG" + ADD_WORK_COUNT_TAG);
-    console.log("ADD_EXACT_WORDCOUNT_TAG_SERIES" + ADD_EXACT_WORDCOUNT_TAG_SERIES);
-    console.log("REC_DEFAULT_SERIES" + REC_DEFAULT_SERIES);
-    console.log("PRIVATE_DEFAULT_SERIES: " + PRIVATE_DEFAULT_SERIES);
-
     if (isLoggedIn() && BOOKMARK_NOTES_ENABLED) {
         // has a problem with the variable name "url" (presumably something else is using it)
         let uri = window.location.href;
