@@ -59,7 +59,7 @@ function isLoggedIn() {
 console.log("loaded latestChapter.js");
 
 function initializeExtension(settings) {
-	const LATEST_CHAPTER_AUTOFILL = settings["latest_chapter_autofill"];
+	const LATEST_CHAPTER_AUTOFILL = settings["latest_chapter_autofill"] || true;
 
 	console.log("LATEST_CHAPTER_AUTOFILL: " + LATEST_CHAPTER_AUTOFILL);
 

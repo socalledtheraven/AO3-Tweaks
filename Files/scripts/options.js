@@ -33,6 +33,7 @@ const booleanSettingMappings = {
     add_custom_tags: "#add_custom_tags",
     custom_tags: "#custom_tags",
     add_exact_wordcount_tag: "#add_exact_wordcount_tag",
+    series_notes_enabled: "#series_notes_enabled",
     add_series_url_and_username: "#add_series_url_and_username",
     add_work_count_tag: "#add_work_count_tag",
     add_exact_wordcount_tag_series: "#add_exact_wordcount_tag_series",
@@ -40,9 +41,7 @@ const booleanSettingMappings = {
     private_default_series: "#private_default_series"
 }
 
-function saveOptions(e) {
-    e.preventDefault();
-
+function saveOptions() {
     for (let [key, value] of Object.entries(booleanSettingMappings)) {
         if (document.querySelector(value).type === "checkbox") {
             console.log("setting key " + key + " to " + document.querySelector(value).checked)
@@ -52,6 +51,12 @@ function saveOptions(e) {
             browser.storage.sync.set({[key]: document.querySelector(value).textContent});
         }
     }
+}
+
+function handleSaveButtonClick(e) {
+    e.preventDefault();
+
+    saveOptions();
 
     console.log("saved");
 
@@ -107,7 +112,7 @@ function restoreOptions() {
 
 console.log("loaded options.js")
 document.addEventListener("DOMContentLoaded", restoreOptions);
-document.querySelector("form").addEventListener("submit", saveOptions);
+document.querySelector("form").addEventListener("submit", handleSaveButtonClick);
 
 
 for (let value of Object.values(booleanSettingMappings)) {

@@ -34,7 +34,7 @@ let ADD_EXACT_WORDCOUNT_TAG_LIST; // Add a tag for special case word counts (ie.
 let EXACT_WORDCOUNT_TAG_LIST = ["100", "1000", "10000"]
 
 /*SERIES BOOKMARK SETTINGS*/
-
+let SERIES_NOTES_ENABLED;
 let ADD_SERIES_URL_AND_USERNAME; // Add the title of the series and the username(s) (and pseud(s) if applicable) of the creator(s) with relevant links to each to the bookmark notes.
 //Highly recommended
 let ADD_WORK_COUNT_TAG; // Add the number of works in the series to the tags
@@ -276,27 +276,29 @@ function isLoggedIn() {
 console.log("loaded bookmarkNotes.js");
 
 function initializeExtension(settings) {
-    BOOKMARK_NOTES_ENABLED = settings["bookmark_notes_enabled"];
-    NOTES_APPEND_TO_PREVIOUS = settings["notes_append_to_previous"];
-    ADD_URL_AND_USERNAME = settings["add_url_and_username"];
-    ADD_SUMMARY = settings["add_summary"];
-    REC_DEFAULT = settings["rec_default"];
-    PRIVATE_DEFAULT = settings["private_default"];
-    ADD_CATEGORIES = settings["add_categories"];
-    ADD_FANDOM_TAGS = settings["add_fandom_tags"];
-    ADD_CHARACTER_TAGS = settings["add_character_tags"];
-    ADD_RELATIONSHIP_TAGS = settings["add_relationship_tags"];
-    ADD_ADDITIONAL_TAGS = settings["add_additional_tags"];
-    ADD_RATING = settings["add_rating"];
-    ADD_ARCHIVE_WARNINGS = settings["add_archive_warnings"];
-    ADD_EXACT_WORDCOUNT_TAG = settings["add_exact_wordcount_tag"];
-    ADD_SERIES_URL_AND_USERNAME = settings["add_series_url_and_username"];
-    ADD_WORK_COUNT_TAG = settings["add_work_count_tag"];
-    ADD_EXACT_WORDCOUNT_TAG_SERIES = settings["add_exact_wordcount_tag_series"];
-    REC_DEFAULT_SERIES = settings["rec_default_series"];
-    PRIVATE_DEFAULT_SERIES = settings["private_default_series"];
-    ADD_CUSTOM_TAGS = settings["add_custom_tags"];
-    CUSTOM_TAGS = settings["custom_tags"];
+    BOOKMARK_NOTES_ENABLED = settings["bookmark_notes_enabled"] || true;
+    NOTES_APPEND_TO_PREVIOUS = settings["notes_append_to_previous"] || true;
+    ADD_URL_AND_USERNAME = settings["add_url_and_username"] || true;
+    ADD_SUMMARY = settings["add_summary"] || true;
+    REC_DEFAULT = settings["rec_default"] || false;
+    PRIVATE_DEFAULT = settings["private_default"] || false;
+    ADD_CATEGORIES = settings["add_categories"] || false;
+    ADD_FANDOM_TAGS = settings["add_fandom_tags"] || true;
+    ADD_CHARACTER_TAGS = settings["add_character_tags"] || false;
+    ADD_RELATIONSHIP_TAGS = settings["add_relationship_tags"] || false;
+    ADD_ADDITIONAL_TAGS = settings["add_additional_tags"] || false;
+    ADD_RATING = settings["add_rating"] || false;
+    ADD_ARCHIVE_WARNINGS = settings["add_archive_warnings"] || false;
+    ADD_CUSTOM_TAGS = settings["add_custom_tags"] || false;
+    CUSTOM_TAGS = settings["custom_tags"] || false;
+    ADD_EXACT_WORDCOUNT_TAG = settings["add_exact_wordcount_tag"] || false;
+
+    SERIES_NOTES_ENABLED = settings["series_notes_enabled"] || true;
+    ADD_SERIES_URL_AND_USERNAME = settings["add_series_url_and_username"] || true;
+    ADD_WORK_COUNT_TAG = settings["add_work_count_tag"] || true;
+    ADD_EXACT_WORDCOUNT_TAG_SERIES = settings["add_exact_wordcount_tag_series"] || false;
+    REC_DEFAULT_SERIES = settings["rec_default_series"] || false;
+    PRIVATE_DEFAULT_SERIES = settings["private_default_series"] || false;
 
     if (isLoggedIn() && BOOKMARK_NOTES_ENABLED) {
         // has a problem with the variable name "url" (presumably something else is using it)
@@ -329,6 +331,7 @@ browser.storage.sync.get([
     "add_rating",
     "add_archive_warnings",
     "add_exact_wordcount_tag",
+    "series_notes_enabled",
     "add_series_url_and_username",
     "add_work_count_tag",
     "add_exact_wordcount_tag_series",

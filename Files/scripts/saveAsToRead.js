@@ -631,14 +631,14 @@ console.log("loaded saveAsToRead.js");
 
 function initializeExtension(settings) {
     // needs to be global variables because they are referenced everywhere
-    SAVE_AS_TO_READ_ENABLED = settings["save_as_to_read_enabled"];
-    REMOVE_FROM_MARKED_FOR_LATER = settings["remove_from_marked_for_later"];
-    UNSUB_FROM_WORKS = settings["unsub_from_works"];
-    REPLACE_MARK_FOR_LATER = settings["replace_mark_for_later"];
-    ADD_PRIV_SAVE_AS = settings["add_priv_save_as"];
-    ENABLE_PRIVATE_FANDOMS = settings["enable_private_fandoms"];
-    PRIVATE_FANDOMS = settings["private_fandoms"];
-    CREATE_MARK_AS_READ_BUTTON = settings["create_mark_as_read_button"];
+    SAVE_AS_TO_READ_ENABLED = settings["save_as_to_read_enabled"] || true;
+    REMOVE_FROM_MARKED_FOR_LATER = settings["remove_from_marked_for_later"] || false;
+    UNSUB_FROM_WORKS = settings["unsub_from_works"] || false;
+    REPLACE_MARK_FOR_LATER = settings["replace_mark_for_later"] || true;
+    ADD_PRIV_SAVE_AS = settings["add_priv_save_as"] || true;
+    ENABLE_PRIVATE_FANDOMS = settings["enable_private_fandoms"] || false;
+    PRIVATE_FANDOMS = settings["private_fandoms"] || [];
+    CREATE_MARK_AS_READ_BUTTON = settings["create_mark_as_read_button"] || true;
 
     if (isLoggedIn() && SAVE_AS_TO_READ_ENABLED) {
         if (isWork()) {

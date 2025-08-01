@@ -116,9 +116,15 @@ function isLoggedIn() {
 console.log("loaded rekudos.js")
 
 function initializeExtension(settings) {
-    const REKUDOS_ACTIVE = settings["rekudos_enabled"];
-    const REKUDOS_AUTO = settings["auto_rekudos_enabled"];
-    const messages = settings["rekudos_messages"].split("\n");
+    let REKUDOS_ACTIVE = settings["rekudos_enabled"] || true;
+    let REKUDOS_AUTO = settings["auto_rekudos_enabled"] || false;
+    let messages = settings["rekudos_messages"].split("\n") || [
+            "Extra Kudos <3",
+            "This is an extra kudos, since I've already left one. :)",
+            "I just wanted to leave another kudos <3",
+            "Update kudos!",
+            "Double kudos!"
+    ];
 
     if (isLoggedIn() && REKUDOS_ACTIVE) {
         // jump back to the kudos button
