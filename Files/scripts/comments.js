@@ -18,7 +18,7 @@ async function fullTextCommentBoxes() {
 
 async function getChapterUrls() {
     // sometimes works will have parameters like this
-    let navigationUrl = window.location.href.split("?")[0] + "/navigate";
+    let navigationUrl = window.location.href.split("?")[0].split("#")[0] + "/navigate";
     let doc = await getDocument(navigationUrl);
     let links = Array.from(doc.querySelector('ol[role="navigation"]').querySelectorAll("a"));
 

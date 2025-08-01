@@ -10,6 +10,7 @@ const booleanSettingMappings = {
     extra_comment_boxes: "#extra_comment_boxes",
     latest_chapter_autofill: "#latest_chapter_autofill",
     save_as_to_read_enabled: "#save_as_to_read_enabled",
+    remove_from_marked_for_later: "#remove_from_marked_for_later",
     unsub_from_works: "#unsub_from_works",
     replace_mark_for_later: "#replace_mark_for_later",
     add_priv_save_as: "#add_priv_save_as",

@@ -2,6 +2,7 @@
 let ENABLE_PRIVATE_FANDOMS;
 let PRIVATE_FANDOMS;
 let SAVE_AS_TO_READ_ENABLED;
+let REMOVE_FROM_MARKED_FOR_LATER;
 let UNSUB_FROM_WORKS;
 let REPLACE_MARK_FOR_LATER;
 let ADD_PRIV_SAVE_AS;
@@ -47,6 +48,30 @@ function post(url, data) {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
         },
         body: stringify(data)
+    });
+}
+
+function get(url) {
+    // a POST request with the associated headers
+    return fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+            "Connection": "keep-alive",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Host": "archiveofourown.org",
+            "Origin": "https://archiveofourown.org",
+            "Priority": "u=0, i",
+            "Referer": url,
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-User": "?1",
+            "Upgrade-Insecure-Requests": "1",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
+        }
     });
 }
 
@@ -267,7 +292,7 @@ function createExternalToReadButton(i, url, series, priv) {
         if (series) {
             bookmarkSeries(doc, toReadButton, priv);
         } else {
-            bookmarkWork(doc, toReadButton, priv);
+            bookmarkWork(doc, toReadButton, priv, url);
         }
         // makes the link do nothing except the function when clicked
         return false;
@@ -290,7 +315,7 @@ function addSaveButtons(series, saveButton, privSaveButton) {
                 markForLaterButton.insertAdjacentElement("beforebegin", privSaveButton);
             }
 
-            markForLaterButton.remove();
+            markForLaterButton.hidden = true;
 
             return true;
         } else {
@@ -315,6 +340,12 @@ function addSaveButtons(series, saveButton, privSaveButton) {
             if (ADD_PRIV_SAVE_AS) {
                 navbar.appendChild(privSaveButton);
             }
+        }
+    } else {
+        navbar.appendChild(saveButton);
+
+        if (ADD_PRIV_SAVE_AS) {
+            navbar.appendChild(privSaveButton);
         }
     }
 }
@@ -396,6 +427,33 @@ function unsubscribe(doc) {
     });
 }
 
+function removeFromMarkedForLater(doc, url) {
+    let userURL = doc.querySelector("#greeting").querySelector("ul").querySelector("li").querySelector("a").href;
+
+    get(url + "/mark_as_read").then((r) => {
+        if (r.ok) {
+            let notice = doc.createElement("div");
+            notice.className = "flash notice";
+            notice.textContent = `This work was removed from your`;
+            let listLink = doc.createElement("a");
+            listLink.href = userURL + "/readings?show=to-read";
+            listLink.text = "Marked for Later list";
+            notice.childNodes.add(listLink);
+            notice.insertAdjacentText("beforeend", ".");
+
+            let main = doc.querySelector("#main");
+            main.insertAdjacentElement("afterbegin", notice);
+        } else {
+            let notice = doc.createElement("div");
+            notice.className = "flash notice error";
+            notice.textContent = "We're sorry! Something went wrong.";
+
+            let main = doc.querySelector("#main");
+            main.insertAdjacentElement("afterbegin", notice);
+        }
+    });
+}
+
 function markAsRead(button) {
     // provides the actual function of a mark as read button
     let doc = document;
@@ -406,10 +464,16 @@ function markAsRead(button) {
     updateBookmark(data[0], data[1], data[2], data[3], data[4], data[5], data[6], button.id);
 }
 
-function bookmarkWork(doc, button, priv) {
+function bookmarkWork(doc, button, priv, url = URL) {
     let subbed = doc.querySelector("#new_subscription");
     if (UNSUB_FROM_WORKS && subbed) {
         unsubscribe(doc);
+    }
+
+    console.log(doc)
+    let isInMarkedForLaterList = doc.querySelector("li[class='mark']").querySelector("a").textContent.includes("Mark as Read");
+    if (REMOVE_FROM_MARKED_FOR_LATER && isInMarkedForLaterList) {
+        removeFromMarkedForLater(doc, url);
     }
 
     if (priv) {
@@ -568,6 +632,7 @@ console.log("loaded saveAsToRead.js");
 function initializeExtension(settings) {
     // needs to be global variables because they are referenced everywhere
     SAVE_AS_TO_READ_ENABLED = settings["save_as_to_read_enabled"];
+    REMOVE_FROM_MARKED_FOR_LATER = settings["remove_from_marked_for_later"];
     UNSUB_FROM_WORKS = settings["unsub_from_works"];
     REPLACE_MARK_FOR_LATER = settings["replace_mark_for_later"];
     ADD_PRIV_SAVE_AS = settings["add_priv_save_as"];
@@ -575,22 +640,18 @@ function initializeExtension(settings) {
     PRIVATE_FANDOMS = settings["private_fandoms"];
     CREATE_MARK_AS_READ_BUTTON = settings["create_mark_as_read_button"];
 
-    console.log("SAVE_AS_TO_READ_ENABLED: " + SAVE_AS_TO_READ_ENABLED);
-    console.log("UNSUB_FROM_WORKS: " + UNSUB_FROM_WORKS);
-    console.log("REPLACE_MARK_FOR_LATER: " + REPLACE_MARK_FOR_LATER);
-    console.log("ADD_PRIV_SAVE_AS: " + ADD_PRIV_SAVE_AS);
-    console.log("CREATE_MARK_AS_READ_BUTTON: " + CREATE_MARK_AS_READ_BUTTON);
-
-
     if (isLoggedIn() && SAVE_AS_TO_READ_ENABLED) {
         if (isWork()) {
             console.log("work")
             // the whole idea here is to not show redundant buttons - save as buttons only when it's not already saved, and mark as button only when it can be marked as read
             if (isMarkedForLater()) {
+                console.log("currently marked for later, adding mark as read button")
                 markAsReadButton();
             } else {
+                console.log("not marked for later, adding save as to read buttons")
                 let buttons = createSaveButtonElements();
                 let saveAsToReadButton = buttons[0];
+                console.log(saveAsToReadButton)
 
                 let privSaveAsToReadButton;
                 if (ADD_PRIV_SAVE_AS) {
@@ -618,7 +679,9 @@ function onError(error) {
 // Get both settings at once and initialise the extension
 browser.storage.sync.get([
         "save_as_to_read_enabled",
+        "remove_from_marked_for_later",
         "unsub_from_works",
+        "replace_mark_for_later",
         "add_priv_save_as",
         "enable_private_fandoms",
         "private_fandoms",
