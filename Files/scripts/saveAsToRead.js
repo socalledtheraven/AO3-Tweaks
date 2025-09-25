@@ -202,20 +202,29 @@ function isWork() {
 
 function getTags(doc) {
     // gives a list of the tags, which can then be joined for a string
-    return [...doc.querySelectorAll("li.added.tag")].map((tag) => tag.textContent.replace("×", "").trim());
+    return [...doc.querySelectorAll("li.added.tag")];
+}
+
+function getStringTags(doc) {
+    return getTags(doc).map((tag) => tag.textContent.replace("×", "").trim());
 }
 
 function isMarkedForLater() {
-    let tags = getTags(document);
+    let tags = getStringTags(document);
     return tags.includes("To Read");
 }
 
 function removeToReadTag(doc) {
     // removes the existing tag button
     let tags = getTags(doc);
-    let toReadTag = tags[tags.indexOf("To Read")]
-    let deleteButton = toReadTag.querySelector(".delete");
-    deleteButton.click();
+
+    for (let tag of tags) {
+        console.log(tag)
+        if (tag.textContent.includes("To Read")) {
+            let deleteButton = tag.querySelector(".delete");
+            deleteButton.click();
+        }
+    }
 
     // both are necessary to remove the original tag and prevent it from being readded when the bookmark is sent
     const tagBox = doc.getElementById("bookmark_tag_string_autocomplete");
@@ -471,9 +480,13 @@ function bookmarkWork(doc, button, priv, url = URL) {
     }
 
     console.log(doc)
-    let isInMarkedForLaterList = doc.querySelector("li[class='mark']").querySelector("a").textContent.includes("Mark as Read");
-    if (REMOVE_FROM_MARKED_FOR_LATER && isInMarkedForLaterList) {
-        removeFromMarkedForLater(doc, url);
+    let mainList = doc.querySelector("li[class='mark']");
+    let linksOfList = mainList.querySelector("a");
+    if (linksOfList) {
+        let isInMarkedForLaterList = linksOfList.textContent.includes("Mark as Read");
+        if (REMOVE_FROM_MARKED_FOR_LATER && isInMarkedForLaterList) {
+            removeFromMarkedForLater(doc, url);
+        }
     }
 
     if (priv) {
@@ -487,6 +500,7 @@ function bookmarkWork(doc, button, priv, url = URL) {
         console.log("currently bookmarked, updating")
         let data = getBookmarkData(doc);
         data[4] += ", To Read";
+        console.log(data);
         updateBookmark(data[0], data[1], data[2], data[3], data[4], data[5], data[6], button.id);
     } else {
         let data = getWorkData(doc);
@@ -556,7 +570,7 @@ function getBookmarkData(doc) {
     let bookmarkNotes = doc.getElementById("bookmark_notes").value.trim();
     console.log("bookmarkNotes: " + bookmarkNotes)
 
-    let bookmarkTags = getTags(doc).join(", ");
+    let bookmarkTags = getStringTags(doc).join(", ");
     if (bookmarkTags.length === 0) {
         bookmarkTags = doc.querySelector("#bookmark_tag_string").value.trim();
     }

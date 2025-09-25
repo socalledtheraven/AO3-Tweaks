@@ -118,13 +118,18 @@ console.log("loaded rekudos.js")
 function initializeExtension(settings) {
     let REKUDOS_ACTIVE = settings["rekudos_enabled"] || true;
     let REKUDOS_AUTO = settings["auto_rekudos_enabled"] || false;
-    let messages = settings["rekudos_messages"].split("\n") || [
+    let messages;
+    if (settings["rekudos_messages"]) {
+        messages = settings["rekudos_messages"].split("\n");
+    } else {
+        messages = [
             "Extra Kudos <3",
             "This is an extra kudos, since I've already left one. :)",
             "I just wanted to leave another kudos <3",
             "Update kudos!",
             "Double kudos!"
-    ];
+        ];
+    }
 
     if (isLoggedIn() && REKUDOS_ACTIVE) {
         // jump back to the kudos button
@@ -141,5 +146,5 @@ function onError(error) {
 
 // Get both settings at once and initialise the extension
 browser.storage.sync.get(["rekudos_enabled", "auto_rekudos_enabled", "rekudos_messages"])
-    .then(initializeExtension)
-    .catch(onError);
+    .then(initializeExtension);
+    // .catch(onError);
