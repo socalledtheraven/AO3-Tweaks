@@ -146,10 +146,10 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
         containerLi1.style.listStyle = "none"
         containerLi1.style.display = "inline"
         containerLi1.style.paddingLeft = "0.25em"
+        containerLi1.style.cursor = "pointer";
 
         let commentTemplateButton = document.createElement("a");
         commentTemplateButton.textContent = "Fill comment template";
-        commentTemplateButton.href = "";
         commentTemplateButton.onclick = function () {
             autofillComment(container, TEMPLATE_COMMENTS);
             return false;
@@ -157,18 +157,18 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
         containerLi1.appendChild(commentTemplateButton);
 
         let paddingLi1 = document.createElement("li");
-        paddingLi1.style.listStyle = "none"
-        paddingLi1.style.display = "inline"
-        paddingLi1.style.paddingLeft = "0.25em"
+        paddingLi1.style.listStyle = "none";
+        paddingLi1.style.display = "inline";
+        paddingLi1.style.paddingLeft = "0.25em";
 
         let containerLi2 = document.createElement("li");
-        containerLi2.style.listStyle = "none"
-        containerLi2.style.display = "inline"
-        containerLi2.style.paddingLeft = "0.25em"
+        containerLi2.style.listStyle = "none";
+        containerLi2.style.display = "inline";
+        containerLi2.style.paddingLeft = "0.25em";
+        containerLi2.style.cursor = "pointer";
 
         let premadeCommentButton = document.createElement("a");
         premadeCommentButton.textContent = "Fill prewritten comment";
-        premadeCommentButton.href = "";
         premadeCommentButton.onclick = function () {
             autofillComment(container, PREWRITTEN_COMMENTS);
             return false;
@@ -184,6 +184,7 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
         containerLi3.style.listStyle = "none"
         containerLi3.style.display = "inline"
         containerLi3.style.paddingLeft = "0.25em"
+        containerLi3.style.cursor = "pointer";
         containerLi3.appendChild(commentButtons[i]);
 
         // .cloneNode(true);
