@@ -154,7 +154,6 @@ function respondToBookmark(r, type) {
         let button;
         console.log(type)
         if (type.includes("to_read")) {
-            console.log("to_read")
             button = document.querySelector(`#${type}`).children[0];
             console.log(button)
             button.textContent = "Saved as \"To Read\"!";
@@ -162,7 +161,6 @@ function respondToBookmark(r, type) {
                 return false;
             }
         } else if (type.includes("priv_to_read")) {
-            console.log("priv_to_read")
             button = document.querySelector(`#${type}`).children[0];
             console.log(button)
             button.textContent = "Saved privately as \"To Read\"!";
@@ -235,14 +233,14 @@ function removeToReadTag(doc) {
 // BUTTON CREATION
 
 
-function createSaveButtonElements() {
+function createSaveButtonElements(series) {
     // not really necessary but nice to separate out functionality
-    let toReadButton = createWorkToReadButton(false);
+    let toReadButton = createWorkToReadButton(false, series);
 
     // needs to be outside so the compiler won't yell at me despite the only time this being referenced is inside other ifs with the same condition
     let privToReadButton;
     if (ADD_PRIV_SAVE_AS) {
-        privToReadButton = createWorkToReadButton(true);
+        privToReadButton = createWorkToReadButton(true, series);
     }
 
     return [toReadButton, privToReadButton];
@@ -521,6 +519,7 @@ function bookmarkSeries(doc, button, priv) {
 
     console.log("seris")
     let data = getSeriesData(doc);
+    data[4] += ", To Read";
     createBookmark(data[0], data[1], data[2], data[3], data[4], data[5], button.id, true);
 }
 
@@ -592,13 +591,14 @@ function getSeriesData(doc) {
 
     const notes = doc.getElementById("bookmark_notes")
     const bookmarkNotes = notes.value;
+    console.log(bookmarkNotes)
 
     const tagBox = doc.getElementById("bookmark_tag_string");
     let bookmarkTags;
     if (tagBox) {
         bookmarkTags = tagBox.value;
     } else {
-        bookmarkTags = "To Read";
+        bookmarkTags = "";
     }
 
     const privateBox = doc.getElementById("bookmark_private");
@@ -663,7 +663,8 @@ function initializeExtension(settings) {
                 markAsReadButton();
             } else {
                 console.log("not marked for later, adding save as to read buttons")
-                let buttons = createSaveButtonElements();
+                let isSeries = URL.includes("/series/");
+                let buttons = createSaveButtonElements(isSeries);
                 let saveAsToReadButton = buttons[0];
 
                 let privSaveAsToReadButton;
@@ -671,7 +672,6 @@ function initializeExtension(settings) {
                     privSaveAsToReadButton = buttons[1];
                 }
 
-                let isSeries = URL.includes("/series/");
                 addSaveButtons(isSeries, saveAsToReadButton, privSaveAsToReadButton);
 
                 if (isSeries) {
@@ -699,5 +699,4 @@ browser.storage.sync.get([
         "enable_private_fandoms",
         "private_fandoms",
         "create_mark_as_read_button"
-    ]).then(initializeExtension)
-    .catch(onError);
+    ]).then(initializeExtension);

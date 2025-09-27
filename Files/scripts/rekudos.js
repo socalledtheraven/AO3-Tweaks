@@ -147,4 +147,3 @@ function onError(error) {
 // Get both settings at once and initialise the extension
 browser.storage.sync.get(["rekudos_enabled", "auto_rekudos_enabled", "rekudos_messages"])
     .then(initializeExtension);
-    // .catch(onError);
