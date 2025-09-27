@@ -13,6 +13,7 @@ let NOTES_APPEND_TO_PREVIOUS; // When editing a pre-existing bookmark, should th
 let ADD_URL_AND_USERNAME; // Add the title of the work and the username (and pseud if applicable) of the creator with relevant links to each to the bookmark notes.
 //Note: Highly recommended as bookmark notes are not deleted when a work is deleted, and finding a lost work is easier with the title, username, and url.
 
+const SEPARATOR = "-~-~-~-";
 let ADD_SUMMARY; // Add the summary of the work to the bookmark notes
 let REC_DEFAULT; // Autocheck the Rec checkbox to make the bookmark a rec
 let PRIVATE_DEFAULT; // Autocheck the Private checkbox to make the bookmark private
@@ -84,11 +85,11 @@ function updateWorkBookmark(url) {
     if (notesBox) {
         // adding a separator for the programmatic notes should allow me to differentiate the two and only copy over real notes
         if (NOTES_APPEND_TO_PREVIOUS) {
-            let oldNotes = notesBox.value.split("-~-~-~-")[0];
+            let oldNotes = notesBox.value.split(SEPARATOR)[0];
 
-            notesBox.value = oldNotes + "\n-~-~-~-\n" + notesBoxText;
+            notesBox.value = oldNotes + `\n${SEPARATOR}\n` + notesBoxText;
         } else {
-            notesBox.value = "\n-~-~-~-\n" + notesBoxText;
+            notesBox.value = `\n${SEPARATOR}\n` + notesBoxText;
         }
     }
 
