@@ -99,8 +99,15 @@ async function getDocument(url) {
 
 // BOOKMARK HANDLING
 
+function createSeriesBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privacy, buttonID) {
+    _createBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privacy, buttonID, true);
+}
 
-function createBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privacy, buttonID, series) {
+function createWorkBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privacy, buttonID) {
+    _createBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privacy, buttonID, false)
+}
+
+function _createBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privacy, buttonID, series) {
     // sends off the bookmark request with the data provided
 
     let url;
@@ -233,19 +240,6 @@ function removeToReadTag(doc) {
 // BUTTON CREATION
 
 
-function createSaveButtonElements(series) {
-    // not really necessary but nice to separate out functionality
-    let toReadButton = createWorkToReadButton(false, series);
-
-    // needs to be outside so the compiler won't yell at me despite the only time this being referenced is inside other ifs with the same condition
-    let privToReadButton;
-    if (ADD_PRIV_SAVE_AS) {
-        privToReadButton = createWorkToReadButton(true, series);
-    }
-
-    return [toReadButton, privToReadButton];
-}
-
 function createWorkToReadButton(priv, series) {
     // these will always be on the user-facing page
     const toReadButton = document.createElement("li");
@@ -310,19 +304,14 @@ function createExternalToReadButton(i, url, series, priv) {
     return toReadButton;
 }
 
-function addSaveButtons(series, saveButton, privSaveButton) {
+function addSaveButton(series, priv) {
     function replaceMarkForLater(navbar) {
         const markForLaterButton = navbar.querySelector(".mark");
 
         // it might not be there if the user has history turned off
         if (markForLaterButton) {
             markForLaterButton.insertAdjacentElement("beforebegin", saveButton);
-
-            if (ADD_PRIV_SAVE_AS) {
-                markForLaterButton.insertAdjacentElement("beforebegin", privSaveButton);
-            }
-
-            markForLaterButton.hidden = true;
+            markForLaterButton.style.display = "none";
 
             return true;
         } else {
@@ -338,28 +327,22 @@ function addSaveButtons(series, saveButton, privSaveButton) {
         navbar = document.querySelector("ul.navigation.actions.work[role='menu']");
     }
 
+    let saveButton = createWorkToReadButton(priv, series);
+
     if (REPLACE_MARK_FOR_LATER) {
         let success = replaceMarkForLater(navbar);
 
         if (!success) {
             navbar.appendChild(saveButton);
-
-            if (ADD_PRIV_SAVE_AS) {
-                navbar.appendChild(privSaveButton);
-            }
         }
     } else {
         navbar.appendChild(saveButton);
-
-        if (ADD_PRIV_SAVE_AS) {
-            navbar.appendChild(privSaveButton);
-        }
     }
 }
 
-function markAsReadButton() {
+function createMarkAsReadButton() {
     // all the mark as read button functionality in one function
-    function createMarkAsReadButton() {
+    function createButton() {
         const markAsReadButton = document.createElement("li");
         markAsReadButton.id = "mark_as_read";
         const child3 = document.createElement("a");
@@ -391,7 +374,7 @@ function markAsReadButton() {
     }
 
     if (CREATE_MARK_AS_READ_BUTTON) {
-        let button = createMarkAsReadButton();
+        let button = createButton();
         addMarkAsReadButton(button);
     }
 }
@@ -504,7 +487,7 @@ function bookmarkWork(doc, button, priv, url = URL) {
         let data = getWorkData(doc);
         data[4] += ", To Read";
         console.log(button.id)
-        createBookmark(data[0], data[1], data[2], data[3], data[4], data[5], button.id, false);
+        createWorkBookmark(data[0], data[1], data[2], data[3], data[4], data[5], button.id, false);
     }
 }
 
@@ -520,7 +503,7 @@ function bookmarkSeries(doc, button, priv) {
     console.log("seris")
     let data = getSeriesData(doc);
     data[4] += ", To Read";
-    createBookmark(data[0], data[1], data[2], data[3], data[4], data[5], button.id, true);
+    createSeriesBookmark(data[0], data[1], data[2], data[3], data[4], data[5], button.id, true);
 }
 
 
@@ -612,7 +595,7 @@ function getSeriesData(doc) {
 // MAIN CODE
 
 
-function onExternalPage() {
+function addButtonsToMultiWorkPage() {
     const works = document.querySelectorAll('li[role="article"]');
     let i = 1;
 
@@ -660,33 +643,26 @@ function initializeExtension(settings) {
             // the whole idea here is to not show redundant buttons - save as buttons only when it's not already saved, and mark as button only when it can be marked as read
             if (isMarkedForLater()) {
                 console.log("currently marked for later, adding mark as read button")
-                markAsReadButton();
+                createMarkAsReadButton();
             } else {
                 console.log("not marked for later, adding save as to read buttons")
-                let isSeries = URL.includes("/series/");
-                let buttons = createSaveButtonElements(isSeries);
-                let saveAsToReadButton = buttons[0];
 
-                let privSaveAsToReadButton;
+                let isSeries = URL.includes("/series/");
+                addSaveButton(isSeries);
+
                 if (ADD_PRIV_SAVE_AS) {
-                    privSaveAsToReadButton = buttons[1];
+                    addSaveButton(isSeries, true);
                 }
 
-                addSaveButtons(isSeries, saveAsToReadButton, privSaveAsToReadButton);
-
+                // add save as to read buttons for the series before adding all the individual ones
                 if (isSeries) {
-                    // add save as to read buttons for the series before adding all the individual ones
-                    onExternalPage();
+                    addButtonsToMultiWorkPage();
                 }
             }
         } else {
-            onExternalPage()
+            addButtonsToMultiWorkPage()
         }
     }
-}
-
-function onError(error) {
-    console.log(`Error: ${error}`);
 }
 
 // Get both settings at once and initialise the extension
@@ -699,4 +675,5 @@ browser.storage.sync.get([
         "enable_private_fandoms",
         "private_fandoms",
         "create_mark_as_read_button"
-    ]).then(initializeExtension);
+    ])
+    .then(initializeExtension);
