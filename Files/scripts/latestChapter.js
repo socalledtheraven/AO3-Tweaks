@@ -1,3 +1,14 @@
+function overlapping(elem1, elem2) {
+    let rect1 = elem1.getBoundingClientRect();
+    let rect2 = elem2.getBoundingClientRect();
+
+    return !(rect1.right < rect2.left ||
+        rect1.left > rect2.right ||
+        rect1.bottom < rect2.top ||
+        rect1.top > rect2.bottom)
+}
+
+
 function main() {
 	// collects all the bookmarks and iterates through them
 	const bookmarks = document.querySelectorAll('[role="article"]');
@@ -17,6 +28,7 @@ function main() {
 
                 let outerLi = document.createElement("li");
                 outerLi.className = "actions";
+                outerLi.style.margin = "0";
 
 				let latest = document.createElement("a");
 				latest.href = url;
@@ -28,7 +40,12 @@ function main() {
 
                 outerLi.appendChild(latest);
 				header.insertAdjacentElement("beforeend", outerLi);
-			}
+
+                const tags = bookmark.querySelector("ul.tags.commas");
+                if (overlapping(latest, tags)) {
+                    tags.style.paddingTop = "10px";
+                }
+            }
 		}
 	}
 }
