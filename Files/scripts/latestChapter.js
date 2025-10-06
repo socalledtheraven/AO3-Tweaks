@@ -1,24 +1,4 @@
-// CONFIG
-const LATEST_CHAPTER_AUTOFILL = true;
-// CONFIG
-
-function addStyles() {
-	const styleSheet = document.createElement("style");
-	styleSheet.textContent = `
-        .latest-link {
-            color: #5998D6 !important;
-        }
-        
-        .latest-link:visited {
-            color: #7F7F7F;
-        }
-    `;
-	document.head.appendChild(styleSheet);
-}
-
 function main() {
-	addStyles();
-
 	// collects all the bookmarks and iterates through them
 	const bookmarks = document.querySelectorAll('[role="article"]');
 
@@ -35,16 +15,19 @@ function main() {
 				console.log("test1")
 				let url = latestChapter.href;
 
+                let outerLi = document.createElement("li");
+                outerLi.className = "actions";
+
 				let latest = document.createElement("a");
 				latest.href = url;
-				latest.text = "(latest)"
-				latest.className = "latest-link";
+				latest.text = "latest"
 				latest.style.position = "absolute";
 				latest.style.right = "0";
-				latest.style.top = "43px";
+				latest.style.top = "45px";
 				latest.style.margin = "0";
 
-				header.insertAdjacentElement("beforeend", latest);
+                outerLi.appendChild(latest);
+				header.insertAdjacentElement("beforeend", outerLi);
 			}
 		}
 	}
@@ -70,11 +53,6 @@ function initializeExtension(settings) {
 	}
 }
 
-function onError(error) {
-	console.log(`Error: ${error}`);
-}
-
 // Get both settings at once and initialise the extension
 browser.storage.sync.get("latest_chapter_autofill")
-	.then(initializeExtension)
-	.catch(onError);
+	.then(initializeExtension);
