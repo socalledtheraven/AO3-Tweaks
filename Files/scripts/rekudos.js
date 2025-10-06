@@ -127,7 +127,9 @@ function initializeExtension(settings) {
             "This is an extra kudos, since I've already left one. :)",
             "I just wanted to leave another kudos <3",
             "Update kudos!",
-            "Double kudos!"
+            "Double kudos!",
+            "<img src='https://64.media.tumblr.com/94b08d177f844232326d7e4f878f27ba/4ce6d86a4b1b1d60-cc/s640x960/ccdc7e76e584f663735e489cd9726f2182c2dbed.png' alt='A small creature with large eyes pawing at the kudos button, which shows the \"You have already left kudos\" message/>",
+            "<img src='https://64.media.tumblr.com/7a59d6a32ace63cdcce3911d529f8b88/08d1854086a423d0-e6/s250x400/3e75997487cf31a3ddd8d9314e78d3d63985ec7d.png' alt='A picture of the kudos button with the word \"Second\" written above it to form the words \"Second Kudos\"'>"
         ];
     }
 
