@@ -9,9 +9,7 @@ async function fullTextCommentBoxes() {
         let chapterUrls = await getChapterUrls();
 
         for (let i = chaptersLength; i > 0; i--) {
-            let newCommentBox = await getCommentBox(i, chapterUrls[i-1]);
-
-            chapters.insertBefore(newCommentBox, chapterNodes[i]);
+            await appendCommentBox(i, chapterUrls[i-1], chapters, chapterNodes[i]);
         }
     }
 }
@@ -37,49 +35,55 @@ async function getChapterUrls() {
     });
 }
 
-async function getCommentBox(i, url) {
+async function appendCommentBox(i, url, chapters, chapterNode) {
     const box = document.querySelector("#add_comment");
     let commentBox = box.cloneNode(true);
     commentBox.id = "add_comment_" + i;
 
-    let button = commentBox.querySelector('input[name="commit"]');
+    // AES compatibility
+    let aesCommentButton = commentBox.querySelector('input[class="aes-fake-submit"]');
+    if (aesCommentButton) {
+        aesCommentButton.remove();
+    }
+
+    let aesMessage = commentBox.querySelector(".aes-fcb-recommendation");
+    if (aesMessage) {
+        aesMessage.remove();
+    }
+
+    let button = commentBox.querySelector('input[value="Comment"]');
+    button.remove();
 
     let newButton = document.createElement("a");
-    newButton.style.cursor = "pointer";
     newButton.textContent = "Comment";
     newButton.id = "comment_button_" + i;
+    newButton.href = "#comment_button_" + i;
 
     newButton.onclick = function () {
         let token = document.querySelector("meta[name='csrf-token']").getAttribute("content");
         let pseudID = document.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
 
         post(url, {
-                "authenticity_token": token,
-                "comment[pseud_id]": pseudID,
-                "comment[comment_content]": commentBox.querySelector("textarea").value,
-                "controller_name": "chapters",
-                "commit": "Comment"
-            }).then((r) => {
-                if (r.ok) {
-                    newButton.textContent = "Commented!";
-                } else {
-                    newButton.textContent = "Comment failed";
-                }
+            "authenticity_token": token,
+            "comment[pseud_id]": pseudID,
+            "comment[comment_content]": commentBox.querySelector("textarea").value,
+            "controller_name": "chapters",
+            "commit": "Comment"
+        }).then((r) => {
+            if (r.ok) {
+                newButton.textContent = "Commented!";
+            } else {
+                newButton.textContent = "Comment failed";
+            }
         });
-    }
+    };
 
-    overrideButton(button, newButton);
+    console.log(newButton)
 
-    return commentBox;
-}
+    let parent = commentBox.querySelector("p.actions");
+    parent.appendChild(newButton);
 
-function overrideButton(oldButton, newButton) {
-    if (oldButton) {
-        oldButton.insertAdjacentElement("beforebegin", newButton);
-
-        // hide it but allow it to be clicked
-        oldButton.style.display = 'none';
-    }
+    chapters.insertBefore(commentBox, chapterNode);
 }
 
 async function getDocument(url) {
@@ -214,6 +218,7 @@ console.log("loaded comments.js");
 
 function initializeExtension(settings) {
     let COMMENT_TEMPLATES = settings["comment_templates"] || true;
+    COMMENT_TEMPLATES = false;
     let EXTRA_COMMENT_BOXES = settings["extra_comment_boxes"] || true;
     let TEMPLATE_COMMENTS = settings["template_comments"] || [
         "[lavish praise]",
@@ -405,11 +410,6 @@ function initializeExtension(settings) {
     }
 }
 
-function onError(error) {
-    console.log(`Error: ${error}`);
-}
-
 // Get both settings at once and initialise the extension
 browser.storage.sync.get(["comment_templates", "extra_comment_boxes", "template_comments", "prewritten_comments"])
-    .then(initializeExtension)
-    .catch(onError);
+    .then(initializeExtension);
