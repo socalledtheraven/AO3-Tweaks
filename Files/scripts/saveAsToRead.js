@@ -159,17 +159,14 @@ function respondToBookmark(r, type) {
         main.insertAdjacentElement("afterbegin", notice);
 
         let button;
-        console.log(type)
         if (type.includes("to_read")) {
             button = document.querySelector(`#${type}`).children[0];
-            console.log(button)
             button.textContent = "Saved as \"To Read\"!";
             button.onclick = function () {
                 return false;
             }
         } else if (type.includes("priv_to_read")) {
             button = document.querySelector(`#${type}`).children[0];
-            console.log(button)
             button.textContent = "Saved privately as \"To Read\"!";
             button.onclick = function () {
                 return false;
@@ -224,7 +221,6 @@ function removeToReadTag(doc) {
     let tags = getTags(doc);
 
     for (let tag of tags) {
-        console.log(tag)
         if (tag.textContent.includes("To Read")) {
             let deleteButton = tag.querySelector(".delete");
             deleteButton.click();
@@ -275,7 +271,7 @@ function createExternalToReadButton(i, url, series, priv) {
     const toReadButton = document.createElement("li");
     const child = document.createElement("a");
     const workID = url.split("/")[4];
-    console.log(workID)
+    console.log(`SaveAsToRead: id is ${workID}`)
 
     if (priv) {
         toReadButton.id = "priv_to_read_" + workID;
@@ -315,7 +311,7 @@ function addSaveButton(series, priv) {
 
             return true;
         } else {
-            console.log("mark for later button not found");
+            console.warn(`SaveAsToRead: mark for later button not found`);
             return false;
         }
     }
@@ -460,7 +456,6 @@ function bookmarkWork(doc, button, priv, url = URL) {
         unsubscribe(doc);
     }
 
-    console.log(doc)
     let mainList = doc.querySelector("li[class='mark']");
     let linksOfList = mainList.querySelector("a");
     if (linksOfList) {
@@ -478,15 +473,13 @@ function bookmarkWork(doc, button, priv, url = URL) {
     let isBookmark = doc.querySelector(".bookmark_form_placement_open").textContent.includes("Edit");
 
     if (isBookmark) {
-        console.log("currently bookmarked, updating")
+        console.log(`SaveAsToRead: currently bookmarked, updating`)
         let data = getBookmarkData(doc);
         data[4] += ", To Read";
-        console.log(data);
         updateBookmark(data[0], data[1], data[2], data[3], data[4], data[5], data[6], button.id);
     } else {
         let data = getWorkData(doc);
         data[4] += ", To Read";
-        console.log(button.id)
         createWorkBookmark(data[0], data[1], data[2], data[3], data[4], data[5], button.id, false);
     }
 }
@@ -500,7 +493,7 @@ function bookmarkSeries(doc, button, priv) {
     let bookmarkTags = doc.querySelector("#bookmark_tag_string").value.trim();
     bookmarkTags.value += ", To Read";
 
-    console.log("seris")
+    console.log(`SaveAsToRead: this is a series`)
     let data = getSeriesData(doc);
     data[4] += ", To Read";
     createSeriesBookmark(data[0], data[1], data[2], data[3], data[4], data[5], button.id, true);
@@ -542,26 +535,26 @@ function getBookmarkData(doc) {
     let url = doc.querySelector("#bookmark-form").querySelector("form").action.split("/");
     // the url gets expanded when everything is loaded, so we need to take `archiveofourown.org/works/...` into mind
     let id = url[4];
-    console.log("url: " + url)
-    console.log("id: " + id)
+    console.info(`SaveAsToRead: url: ${url}`)
+    console.info(`SaveAsToRead: id: ${id}`)
 
     let token = doc.querySelector("meta[name='csrf-token']").getAttribute("content");
     let pseudID = doc.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
-    console.log("pseudID: " + pseudID)
+    console.info(`SaveAsToRead: pseudID: ${pseudID}`)
 
     let bookmarkNotes = doc.getElementById("bookmark_notes").value.trim();
-    console.log("bookmarkNotes: " + bookmarkNotes)
+    console.info(`SaveAsToRead: bookmarkNotes: ${bookmarkNotes}`)
 
     let bookmarkTags = getStringTags(doc).join(", ");
     if (bookmarkTags.length === 0) {
         bookmarkTags = doc.querySelector("#bookmark_tag_string").value.trim();
     }
-    console.log("bookmarkTags: " + bookmarkTags)
+    console.info(`SaveAsToRead: bookmarkTags: ${bookmarkTags}`)
 
     let privacy = doc.getElementById("bookmark_private").checked ? "1" : "0";
-    console.log("privacy: " + privacy)
+    console.info(`SaveAsToRead: privacy: ${privacy}`)
     let rec = doc.getElementById("bookmark_rec").checked ? "1" : "0";
-    console.log("rec: " + rec)
+    console.info(`SaveAsToRead: rec: ${rec}`)
 
     return [id, token, pseudID, bookmarkNotes, bookmarkTags, privacy, rec];
 }
@@ -574,7 +567,7 @@ function getSeriesData(doc) {
 
     const notes = doc.getElementById("bookmark_notes")
     const bookmarkNotes = notes.value;
-    console.log(bookmarkNotes)
+    console.info(`SaveAsToRead: bookmarkNotes for series: ${bookmarkNotes}`)
 
     const tagBox = doc.getElementById("bookmark_tag_string");
     let bookmarkTags;
@@ -639,13 +632,13 @@ function initializeExtension(settings) {
 
     if (isLoggedIn() && SAVE_AS_TO_READ_ENABLED) {
         if (isWork()) {
-            console.log("work")
+            console.log(`SaveAsToRead: this is a work`)
             // the whole idea here is to not show redundant buttons - save as buttons only when it's not already saved, and mark as button only when it can be marked as read
             if (isMarkedForLater()) {
-                console.log("currently marked for later, adding mark as read button")
+                console.log(`SaveAsToRead: currently marked for later, adding mark as read button`)
                 createMarkAsReadButton();
             } else {
-                console.log("not marked for later, adding save as to read buttons")
+                console.log(`SaveAsToRead: not marked for later, adding save as to read buttons`)
 
                 let isSeries = URL.includes("/series/");
                 addSaveButton(isSeries);
@@ -676,4 +669,5 @@ browser.storage.sync.get([
         "private_fandoms",
         "create_mark_as_read_button"
     ])
-    .then(initializeExtension);
+    .then(initializeExtension)
+    .catch(onError);

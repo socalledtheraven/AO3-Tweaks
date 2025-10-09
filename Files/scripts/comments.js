@@ -78,8 +78,6 @@ async function appendCommentBox(i, url, chapters, chapterNode) {
         });
     };
 
-    console.log(newButton)
-
     let parent = commentBox.querySelector("p.actions");
     parent.appendChild(newButton);
 
@@ -412,4 +410,5 @@ function initializeExtension(settings) {
 
 // Get both settings at once and initialise the extension
 browser.storage.sync.get(["comment_templates", "extra_comment_boxes", "template_comments", "prewritten_comments"])
-    .then(initializeExtension);
+    .then(initializeExtension)
+    .catch(onError);

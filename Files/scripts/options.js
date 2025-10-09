@@ -44,10 +44,10 @@ const booleanSettingMappings = {
 function saveOptions() {
     for (let [key, value] of Object.entries(booleanSettingMappings)) {
         if (document.querySelector(value).type === "checkbox") {
-            console.log("setting key " + key + " to " + document.querySelector(value).checked)
+            console.log(`Options: setting key ${key} to ${document.querySelector(value).checked}`)
             browser.storage.sync.set({[key]: document.querySelector(value).checked});
         } else if (document.querySelector(value).type === "textarea") {
-            console.log("setting key " + key + " to " + document.querySelector(value).textContent)
+            console.log(`Options: setting key ${key} to ${document.querySelector(value).textContent}`)
             browser.storage.sync.set({[key]: document.querySelector(value).textContent});
         }
     }
@@ -58,7 +58,7 @@ function handleSaveButtonClick(e) {
 
     saveOptions();
 
-    console.log("saved");
+    console.log("Options: saved");
 
     let notice = document.querySelector(".flash-notice");
     notice.hidden = false;
@@ -74,13 +74,11 @@ function handleSaveButtonClick(e) {
 function restoreOptions() {
     function setCurrentChoice(result, id) {
         let elem = document.querySelector(id);
-        console.log(elem);
         if (elem.tagName === "CHECKBOX") {
-            console.log("setting id " + id + " to " + result);
+            console.log(`Options: Setting id ${id} to ${result}`);
             elem.checked = result;
 
             if (elem.classList.contains("dom") && result) {
-                console.log("subing list")
                 let checkboxes = elem.parentNode.parentNode.parentNode.querySelector("ul").querySelectorAll(".sub");
                 for (let i = 0; i < checkboxes.length; i++) {
                     checkboxes[i].disabled = false;
@@ -94,17 +92,17 @@ function restoreOptions() {
             }
         } else if (elem.tagName === "TEXTAREA") {
             result = result || elem.textContent;
-            console.log("setting id " + id + " to " + result);
+            console.log(`Options: setting id ${id} to ${result}`);
             elem.textContent = result;
         }
     }
 
     for (let [key, value] of Object.entries(booleanSettingMappings)) {
-        console.log("getting key " + key);
+        console.log(`Options: getting key ${key}`);
         browser.storage.sync.get(key).then(
             (result) => setCurrentChoice(result[key], value),
             (e) => {
-                console.log(e);
+                console.error(e);
             }
         );
     }

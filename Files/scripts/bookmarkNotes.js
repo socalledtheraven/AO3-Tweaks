@@ -313,7 +313,7 @@ function initializeExtension(settings) {
 }
 
 function onError(error) {
-    console.log(`Error: ${error}`);
+    console.error(`Error: ${error}`);
 }
 
 // Get both settings at once and initialise the extension
