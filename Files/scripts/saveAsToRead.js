@@ -320,7 +320,11 @@ function addSaveButton(series, priv) {
     if (series) {
         navbar = document.querySelector("ul.navigation.actions[role='navigation']");
     } else {
-        navbar = document.querySelector("ul.navigation.actions.work[role='menu']");
+        navbar = document.querySelector("ul.navigation.actions.work");
+    }
+
+    if (!navbar) {
+        console.log("navbar selector broke :(")
     }
 
     let saveButton = createWorkToReadButton(priv, series);
@@ -364,7 +368,7 @@ function createMarkAsReadButton() {
 
     // needs to come first so it doesn't end after that return in the second if
     if (REPLACE_MARK_FOR_LATER) {
-        const navbar = document.querySelector("ul.navigation.actions.work[role='menu']");
+        const navbar = document.querySelector("ul.navigation.actions.work");
         const markForLaterButton = navbar.querySelector(".mark");
         markForLaterButton.remove();
     }
