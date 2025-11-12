@@ -6,13 +6,13 @@
 	"permissions": ["storage"],
 	"content_scripts": [
 		{
-			"js": ["scripts/latestChapter.js"],
+			"js": ["scripts/utilities.js", "scripts/latestChapter.js"],
 			"matches": [
 				"*://archiveofourown.org/bookmarks?commit=Sort+and+Filter&bookmark_search%5Bsort_column%5D=bookmarkable_date*"
 			]
 		},
 		{
-			"js": ["scripts/saveAsToRead.js"],
+			"js": ["scripts/utilities.js", "scripts/saveAsToRead.js"],
 			"matches": [
 				"*://archiveofourown.org/*"
 			],
@@ -22,7 +22,7 @@
 			]
 		},
 		{
-			"js": ["scripts/bookmarkNotes.js"],
+			"js": ["scripts/utilities.js", "scripts/bookmarkNotes.js"],
 			"matches": [
 				"*://archiveofourown.org/*chapters/*",
 				"*://archiveofourown.org/*works/*",
@@ -35,13 +35,13 @@
 			]
 		},
 		{
-			"js": ["scripts/rekudos.js"],
+			"js": ["scripts/utilities.js", "scripts/rekudos.js"],
 			"matches": [
 				"*://archiveofourown.org/*works/*"
 			]
 		},
 		{
-			"js": ["scripts/comments.js"],
+			"js": ["scripts/utilities.js", "scripts/comments.js"],
 			"matches": [
 				"*://archiveofourown.org/*works/*"
 			]
