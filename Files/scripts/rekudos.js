@@ -21,7 +21,7 @@ function sendComment(comment, button) {
     let token = document.querySelector("meta[name='csrf-token']").getAttribute("content");
     let pseudID = document.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
 
-    post(url, {
+    window.AO3TweaksUtils.post(url, {
         "authenticity_token": token,
         "comment[pseud_id]": pseudID,
         "comment[comment_content]": comment,
@@ -33,31 +33,6 @@ function sendComment(comment, button) {
         } else {
             button.textContent = "Rekudos failed, try again later.";
         }
-    });
-}
-
-function post(url, data) {
-    // a POST request with the associated headers
-    return fetch(url, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Encoding": "gzip, deflate, br, zstd",
-            "Connection": "keep-alive",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Host": "archiveofourown.org",
-            "Origin": "https://archiveofourown.org",
-            "Priority": "u=0, i",
-            "Referer": url,
-            "Sec-Fetch-Dest": "document",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-Site": "same-origin",
-            "Sec-Fetch-User": "?1",
-            "Upgrade-Insecure-Requests": "1",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
-        },
-        body: stringify(data)
     });
 }
 
@@ -107,12 +82,6 @@ function createNewKudos(AUTO, messages) {
     return containerLi;
 }
 
-function isLoggedIn() {
-    // when used in an if, this will check for the existence of the element
-    // it's basically being cast to bool
-    return !document.querySelector("#login");
-}
-
 console.log("loaded rekudos.js")
 
 function initializeExtension(settings) {
@@ -133,7 +102,7 @@ function initializeExtension(settings) {
         ];
     }
 
-    if (isLoggedIn() && REKUDOS_ACTIVE) {
+    if (window.AO3TweaksUtils.isLoggedIn() && REKUDOS_ACTIVE) {
         // jump back to the kudos button
         let kudosButton = document.querySelector("#new_kudo");
         let containerLi = createNewKudos(REKUDOS_AUTO, messages);
@@ -142,11 +111,7 @@ function initializeExtension(settings) {
     }
 }
 
-function onError(error) {
-    console.error(`Error: ${error}`);
-}
-
 // Get both settings at once and initialise the extension
 browser.storage.sync.get(["rekudos_enabled", "auto_rekudos_enabled", "rekudos_messages"])
     .then(initializeExtension)
-    .catch(onError);
+    .catch(window.AO3TweaksUtils.onError);

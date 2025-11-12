@@ -17,7 +17,7 @@ async function fullTextCommentBoxes() {
 async function getChapterUrls() {
     // sometimes works will have parameters like this
     let navigationUrl = window.location.href.split("?")[0].split("#")[0] + "/navigate";
-    let doc = await getDocument(navigationUrl);
+    let doc = await window.AO3TweaksUtils.getDocument(navigationUrl);
     let links = Array.from(doc.querySelector('ol[role="navigation"]').querySelectorAll("a"));
 
     // grabs all the things in that list and filters it down to just the urls, then format them appropriately
@@ -63,7 +63,7 @@ async function appendCommentBox(i, url, chapters, chapterNode) {
         let token = document.querySelector("meta[name='csrf-token']").getAttribute("content");
         let pseudID = document.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
 
-        post(url, {
+        window.AO3TweaksUtils.post(url, {
             "authenticity_token": token,
             "comment[pseud_id]": pseudID,
             "comment[comment_content]": commentBox.querySelector("textarea").value,
@@ -82,53 +82,6 @@ async function appendCommentBox(i, url, chapters, chapterNode) {
     parent.appendChild(newButton);
 
     chapters.insertBefore(commentBox, chapterNode);
-}
-
-async function getDocument(url) {
-    // gets the HTML and document object of a url
-    let response = await fetch(url);
-
-    let navPageHTML = await response.text();
-
-    // this is standard parsing
-    let parser = new DOMParser();
-    return parser.parseFromString(navPageHTML, "text/html");
-}
-
-function post(url, data) {
-    // a POST request with the associated headers
-    return fetch(url, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Encoding": "gzip, deflate, br, zstd",
-            "Connection": "keep-alive",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Host": "archiveofourown.org",
-            "Origin": "https://archiveofourown.org",
-            "Priority": "u=0, i",
-            "Referer": url,
-            "Sec-Fetch-Dest": "document",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-Site": "same-origin",
-            "Sec-Fetch-User": "?1",
-            "Upgrade-Insecure-Requests": "1",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
-        },
-        body: stringify(data)
-    });
-}
-
-function stringify(json) {
-    // turns a JSON document into a single URL-encoded string for sending in POST requests
-    let s = "";
-    for (const [key, value] of Object.entries(json)) {
-        s += encodeURIComponent(key) + "=" + encodeURIComponent(value) + "&";
-    }
-
-    // remove the final "&" because it gets unnecessarily added
-    return s.substring(0, s.length-1)
 }
 
 // Code for comment templates begins
@@ -204,12 +157,6 @@ function autofillComment(parentContainer, templates) {
     let random = Math.floor(Math.random() * templates.length);
     let commentBox = parentContainer.querySelector(".comment_form");
     commentBox.value = templates[random];
-}
-
-function isLoggedIn() {
-    // when used in an if, this will check for the existence of the element
-    // it's basically being cast to bool
-    return !document.querySelector("#login");
 }
 
 console.log("loaded comments.js");
@@ -392,7 +339,7 @@ function initializeExtension(settings) {
         "This fish is delicious"
     ];
 
-    if (isLoggedIn()) {
+    if (window.AO3TweaksUtils.isLoggedIn()) {
         // full text comment boxes is async, so it needs to happen first, so we have to have an overly complicated if structure
         if (EXTRA_COMMENT_BOXES) {
             fullTextCommentBoxes().then(function () {
@@ -411,4 +358,4 @@ function initializeExtension(settings) {
 // Get both settings at once and initialise the extension
 browser.storage.sync.get(["comment_templates", "extra_comment_boxes", "template_comments", "prewritten_comments"])
     .then(initializeExtension)
-    .catch(onError);
+    .catch(window.AO3TweaksUtils.onError);

@@ -42,7 +42,7 @@ function _createBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privac
     } else {
         url = "https://archiveofourown.org/works/" + id + "/bookmarks";
     }
-    post(url, {
+    window.AO3TweaksUtils.post(url, {
         "authenticity_token": token,
         "bookmark[pseud_id]": pseudID,
         "bookmark[bookmarker_notes]": bookmarkNotes, // url encode the output of bookmarkNotes, if enabled
@@ -58,7 +58,7 @@ function _createBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privac
 
 function updateBookmark(bookmarkID, token, pseudID, notes, tagString, privacy, rec, buttonID) {
     // sends an update request with the data
-    post("https://archiveofourown.org/bookmarks/" + bookmarkID, {
+    window.AO3TweaksUtils.post("https://archiveofourown.org/bookmarks/" + bookmarkID, {
         "_method": "put",
         "authenticity_token": token,
         "bookmark[pseud_id]": pseudID,
@@ -131,7 +131,7 @@ function isWork() {
 }
 
 function isMarkedForLater() {
-    let tags = getStringTags(document);
+    let tags = window.AO3TweaksUtils.getStringTags(document);
     return tags.includes("To Read");
 }
 
@@ -202,7 +202,7 @@ function createExternalToReadButton(i, url, series, priv) {
     }
 
     child.onclick = async function () {
-        let doc = await getDocument(url);
+        let doc = await window.AO3TweaksUtils.getDocument(url);
 
         if (series) {
             bookmarkSeries(doc, toReadButton, priv);
@@ -325,7 +325,7 @@ function unsubscribe(doc) {
     subscriptionID = subscriptionID[subscriptionID.length - 1];
     let userURL = doc.querySelector("#greeting").querySelector("ul").querySelector("li").querySelector("a").href;
 
-    post(userURL + "/subscriptions/" + subscriptionID, {
+    window.AO3TweaksUtils.post(userURL + "/subscriptions/" + subscriptionID, {
         "authenticity_token": token,
         "subscription[subscribable_id]": subWorkID,
         "subscription[subscribable_type]": subType,
@@ -352,7 +352,7 @@ function unsubscribe(doc) {
 function removeFromMarkedForLater(doc, url) {
     let userURL = doc.querySelector("#greeting").querySelector("ul").querySelector("li").querySelector("a").href;
 
-    get(url + "/mark_as_read").then((r) => {
+    window.AO3TweaksUtils.get(url + "/mark_as_read").then((r) => {
         if (r.ok) {
             let notice = doc.createElement("div");
             notice.className = "flash notice";
@@ -380,7 +380,7 @@ function markAsRead(button) {
     // provides the actual function of a mark as read button
     let doc = document;
 
-    removeToReadTag(doc);
+    window.AO3TweaksUtils.removeToReadTag(doc);
 
     let data = getBookmarkData(doc);
     updateBookmark(data[0], data[1], data[2], data[3], data[4], data[5], data[6], button.id);
@@ -481,7 +481,7 @@ function getBookmarkData(doc) {
     let bookmarkNotes = doc.getElementById("bookmark_notes").value.trim();
     console.info(`SaveAsToRead: bookmarkNotes: ${bookmarkNotes}`)
 
-    let bookmarkTags = getStringTags(doc).join(", ");
+    let bookmarkTags = window.AO3TweaksUtils.getStringTags(doc).join(", ");
     if (bookmarkTags.length === 0) {
         bookmarkTags = doc.querySelector("#bookmark_tag_string").value.trim();
     }
@@ -566,7 +566,7 @@ function initializeExtension(settings) {
     PRIVATE_FANDOMS = settings["private_fandoms"] || [];
     CREATE_MARK_AS_READ_BUTTON = settings["create_mark_as_read_button"] || true;
 
-    if (isLoggedIn() && SAVE_AS_TO_READ_ENABLED) {
+    if (window.AO3TweaksUtils.isLoggedIn() && SAVE_AS_TO_READ_ENABLED) {
         if (isWork()) {
             console.log(`SaveAsToRead: this is a work`)
             // the whole idea here is to not show redundant buttons - save as buttons only when it's not already saved, and mark as button only when it can be marked as read
@@ -606,4 +606,4 @@ browser.storage.sync.get([
     "create_mark_as_read_button"
 ])
 .then(initializeExtension)
-.catch(onError);
+.catch(window.AO3TweaksUtils.onError);

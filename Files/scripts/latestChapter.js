@@ -50,18 +50,12 @@ function main() {
 	}
 }
 
-function isLoggedIn() {
-	// when used in an if, this will check for the existence of the element
-	// it's basically being casted to bool
-	return !document.querySelector("#login");
-}
-
 console.log("loaded latestChapter.js");
 
 function initializeExtension(settings) {
 	const LATEST_CHAPTER_AUTOFILL = settings["latest_chapter_autofill"] || true;
 
-	if (isLoggedIn() && LATEST_CHAPTER_AUTOFILL) {
+	if (window.AO3TweaksUtils.isLoggedIn() && LATEST_CHAPTER_AUTOFILL) {
 		// runs it when the page loads
 		console.log("LatestChapter: loaded")
 		main();
@@ -71,4 +65,4 @@ function initializeExtension(settings) {
 // Get both settings at once and initialise the extension
 browser.storage.sync.get("latest_chapter_autofill")
 	.then(initializeExtension)
-    .catch(onError);
+    .catch(window.AO3TweaksUtils.onError);
