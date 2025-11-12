@@ -245,35 +245,6 @@ function updateSeriesBookmark(url) {
     }
 }
 
-function removeCommas(wordcount) {
-    if (wordcount.includes(',')) {
-        // no, I don't know why this recursively keeps doing this, it was like this in the original script. my best guess
-        // is that in the past, replace only replaced the first match
-        wordcount = wordcount.replace(',', '');
-        wordcount = removeCommas(wordcount);
-    }
-
-    return wordcount;
-}
-
-function addTags(tagBox, categorySelector) {
-    const categories = document.getElementsByClassName(categorySelector);
-    if (categories.length > 0) {
-        const categoryTags = categories[1].getElementsByClassName("tag");
-        for (let tag of categoryTags) {
-            tagBox.value += ", " + tag.textContent;
-        }
-    }
-
-    return tagBox;
-}
-
-function isLoggedIn() {
-    // when used in an if, this will check for the existence of the element
-    // it's basically being casted to bool
-    return !document.querySelector("#login");
-}
-
 console.log("loaded bookmarkNotes.js");
 
 function initializeExtension(settings) {
@@ -310,10 +281,6 @@ function initializeExtension(settings) {
             updateSeriesBookmark(uri);
         }
     }
-}
-
-function onError(error) {
-    console.error(`Error: ${error}`);
 }
 
 // Get both settings at once and initialise the extension

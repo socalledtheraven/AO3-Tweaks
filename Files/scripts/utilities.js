@@ -1,4 +1,23 @@
+// noinspection JSUnusedLocalSymbols
+
 if (window.AO3TweaksUtils) {
+    if (!window.utilitiesInitialised) {
+        const {
+            stringify,
+            post,
+            get,
+            getDocument,
+            isLoggedIn,
+            onError,
+            removeCommas,
+            getTags,
+            getStringTags,
+            removeToReadTag,
+            addTags
+        } = window.AO3TweaksUtils;
+
+        window.utilitiesInitialised = true;
+    }
 } else {
     console.log("running the first time")
     // LOW-LEVEL UTILITIES
