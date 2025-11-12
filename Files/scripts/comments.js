@@ -137,9 +137,8 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
 
 function autofillComment(parentContainer, templates) {
     parentContainer = parentContainer.parentNode;
-    let random = Math.floor(Math.random() * templates.length);
     let commentBox = parentContainer.querySelector(".comment_form");
-    commentBox.value = templates[random];
+    commentBox.value = window.AO3TweaksUtils.getRandomItem(templates);
 }
 
 console.log("loaded comments.js");

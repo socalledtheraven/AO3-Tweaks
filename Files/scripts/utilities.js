@@ -163,6 +163,10 @@ function createInlineListItem(pointer) {
     return li;
 }
 
+function getRandomItem(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
 // Export functions for use in other scripts
 // This allows the functions to be called from other files
 window.AO3TweaksUtils = {
@@ -177,5 +181,6 @@ window.AO3TweaksUtils = {
     addTags,
     getAO3Metadata,
     showFlashNotice,
-    createInlineListItem
+    createInlineListItem,
+    getRandomItem
 };

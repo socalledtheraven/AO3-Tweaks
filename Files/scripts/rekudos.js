@@ -8,8 +8,7 @@ function postComment(messages, button) {
         if (messages.length === 1) {
             comment = messages;
         } else {
-            let random = Math.floor(Math.random() * messages.length);
-            comment = messages[random];
+            comment = window.AO3TweaksUtils.getRandomItem(messages);
         }
 
         sendComment(comment, button);
