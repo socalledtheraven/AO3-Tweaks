@@ -150,6 +150,19 @@ function showFlashNotice(message, isError = false, doc = document) {
     return notice;
 }
 
+function createInlineListItem(pointer) {
+    let li = document.createElement("li");
+    li.style.listStyle = "none";
+    li.style.display = "inline";
+    li.style.paddingLeft = "0.25em";
+
+    if (pointer) {
+        li.style.cursor = "pointer";
+    }
+
+    return li;
+}
+
 // Export functions for use in other scripts
 // This allows the functions to be called from other files
 window.AO3TweaksUtils = {
@@ -163,5 +176,6 @@ window.AO3TweaksUtils = {
     removeToReadTag,
     addTags,
     getAO3Metadata,
-    showFlashNotice
+    showFlashNotice,
+    createInlineListItem
 };

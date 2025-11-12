@@ -98,10 +98,7 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
 
         // all the styling here is so that it will look like the actions in terms of spacing
         // same reason for why I'm bothering with using a ul and lis
-        let containerLi1 = document.createElement("li");
-        containerLi1.style.listStyle = "none"
-        containerLi1.style.display = "inline"
-        containerLi1.style.paddingLeft = "0.25em"
+        let containerLi1 = window.AO3TweaksUtils.createInlineListItem();
         containerLi1.style.cursor = "pointer";
 
         let commentTemplateButton = document.createElement("a");
@@ -112,16 +109,9 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
         };
         containerLi1.appendChild(commentTemplateButton);
 
-        let paddingLi1 = document.createElement("li");
-        paddingLi1.style.listStyle = "none";
-        paddingLi1.style.display = "inline";
-        paddingLi1.style.paddingLeft = "0.25em";
+        let paddingLi1 = window.AO3TweaksUtils.createInlineListItem();
 
-        let containerLi2 = document.createElement("li");
-        containerLi2.style.listStyle = "none";
-        containerLi2.style.display = "inline";
-        containerLi2.style.paddingLeft = "0.25em";
-        containerLi2.style.cursor = "pointer";
+        let containerLi2 = window.AO3TweaksUtils.createInlineListItem(true);
 
         let premadeCommentButton = document.createElement("a");
         premadeCommentButton.textContent = "Fill prewritten comment";
@@ -131,19 +121,11 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
         };
         containerLi2.appendChild(premadeCommentButton);
 
-        let paddingLi2 = document.createElement("li");
-        paddingLi2.style.listStyle = "none"
-        paddingLi2.style.display = "inline"
-        paddingLi2.style.paddingLeft = "0.25em"
+        let paddingLi2 = window.AO3TweaksUtils.createInlineListItem();
 
-        let containerLi3 = document.createElement("li");
-        containerLi3.style.listStyle = "none"
-        containerLi3.style.display = "inline"
-        containerLi3.style.paddingLeft = "0.25em"
-        containerLi3.style.cursor = "pointer";
+        let containerLi3 = window.AO3TweaksUtils.createInlineListItem(true);
         containerLi3.appendChild(commentButtons[i]);
 
-        // .cloneNode(true);
         ul.appendChild(containerLi1);
         ul.appendChild(paddingLi1);
         ul.appendChild(containerLi2);

@@ -57,10 +57,7 @@ function overrideButton(oldButton, newButton) {
 }
 
 function createNewKudos(AUTO, messages) {
-    let containerLi = document.createElement("li");
-    containerLi.style.listStyle = "none"
-    containerLi.style.display = "inline"
-    containerLi.style.paddingLeft = "0.25em"
+    let containerLi = window.AO3TweaksUtils.createInlineListItem();
 
     let newKudosButton = document.createElement("a");
     newKudosButton.textContent = "Kudos ♥";
