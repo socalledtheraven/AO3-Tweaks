@@ -4,7 +4,7 @@ if (window.saveAsToReadInitialized) {
     // Set the flag immediately to prevent re-entry
     window.saveAsToReadInitialized = true;
 
-// CONFIG
+    // CONFIG
     let ENABLE_PRIVATE_FANDOMS;
     let PRIVATE_FANDOMS;
     let SAVE_AS_TO_READ_ENABLED;
@@ -13,14 +13,13 @@ if (window.saveAsToReadInitialized) {
     let REPLACE_MARK_FOR_LATER;
     let ADD_PRIV_SAVE_AS;
     let CREATE_MARK_AS_READ_BUTTON;
-// END CONFIG
+    // END CONFIG
 
     const URL = window.location.href;
 
     console.log("running before onerror")
 
     const {
-        stringify,
         post,
         get,
         getDocument,
@@ -31,7 +30,7 @@ if (window.saveAsToReadInitialized) {
     } = window.AO3TweaksUtils;
 
 
-// LOW-LEVEL UTILITIES
+    // LOW-LEVEL UTILITIES
 
     function isInArray(arr) {
         // an "is in list" function checking against `PRIVATE_FANDOMS`
@@ -43,7 +42,7 @@ if (window.saveAsToReadInitialized) {
         return false;
     }
 
-// BOOKMARK HANDLING
+    // BOOKMARK HANDLING
 
     function createSeriesBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privacy, buttonID) {
         _createBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privacy, buttonID, true);
@@ -135,7 +134,7 @@ if (window.saveAsToReadInitialized) {
     }
 
 
-// SMALL UTILITIES
+    // SMALL UTILITIES
 
 
     function isWork() {
@@ -156,7 +155,7 @@ if (window.saveAsToReadInitialized) {
     }
 
 
-// BUTTON CREATION
+    // BUTTON CREATION
 
     function createWorkToReadButton(priv, series) {
         // these will always be on the user-facing page
@@ -332,7 +331,7 @@ if (window.saveAsToReadInitialized) {
     }
 
 
-// BUTTON FUNCTIONS
+    // BUTTON FUNCTIONS
 
 
     function unsubscribe(doc) {
@@ -456,7 +455,7 @@ if (window.saveAsToReadInitialized) {
     }
 
 
-// GET DATA FUNCS
+    // GET DATA FUNCS
 
 
     function getWorkData(doc) {
@@ -541,7 +540,7 @@ if (window.saveAsToReadInitialized) {
     }
 
 
-// MAIN CODE
+    // MAIN CODE
 
 
     function addButtonsToMultiWorkPage() {
@@ -614,7 +613,7 @@ if (window.saveAsToReadInitialized) {
         }
     }
 
-// Get both settings at once and initialise the extension
+    // Get both settings at once and initialise the extension
     browser.storage.sync.get([
         "save_as_to_read_enabled",
         "remove_from_marked_for_later",
@@ -625,7 +624,6 @@ if (window.saveAsToReadInitialized) {
         "private_fandoms",
         "create_mark_as_read_button"
     ])
-        .then(initializeExtension)
-        .catch(onError);
-
+    .then(initializeExtension)
+    .catch(onError);
 }
