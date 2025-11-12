@@ -318,7 +318,9 @@ function createMarkAsReadButton() {
 function unsubscribe(doc) {
     // unsubscribes from a story, given a document
     // can probably be left as-is, because it's all self-contained and works fine
-    let token = doc.querySelector("input[name='authenticity_token']").getAttribute("value");
+    let metadata = window.AO3TweaksUtils.getAO3Metadata();
+    let token = metadata.token;
+
     let subWorkID = doc.querySelector("#subscription_subscribable_id").getAttribute("value");
     let subType = doc.querySelector("#subscription_subscribable_type").getAttribute("value");
     let subscriptionID = doc.querySelector("input[name='authenticity_token']").parentElement.getAttribute("id").split("_");
@@ -460,8 +462,10 @@ function getWorkData(doc) {
         bookmarkTags = "";
     }
 
-    let token = doc.querySelector("meta[name='csrf-token']").getAttribute("content");
-    let pseudID = doc.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
+    let metadata = window.AO3TweaksUtils.getAO3Metadata();
+    let token = metadata.token;
+    let pseudID = metadata.pseudID;
+
     let privacy = isPrivate ? "1" : "0"
 
     return [id, token, pseudID, bookmarkNotes, bookmarkTags, privacy];
@@ -474,8 +478,10 @@ function getBookmarkData(doc) {
     console.info(`SaveAsToRead: url: ${url}`)
     console.info(`SaveAsToRead: id: ${id}`)
 
-    let token = doc.querySelector("meta[name='csrf-token']").getAttribute("content");
-    let pseudID = doc.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
+
+    let metadata = window.AO3TweaksUtils.getAO3Metadata();
+    let token = metadata.token;
+    let pseudID = metadata.pseudID;
     console.info(`SaveAsToRead: pseudID: ${pseudID}`)
 
     let bookmarkNotes = doc.getElementById("bookmark_notes").value.trim();
@@ -498,8 +504,9 @@ function getBookmarkData(doc) {
 function getSeriesData(doc) {
     let id = doc.querySelector("#subscription_subscribable_id").value;
 
-    let token = doc.querySelector("meta[name='csrf-token']").getAttribute("content");
-    let pseudID = doc.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
+    let metadata = window.AO3TweaksUtils.getAO3Metadata();
+    let token = metadata.token;
+    let pseudID = metadata.pseudID;
 
     const notes = doc.getElementById("bookmark_notes")
     const bookmarkNotes = notes.value;

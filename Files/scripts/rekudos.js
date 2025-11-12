@@ -18,8 +18,10 @@ function postComment(messages, button) {
 
 function sendComment(comment, button) {
     let url = window.location.href + "/comments";
-    let token = document.querySelector("meta[name='csrf-token']").getAttribute("content");
-    let pseudID = document.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
+
+    let metadata = window.AO3TweaksUtils.getAO3Metadata();
+    let token = metadata.token;
+    let pseudID = metadata.pseudID;
 
     window.AO3TweaksUtils.post(url, {
         "authenticity_token": token,

@@ -131,6 +131,13 @@ function addTags(tagBox, categorySelector) {
     return tagBox;
 }
 
+function getAO3Metadata(doc = document) {
+    return {
+        token: doc.querySelector("meta[name='csrf-token']").getAttribute("content"),
+        pseudID: doc.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value")
+    };
+}
+
 // Export functions for use in other scripts
 // This allows the functions to be called from other files
 window.AO3TweaksUtils = {
@@ -142,5 +149,6 @@ window.AO3TweaksUtils = {
     removeCommas,
     getStringTags,
     removeToReadTag,
-    addTags
+    addTags,
+    getAO3Metadata
 };
