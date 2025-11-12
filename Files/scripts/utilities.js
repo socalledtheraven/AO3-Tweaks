@@ -134,14 +134,12 @@ function addTags(tagBox, categorySelector) {
 // Export functions for use in other scripts
 // This allows the functions to be called from other files
 window.AO3TweaksUtils = {
-    stringify,
     post,
     get,
     getDocument,
     isLoggedIn,
     onError,
     removeCommas,
-    getTags,
     getStringTags,
     removeToReadTag,
     addTags

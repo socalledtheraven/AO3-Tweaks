@@ -1,11 +1,11 @@
 function overlapping(elem1, elem2) {
-    let rect1 = elem1.getBoundingClientRect();
-    let rect2 = elem2.getBoundingClientRect();
+	let rect1 = elem1.getBoundingClientRect();
+	let rect2 = elem2.getBoundingClientRect();
 
-    return !(rect1.right < rect2.left ||
-        rect1.left > rect2.right ||
-        rect1.bottom < rect2.top ||
-        rect1.top > rect2.bottom)
+	return !(rect1.right < rect2.left ||
+		rect1.left > rect2.right ||
+		rect1.bottom < rect2.top ||
+		rect1.top > rect2.bottom)
 }
 
 
@@ -26,9 +26,9 @@ function main() {
 				console.info(`LatestChapter: multiple chapters`)
 				let url = latestChapter.href;
 
-                let outerLi = document.createElement("li");
-                outerLi.className = "actions";
-                outerLi.style.margin = "0";
+				let outerLi = document.createElement("li");
+				outerLi.className = "actions";
+				outerLi.style.margin = "0";
 
 				let latest = document.createElement("a");
 				latest.href = url;
@@ -38,14 +38,14 @@ function main() {
 				latest.style.top = "45px";
 				latest.style.margin = "0";
 
-                outerLi.appendChild(latest);
+				outerLi.appendChild(latest);
 				header.insertAdjacentElement("beforeend", outerLi);
 
-                const tags = bookmark.querySelector("ul.tags.commas");
-                if (overlapping(latest, tags)) {
-                    tags.style.paddingTop = "10px";
-                }
-            }
+				const tags = bookmark.querySelector("ul.tags.commas");
+				if (overlapping(latest, tags)) {
+					tags.style.paddingTop = "10px";
+				}
+			}
 		}
 	}
 }
@@ -65,4 +65,4 @@ function initializeExtension(settings) {
 // Get both settings at once and initialise the extension
 browser.storage.sync.get("latest_chapter_autofill")
 	.then(initializeExtension)
-    .catch(window.AO3TweaksUtils.onError);
+	.catch(window.AO3TweaksUtils.onError);
