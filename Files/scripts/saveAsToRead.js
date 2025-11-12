@@ -199,7 +199,15 @@ function isLoggedIn() {
 }
 
 function isWork() {
-    return URL.includes("chapters") || (URL.includes("series") && !URL.includes("tags")) || (URL.includes("works") && !URL.includes("search") && !URL.includes("users") && !URL.includes("tags"));
+    return URL.includes("chapters")
+        || (URL.includes("series")
+            && !URL.includes("tags"))
+        || (URL.includes("works")
+            && !URL.includes("search")
+            && !URL.includes("users")
+            && !URL.includes("tags")
+            && !URL.includes("collections")
+            && !(URL === "https://archiveofourown.org/works"));
 }
 
 function getTags(doc) {
