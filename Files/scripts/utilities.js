@@ -138,6 +138,18 @@ function getAO3Metadata(doc = document) {
     };
 }
 
+function showFlashNotice(message, isError = false, doc = document) {
+    let notice = doc.createElement("div");
+    notice.className = isError ? "flash notice error" : "flash notice";
+    notice.textContent = message;
+
+    let main = doc.querySelector("#main");
+    if (main) {
+        main.insertAdjacentElement("afterbegin", notice);
+    }
+    return notice;
+}
+
 // Export functions for use in other scripts
 // This allows the functions to be called from other files
 window.AO3TweaksUtils = {
@@ -150,5 +162,6 @@ window.AO3TweaksUtils = {
     getStringTags,
     removeToReadTag,
     addTags,
-    getAO3Metadata
+    getAO3Metadata,
+    showFlashNotice
 };

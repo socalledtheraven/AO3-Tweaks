@@ -77,12 +77,7 @@ function respondToBookmark(r, type) {
     // adds a flash notice to the top of the screen and changes the text of the button
     if (r.ok) {
         // always document rather than doc because these will always be seen on the page the user is looking at
-        let notice = document.createElement("div");
-        notice.className = "flash notice";
-        notice.textContent = `Work successfully saved as "To Read".`;
-
-        let main = document.querySelector("#main");
-        main.insertAdjacentElement("afterbegin", notice);
+        window.AO3TweaksUtils.showFlashNotice(`Work successfully saved as "To Read".`);
 
         let button;
         if (type.includes("to_read")) {
@@ -105,12 +100,7 @@ function respondToBookmark(r, type) {
             }
         }
     } else {
-        let notice = document.createElement("div");
-        notice.className = "flash notice error";
-        notice.textContent = "We're sorry! Something went wrong.";
-
-        let main = document.querySelector("#main");
-        main.insertAdjacentElement("afterbegin", notice);
+        window.AO3TweaksUtils.showFlashNotice("We're sorry! Something went wrong.", true);
     }
 }
 
@@ -318,7 +308,7 @@ function createMarkAsReadButton() {
 function unsubscribe(doc) {
     // unsubscribes from a story, given a document
     // can probably be left as-is, because it's all self-contained and works fine
-    let metadata = window.AO3TweaksUtils.getAO3Metadata();
+    let metadata = window.AO3TweaksUtils.getAO3Metadata(doc);
     let token = metadata.token;
 
     let subWorkID = doc.querySelector("#subscription_subscribable_id").getAttribute("value");
@@ -334,19 +324,9 @@ function unsubscribe(doc) {
         "_method": "delete"
     }).then((r) => {
         if (r.ok) {
-            let notice = doc.createElement("div");
-            notice.className = "flash notice";
-            notice.textContent = `You have successfully unsubscribed from ${doc.querySelector(".title.heading").textContent}.`;
-
-            let main = doc.querySelector("#main");
-            main.insertAdjacentElement("afterbegin", notice);
+            window.AO3TweaksUtils.showFlashNotice(`You have successfully unsubscribed from ${doc.querySelector(".title.heading").textContent}.`, false, doc);
         } else {
-            let notice = doc.createElement("div");
-            notice.className = "flash notice error";
-            notice.textContent = "We're sorry! Something went wrong.";
-
-            let main = doc.querySelector("#main");
-            main.insertAdjacentElement("afterbegin", notice);
+            window.AO3TweaksUtils.showFlashNotice("We're sorry! Something went wrong.", true, doc)
         }
     });
 }
@@ -356,24 +336,16 @@ function removeFromMarkedForLater(doc, url) {
 
     window.AO3TweaksUtils.get(url + "/mark_as_read").then((r) => {
         if (r.ok) {
-            let notice = doc.createElement("div");
-            notice.className = "flash notice";
-            notice.textContent = `This work was removed from your`;
+            let notice = window.AO3TweaksUtils.showFlashNotice("This work was removed from your", false, doc);
+
             let listLink = doc.createElement("a");
             listLink.href = userURL + "/readings?show=to-read";
             listLink.text = "Marked for Later list";
+
             notice.childNodes.add(listLink);
             notice.insertAdjacentText("beforeend", ".");
-
-            let main = doc.querySelector("#main");
-            main.insertAdjacentElement("afterbegin", notice);
         } else {
-            let notice = doc.createElement("div");
-            notice.className = "flash notice error";
-            notice.textContent = "We're sorry! Something went wrong.";
-
-            let main = doc.querySelector("#main");
-            main.insertAdjacentElement("afterbegin", notice);
+            window.AO3TweaksUtils.showFlashNotice("We're sorry! Something went wrong.", true, doc);
         }
     });
 }
@@ -462,7 +434,7 @@ function getWorkData(doc) {
         bookmarkTags = "";
     }
 
-    let metadata = window.AO3TweaksUtils.getAO3Metadata();
+    let metadata = window.AO3TweaksUtils.getAO3Metadata(doc);
     let token = metadata.token;
     let pseudID = metadata.pseudID;
 
@@ -479,7 +451,7 @@ function getBookmarkData(doc) {
     console.info(`SaveAsToRead: id: ${id}`)
 
 
-    let metadata = window.AO3TweaksUtils.getAO3Metadata();
+    let metadata = window.AO3TweaksUtils.getAO3Metadata(doc);
     let token = metadata.token;
     let pseudID = metadata.pseudID;
     console.info(`SaveAsToRead: pseudID: ${pseudID}`)
@@ -504,7 +476,7 @@ function getBookmarkData(doc) {
 function getSeriesData(doc) {
     let id = doc.querySelector("#subscription_subscribable_id").value;
 
-    let metadata = window.AO3TweaksUtils.getAO3Metadata();
+    let metadata = window.AO3TweaksUtils.getAO3Metadata(doc);
     let token = metadata.token;
     let pseudID = metadata.pseudID;
 
