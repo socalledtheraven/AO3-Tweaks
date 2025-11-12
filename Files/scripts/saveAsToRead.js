@@ -700,6 +700,10 @@ function initializeExtension(settings) {
     }
 }
 
+function onError(error) {
+    console.error(`Error: ${error}`);
+}
+
 // Get both settings at once and initialise the extension
 browser.storage.sync.get([
         "save_as_to_read_enabled",
