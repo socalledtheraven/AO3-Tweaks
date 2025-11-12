@@ -266,6 +266,22 @@ function createWorkToReadButton(priv, series) {
     } else {
         child.onclick = function () {
             bookmarkWork(document, toReadButton, priv);
+            createMarkAsReadButton();
+
+            let button = document.querySelector("#to_read");
+
+            // we add a delay so the user can see the "saved as ... " message before the button disappears
+            setTimeout(function () {
+                button.remove();
+            }, 3 * 1000);
+
+            if (ADD_PRIV_SAVE_AS) {
+                let privButton = document.querySelector("#priv_to_read");
+                setTimeout(function () {
+                    privButton.remove();
+                }, 3 * 1000);
+            }
+
             return false;
         };
     }
@@ -360,6 +376,20 @@ function createMarkAsReadButton() {
         child3.href = "#mark_as_read";
         child3.onclick = function () {
             markAsRead(markAsReadButton);
+
+            addSaveButton(false);
+
+            if (ADD_PRIV_SAVE_AS) {
+                addSaveButton(false, true);
+            }
+
+            let button = document.querySelector("#mark_as_read");
+
+            // we add a delay so the user can see the "marked as ... " message before the button disappears
+            setTimeout(function () {
+                button.remove();
+            }, 3 * 1000);
+
             return false;
         }
 

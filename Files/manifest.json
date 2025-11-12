@@ -1,7 +1,7 @@
 {
 	"name": "AO3 Tweaks",
 	"description": "An extension adding various little tweaks to Ao3.",
-	"version": "4.0.10",
+	"version": "4.1.0",
 	"manifest_version": 3,
 	"permissions": ["storage"],
 	"content_scripts": [
