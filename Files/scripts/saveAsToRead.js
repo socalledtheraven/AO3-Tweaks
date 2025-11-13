@@ -178,7 +178,7 @@ function createExternalToReadButton(i, url, series, priv) {
     // creates a new button
     const toReadButton = document.createElement("li");
     const child = document.createElement("a");
-    const workID = url.split("/")[4];
+    const workID = window.AO3TweaksUtils.extractIdFromUrl(url);
     console.log(`SaveAsToRead: id is ${workID}`)
 
     if (priv) {
@@ -422,9 +422,9 @@ function getWorkData(doc) {
 
     const bookmarkNotes = doc.getElementById("bookmark_notes").value;
 
-    let url = doc.querySelector("li.share").querySelector("a").href.split("/");
+    let url = doc.querySelector("li.share").querySelector("a").href;
     // the url gets expanded when everything is loaded, so we need to take `archiveofourown.org/works/...` into mind
-    let id = url[4];
+    let id = window.AO3TweaksUtils.extractIdFromUrl(url);
 
     const tagBox = doc.getElementById("bookmark_tag_string_autocomplete");
     let bookmarkTags;
@@ -444,9 +444,9 @@ function getWorkData(doc) {
 }
 
 function getBookmarkData(doc) {
-    let url = doc.querySelector("#bookmark-form").querySelector("form").action.split("/");
+    let url = doc.querySelector("#bookmark-form").querySelector("form").action;
     // the url gets expanded when everything is loaded, so we need to take `archiveofourown.org/works/...` into mind
-    let id = url[4];
+    let id = window.AO3TweaksUtils.extractIdFromUrl(url);
     console.info(`SaveAsToRead: url: ${url}`)
     console.info(`SaveAsToRead: id: ${id}`)
 

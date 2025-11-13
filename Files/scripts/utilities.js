@@ -167,6 +167,12 @@ function getRandomItem(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
 
+function extractIdFromUrl(url) {
+    // Handles URLs like /works/123/chapters/456 or https://archiveofourown.org/works/123
+    const parts = url.split("/");
+    return parts[4]; // Works for both absolute and relative URLs after split
+}
+
 // Export functions for use in other scripts
 // This allows the functions to be called from other files
 window.AO3TweaksUtils = {
@@ -182,5 +188,6 @@ window.AO3TweaksUtils = {
     getAO3Metadata,
     showFlashNotice,
     createInlineListItem,
-    getRandomItem
+    getRandomItem,
+    extractIdFromUrl
 };
