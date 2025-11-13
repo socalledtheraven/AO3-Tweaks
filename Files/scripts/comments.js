@@ -17,7 +17,7 @@ async function fullTextCommentBoxes() {
 async function getChapterUrls() {
     // sometimes works will have parameters like this
     let navigationUrl = window.location.href.split("?")[0].split("#")[0] + "/navigate";
-    let doc = await window.AO3TweaksUtils.getDocument(navigationUrl);
+    let doc = await utils.getDocument(navigationUrl);
     let links = Array.from(doc.querySelector('ol[role="navigation"]').querySelectorAll("a"));
 
     // grabs all the things in that list and filters it down to just the urls, then format them appropriately
@@ -60,11 +60,11 @@ async function appendCommentBox(i, url, chapters, chapterNode) {
     newButton.href = "#comment_button_" + i;
 
     newButton.onclick = function () {
-        let metadata = window.AO3TweaksUtils.getAO3Metadata();
+        let metadata = utils.getAO3Metadata();
         let token = metadata.token;
         let pseudID = metadata.pseudID;
 
-        window.AO3TweaksUtils.post(url, {
+        utils.post(url, {
             "authenticity_token": token,
             "comment[pseud_id]": pseudID,
             "comment[comment_content]": commentBox.querySelector("textarea").value,
@@ -98,7 +98,7 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
 
         // all the styling here is so that it will look like the actions in terms of spacing
         // same reason for why I'm bothering with using a ul and lis
-        let containerLi1 = window.AO3TweaksUtils.createInlineListItem();
+        let containerLi1 = utils.createInlineListItem();
         containerLi1.style.cursor = "pointer";
 
         let commentTemplateButton = document.createElement("a");
@@ -109,9 +109,9 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
         };
         containerLi1.appendChild(commentTemplateButton);
 
-        let paddingLi1 = window.AO3TweaksUtils.createInlineListItem();
+        let paddingLi1 = utils.createInlineListItem();
 
-        let containerLi2 = window.AO3TweaksUtils.createInlineListItem(true);
+        let containerLi2 = utils.createInlineListItem(true);
 
         let premadeCommentButton = document.createElement("a");
         premadeCommentButton.textContent = "Fill prewritten comment";
@@ -121,9 +121,9 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
         };
         containerLi2.appendChild(premadeCommentButton);
 
-        let paddingLi2 = window.AO3TweaksUtils.createInlineListItem();
+        let paddingLi2 = utils.createInlineListItem();
 
-        let containerLi3 = window.AO3TweaksUtils.createInlineListItem(true);
+        let containerLi3 = utils.createInlineListItem(true);
         containerLi3.appendChild(commentButtons[i]);
 
         ul.appendChild(containerLi1);
@@ -138,7 +138,7 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
 function autofillComment(parentContainer, templates) {
     parentContainer = parentContainer.parentNode;
     let commentBox = parentContainer.querySelector(".comment_form");
-    commentBox.value = window.AO3TweaksUtils.getRandomItem(templates);
+    commentBox.value = utils.getRandomItem(templates);
 }
 
 console.log("loaded comments.js");
@@ -321,7 +321,7 @@ function initializeExtension(settings) {
         "This fish is delicious"
     ];
 
-    if (window.AO3TweaksUtils.isLoggedIn()) {
+    if (utils.isLoggedIn()) {
         // full text comment boxes is async, so it needs to happen first, so we have to have an overly complicated if structure
         if (EXTRA_COMMENT_BOXES) {
             fullTextCommentBoxes().then(function () {
@@ -340,4 +340,4 @@ function initializeExtension(settings) {
 // Get both settings at once and initialise the extension
 browser.storage.sync.get(["comment_templates", "extra_comment_boxes", "template_comments", "prewritten_comments"])
     .then(initializeExtension)
-    .catch(window.AO3TweaksUtils.onError);
+    .catch(utils.onError);

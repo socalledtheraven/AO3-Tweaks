@@ -108,31 +108,31 @@ function updateWorkBookmark(url) {
     const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
 
     if (ADD_CATEGORIES) {
-        window.AO3TweaksUtils.addTags(tagBox, "category tags")
+        utils.addTags(tagBox, "category tags")
     }
 
     if (ADD_FANDOM_TAGS) {
-        window.AO3TweaksUtils.addTags(tagBox, "fandom tags")
+        utils.addTags(tagBox, "fandom tags")
     }
 
     if (ADD_CHARACTER_TAGS) {
-        window.AO3TweaksUtils.addTags(tagBox, "character tags")
+        utils.addTags(tagBox, "character tags")
     }
 
     if (ADD_RELATIONSHIP_TAGS) {
-        window.AO3TweaksUtils.addTags(tagBox, "relationship tags")
+        utils.addTags(tagBox, "relationship tags")
     }
 
     if (ADD_ADDITIONAL_TAGS) {
-        window.AO3TweaksUtils.addTags(tagBox, "freeform tags")
+        utils.addTags(tagBox, "freeform tags")
     }
 
     if (ADD_RATING) {
-        window.AO3TweaksUtils.addTags(tagBox, "rating tags")
+        utils.addTags(tagBox, "rating tags")
     }
 
     if (ADD_ARCHIVE_WARNINGS) {
-        window.AO3TweaksUtils.addTags(tagBox, "warning tags")
+        utils.addTags(tagBox, "warning tags")
     }
 
     if (ADD_CUSTOM_TAGS) {
@@ -141,7 +141,7 @@ function updateWorkBookmark(url) {
 
     // the wordcount section begins
     let wordcount = document.getElementsByClassName("words")[1].textContent;
-    wordcount = window.AO3TweaksUtils.removeCommas(wordcount);
+    wordcount = utils.removeCommas(wordcount);
 
     if (ADD_EXACT_WORDCOUNT_TAG) {
         tagBox.value += ", Word Count:" + wordcount;
@@ -223,7 +223,7 @@ function updateSeriesBookmark(url) {
 
     if (ADD_EXACT_WORDCOUNT_TAG_SERIES) {
         const wordCount = document.getElementsByClassName("words");
-        tagBox.value += ", Words in series: " + window.AO3TweaksUtils.removeCommas(wordCount[1].textContent);
+        tagBox.value += ", Words in series: " + utils.removeCommas(wordCount[1].textContent);
     }
 
     if (ADD_CUSTOM_TAGS_SERIES) {
@@ -272,7 +272,7 @@ function initializeExtension(settings) {
     REC_DEFAULT_SERIES = settings["rec_default_series"] || false;
     PRIVATE_DEFAULT_SERIES = settings["private_default_series"] || false;
 
-    if (window.AO3TweaksUtils.isLoggedIn() && BOOKMARK_NOTES_ENABLED) {
+    if (utils.isLoggedIn() && BOOKMARK_NOTES_ENABLED) {
         // has a problem with the variable name "url" (presumably something else is using it)
         let uri = window.location.href;
         if (uri.includes("/works/")) {
@@ -309,4 +309,4 @@ browser.storage.sync.get([
     "custom_tags"
 ])
     .then(initializeExtension)
-    .catch(window.AO3TweaksUtils.onError);
+    .catch(utils.onError);

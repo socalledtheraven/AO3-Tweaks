@@ -55,7 +55,7 @@ console.log("loaded latestChapter.js");
 function initializeExtension(settings) {
 	const LATEST_CHAPTER_AUTOFILL = settings["latest_chapter_autofill"] || true;
 
-	if (window.AO3TweaksUtils.isLoggedIn() && LATEST_CHAPTER_AUTOFILL) {
+	if (utils.isLoggedIn() && LATEST_CHAPTER_AUTOFILL) {
 		// runs it when the page loads
 		console.log("LatestChapter: loaded")
 		main();
@@ -65,4 +65,4 @@ function initializeExtension(settings) {
 // Get both settings at once and initialise the extension
 browser.storage.sync.get("latest_chapter_autofill")
 	.then(initializeExtension)
-	.catch(window.AO3TweaksUtils.onError);
+	.catch(utils.onError);

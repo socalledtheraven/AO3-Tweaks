@@ -8,7 +8,7 @@ function postComment(messages, button) {
         if (messages.length === 1) {
             comment = messages;
         } else {
-            comment = window.AO3TweaksUtils.getRandomItem(messages);
+            comment = utils.getRandomItem(messages);
         }
 
         sendComment(comment, button);
@@ -18,11 +18,11 @@ function postComment(messages, button) {
 function sendComment(comment, button) {
     let url = window.location.href + "/comments";
 
-    let metadata = window.AO3TweaksUtils.getAO3Metadata();
+    let metadata = utils.getAO3Metadata();
     let token = metadata.token;
     let pseudID = metadata.pseudID;
 
-    window.AO3TweaksUtils.post(url, {
+    utils.post(url, {
         "authenticity_token": token,
         "comment[pseud_id]": pseudID,
         "comment[comment_content]": comment,
@@ -56,7 +56,7 @@ function overrideButton(oldButton, newButton) {
 }
 
 function createNewKudos(AUTO, messages) {
-    let containerLi = window.AO3TweaksUtils.createInlineListItem();
+    let containerLi = utils.createInlineListItem();
 
     let newKudosButton = document.createElement("a");
     newKudosButton.textContent = "Kudos ♥";
@@ -100,7 +100,7 @@ function initializeExtension(settings) {
         ];
     }
 
-    if (window.AO3TweaksUtils.isLoggedIn() && REKUDOS_ACTIVE) {
+    if (utils.isLoggedIn() && REKUDOS_ACTIVE) {
         // jump back to the kudos button
         let kudosButton = document.querySelector("#new_kudo");
         let containerLi = createNewKudos(REKUDOS_AUTO, messages);
@@ -112,4 +112,4 @@ function initializeExtension(settings) {
 // Get both settings at once and initialise the extension
 browser.storage.sync.get(["rekudos_enabled", "auto_rekudos_enabled", "rekudos_messages"])
     .then(initializeExtension)
-    .catch(window.AO3TweaksUtils.onError);
+    .catch(utils.onError);

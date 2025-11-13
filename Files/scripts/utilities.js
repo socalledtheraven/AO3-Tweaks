@@ -191,3 +191,5 @@ window.AO3TweaksUtils = {
     getRandomItem,
     extractIdFromUrl
 };
+
+window.utils = AO3Utilities;
