@@ -1,16 +1,24 @@
 async function fullTextCommentBoxes() {
     // checks if the "chapter by chapter" button is present (to indicate it is currently in fulltext mode
     const fullText = document.querySelector(".chapter.bychapter");
-    if (fullText) {
-        let chapters = document.querySelector("#chapters");
-        let chapterNodes = chapters.children;
-        // we do this because the length will be updated when I'm dynamically inserting new ones
-        let chaptersLength = chapterNodes.length;
-        let chapterUrls = await getChapterUrls();
+    if (!fullText) {
+        console.log("")
+        return;
+    }
 
-        for (let i = chaptersLength; i > 0; i--) {
-            await appendCommentBox(i, chapterUrls[i-1], chapters, chapterNodes[i]);
-        }
+    let chapters = document.querySelector("#chapters");
+    if (!chapters) {
+        console.log("No #chapters element found.");
+        return;
+    }
+
+    let chapterNodes = chapters.children;
+    // we do this because the length will be updated when I'm dynamically inserting new ones
+    let chaptersLength = chapterNodes.length;
+    let chapterUrls = await getChapterUrls();
+
+    for (let i = chaptersLength; i > 0; i--) {
+        await appendCommentBox(i, chapterUrls[i - 1], chapters, chapterNodes[i]);
     }
 }
 
@@ -18,7 +26,20 @@ async function getChapterUrls() {
     // sometimes works will have parameters like this
     let navigationUrl = window.location.href.split("?")[0].split("#")[0] + "/navigate";
     let doc = await getDocument(navigationUrl);
-    let links = Array.from(doc.querySelector('ol[role="navigation"]').querySelectorAll("a"));
+    let x = doc.querySelector('ol[role="navigation"]');
+
+    if (!x) {
+        console.log("No navigation element found.")
+        return;
+    }
+
+    let links = x.querySelectorAll("a");
+    if (links.length < 1) {
+        console.log("No links found.");
+        return;
+    }
+
+    links = Array.from(links);
 
     // grabs all the things in that list and filters it down to just the urls, then format them appropriately
     return links.map(link => {
@@ -37,6 +58,11 @@ async function getChapterUrls() {
 
 async function appendCommentBox(i, url, chapters, chapterNode) {
     const box = document.querySelector("#add_comment");
+    if (!box) {
+        console.log("No comment box element found.");
+        return;
+    }
+
     let commentBox = box.cloneNode(true);
     commentBox.id = "add_comment_" + i;
 
@@ -52,7 +78,11 @@ async function appendCommentBox(i, url, chapters, chapterNode) {
     }
 
     let button = commentBox.querySelector('input[value="Comment"]');
-    button.remove();
+    if (button) {
+        button.remove();
+    } else {
+        console.log("No button element found.");
+    }
 
     let newButton = document.createElement("a");
     newButton.textContent = "Comment";
@@ -63,10 +93,17 @@ async function appendCommentBox(i, url, chapters, chapterNode) {
         let token = document.querySelector("meta[name='csrf-token']").getAttribute("content");
         let pseudID = document.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
 
+        const commentText = commentBox.querySelector("textarea").value;
+
+        if (!commentText) {
+            console.log("No comment text found.");
+            return;
+        }
+
         post(url, {
             "authenticity_token": token,
             "comment[pseud_id]": pseudID,
-            "comment[comment_content]": commentBox.querySelector("textarea").value,
+            "comment[comment_content]": commentText,
             "controller_name": "chapters",
             "commit": "Comment"
         }).then((r) => {
@@ -79,7 +116,11 @@ async function appendCommentBox(i, url, chapters, chapterNode) {
     };
 
     let parent = commentBox.querySelector("p.actions");
-    parent.appendChild(newButton);
+    if (parent) {
+        parent.appendChild(newButton);
+    } else {
+        console.log("No parent element found.");
+    }
 
     chapters.insertBefore(commentBox, chapterNode);
 }
@@ -135,6 +176,11 @@ function stringify(json) {
 
 function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
     let commentButtons = document.querySelectorAll("input[value='Comment']");
+    if (commentButtons.length < 1) {
+        console.log("No comment button elements found.");
+        return;
+    }
+
     let commentButtonContainers = Array.from(commentButtons, button => button.parentNode);
 
     for (let i = 0; i <= commentButtonContainers.length-1; i++) {
@@ -201,8 +247,15 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
 
 function autofillComment(parentContainer, templates) {
     parentContainer = parentContainer.parentNode;
+
     let random = Math.floor(Math.random() * templates.length);
+
     let commentBox = parentContainer.querySelector(".comment_form");
+    if (!commentBox) {
+        console.log("No comment box element found.");
+        return;
+    }
+
     commentBox.value = templates[random];
 }
 
