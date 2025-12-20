@@ -1,5 +1,9 @@
 function postComment(messages, button) {
     let kudosMessage = document.querySelector("#kudos_message");
+    if (!kudosMessage) {
+        console.log("No kudos message found");
+        return;
+    }
 
     // checks if a kudos has already been left
     if (kudosMessage.textContent.includes("already")) {
@@ -92,6 +96,11 @@ function createNewKudos(AUTO, messages) {
 
     newKudosButton.onclick = function () {
         let oldKudosButton = document.querySelector("#kudo_submit");
+        if (!oldKudosButton) {
+            console.log("No old kudos button found");
+            return;
+        }
+
         oldKudosButton.click();
 
         if (AUTO) {
@@ -136,6 +145,11 @@ function initializeExtension(settings) {
     if (isLoggedIn() && REKUDOS_ACTIVE) {
         // jump back to the kudos button
         let kudosButton = document.querySelector("#new_kudo");
+        if (!kudosButton) {
+            console.log("No new kudos button found");
+            return;
+        }
+
         let containerLi = createNewKudos(REKUDOS_AUTO, messages);
 
         overrideButton(kudosButton, containerLi);
