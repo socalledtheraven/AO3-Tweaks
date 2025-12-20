@@ -1,3 +1,13 @@
+import {
+    createInlineListItem,
+    getAO3Metadata,
+    getDocument,
+    getRandomItem,
+    isLoggedIn,
+    onError,
+    post
+} from "./utilities.js";
+
 async function fullTextCommentBoxes() {
     // checks if the "chapter by chapter" button is present (to indicate it is currently in fulltext mode
     const fullText = document.querySelector(".chapter.bychapter");
@@ -90,8 +100,9 @@ async function appendCommentBox(i, url, chapters, chapterNode) {
     newButton.href = "#comment_button_" + i;
 
     newButton.onclick = function () {
-        let token = document.querySelector("meta[name='csrf-token']").getAttribute("content");
-        let pseudID = document.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
+        let metadata = getAO3Metadata();
+        let token = metadata.token;
+        let pseudID = metadata.pseudID;
 
         const commentText = commentBox.querySelector("textarea").value;
 
@@ -125,53 +136,6 @@ async function appendCommentBox(i, url, chapters, chapterNode) {
     chapters.insertBefore(commentBox, chapterNode);
 }
 
-async function getDocument(url) {
-    // gets the HTML and document object of a url
-    let response = await fetch(url);
-
-    let navPageHTML = await response.text();
-
-    // this is standard parsing
-    let parser = new DOMParser();
-    return parser.parseFromString(navPageHTML, "text/html");
-}
-
-function post(url, data) {
-    // a POST request with the associated headers
-    return fetch(url, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Encoding": "gzip, deflate, br, zstd",
-            "Connection": "keep-alive",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Host": "archiveofourown.org",
-            "Origin": "https://archiveofourown.org",
-            "Priority": "u=0, i",
-            "Referer": url,
-            "Sec-Fetch-Dest": "document",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-Site": "same-origin",
-            "Sec-Fetch-User": "?1",
-            "Upgrade-Insecure-Requests": "1",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
-        },
-        body: stringify(data)
-    });
-}
-
-function stringify(json) {
-    // turns a JSON document into a single URL-encoded string for sending in POST requests
-    let s = "";
-    for (const [key, value] of Object.entries(json)) {
-        s += encodeURIComponent(key) + "=" + encodeURIComponent(value) + "&";
-    }
-
-    // remove the final "&" because it gets unnecessarily added
-    return s.substring(0, s.length-1)
-}
-
 // Code for comment templates begins
 
 function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
@@ -190,10 +154,7 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
 
         // all the styling here is so that it will look like the actions in terms of spacing
         // same reason for why I'm bothering with using a ul and lis
-        let containerLi1 = document.createElement("li");
-        containerLi1.style.listStyle = "none"
-        containerLi1.style.display = "inline"
-        containerLi1.style.paddingLeft = "0.25em"
+        let containerLi1 = createInlineListItem();
         containerLi1.style.cursor = "pointer";
 
         let commentTemplateButton = document.createElement("a");
@@ -204,16 +165,9 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
         };
         containerLi1.appendChild(commentTemplateButton);
 
-        let paddingLi1 = document.createElement("li");
-        paddingLi1.style.listStyle = "none";
-        paddingLi1.style.display = "inline";
-        paddingLi1.style.paddingLeft = "0.25em";
+        let paddingLi1 = createInlineListItem();
 
-        let containerLi2 = document.createElement("li");
-        containerLi2.style.listStyle = "none";
-        containerLi2.style.display = "inline";
-        containerLi2.style.paddingLeft = "0.25em";
-        containerLi2.style.cursor = "pointer";
+        let containerLi2 = createInlineListItem(true);
 
         let premadeCommentButton = document.createElement("a");
         premadeCommentButton.textContent = "Fill prewritten comment";
@@ -223,19 +177,11 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
         };
         containerLi2.appendChild(premadeCommentButton);
 
-        let paddingLi2 = document.createElement("li");
-        paddingLi2.style.listStyle = "none"
-        paddingLi2.style.display = "inline"
-        paddingLi2.style.paddingLeft = "0.25em"
+        let paddingLi2 = createInlineListItem();
 
-        let containerLi3 = document.createElement("li");
-        containerLi3.style.listStyle = "none"
-        containerLi3.style.display = "inline"
-        containerLi3.style.paddingLeft = "0.25em"
-        containerLi3.style.cursor = "pointer";
+        let containerLi3 = createInlineListItem(true);
         containerLi3.appendChild(commentButtons[i]);
 
-        // .cloneNode(true);
         ul.appendChild(containerLi1);
         ul.appendChild(paddingLi1);
         ul.appendChild(containerLi2);
@@ -247,22 +193,8 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
 
 function autofillComment(parentContainer, templates) {
     parentContainer = parentContainer.parentNode;
-
-    let random = Math.floor(Math.random() * templates.length);
-
     let commentBox = parentContainer.querySelector(".comment_form");
-    if (!commentBox) {
-        console.log("No comment box element found.");
-        return;
-    }
-
-    commentBox.value = templates[random];
-}
-
-function isLoggedIn() {
-    // when used in an if, this will check for the existence of the element
-    // it's basically being cast to bool
-    return !document.querySelector("#login");
+    commentBox.value = getRandomItem(templates);
 }
 
 console.log("loaded comments.js");

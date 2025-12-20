@@ -1,0 +1,161 @@
+// noinspection JSUnusedLocalSymbols
+console.log("running the first time")
+// LOW-LEVEL UTILITIES
+
+// turns a JSON document into a single URL-encoded string for sending in POST requests
+export function stringify(json) {
+    return new URLSearchParams(json).toString();
+}
+
+// Helper to create base headers (browser handles Host and User-Agent automatically)
+const AO3_HEADERS = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Upgrade-Insecure-Requests": "1"
+};
+
+export function post(url, data) {
+    // a POST request with the associated headers
+    return fetch(url, {
+        method: "POST",
+        credentials: "include",
+        headers: AO3_HEADERS,
+        body: stringify(data)
+    });
+}
+
+export function get(url) {
+    // a GET request with the associated headers
+    return fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: AO3_HEADERS,
+    });
+}
+
+export async function getDocument(url) {
+    // gets the HTML and document object of a url
+    let response = await fetch(url);
+
+    let navPageHTML = await response.text();
+
+    // this is standard parsing
+    let parser = new DOMParser();
+    return parser.parseFromString(navPageHTML, "text/html");
+}
+
+export function isLoggedIn() {
+    // when used in an if, this will check for the existence of the element
+    // it's basically being cast to bool
+    return !document.querySelector("#login");
+}
+
+export function onError(error) {
+    console.error(`Error: ${error}`);
+}
+
+export function removeCommas(wordcount) {
+    return wordcount.replace(",", "");
+}
+
+// BOOKMARK UTILITIES
+
+export function getTags(doc) {
+    // gives a list of the tags, which can then be joined for a string
+    return [...doc.querySelectorAll("li.added.tag")];
+}
+
+export function getStringTags(doc) {
+    return getTags(doc).map((tag) => tag.textContent.replace("×", "").trim());
+}
+
+export function removeToReadTag(doc) {
+    // removes the existing tag button
+    let tags = getTags(doc);
+
+    for (let tag of tags) {
+        if (tag.textContent.includes("To Read")) {
+            let deleteButton = tag.querySelector(".delete");
+            deleteButton.click();
+        }
+    }
+
+    // both are necessary to remove the original tag and prevent it from being readded when the bookmark is sent
+    const tagBox = doc.getElementById("bookmark_tag_string_autocomplete");
+    tagBox.value = tagBox.value.replace("To Read", "");
+}
+
+export function addTags(tagBox, categorySelector) {
+    const categories = document.getElementsByClassName(categorySelector);
+    if (categories.length > 0) {
+        const categoryTags = categories[1].getElementsByClassName("tag");
+        for (let tag of categoryTags) {
+            tagBox.value += ", " + tag.textContent;
+        }
+    }
+
+    return tagBox;
+}
+
+export function getAO3Metadata(doc = document) {
+    return {
+        token: doc.querySelector("meta[name='csrf-token']")?.getAttribute("content"),
+        pseudID: doc.querySelector("input[name='bookmark[pseud_id]']")?.getAttribute("value")
+    };
+}
+
+export function showFlashNotice(message, isError = false, doc = document) {
+    let notice = doc.createElement("div");
+    notice.className = isError ? "flash notice error" : "flash notice";
+    notice.textContent = message;
+
+    let main = doc.querySelector("#main");
+    if (main) {
+        main.insertAdjacentElement("afterbegin", notice);
+    }
+    return notice;
+}
+
+export function createInlineListItem(pointer) {
+    let li = document.createElement("li");
+    li.style.listStyle = "none";
+    li.style.display = "inline";
+    li.style.paddingLeft = "0.25em";
+
+    if (pointer) {
+        li.style.cursor = "pointer";
+    }
+
+    return li;
+}
+
+export function getRandomItem(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+// Handles URLs like `/works/123/chapters/456` or `https://archiveofourown.org/works/123`
+export function extractIdFromUrl(url) {
+    const parts = url.split("/");
+    return parts[4]; // Works for both absolute and relative URLs after split
+}
+
+// Export functions for use in other scripts
+// This allows the functions to be called from other files
+// window.AO3TweaksUtils = {
+//     post,
+//     get,
+//     getDocument,
+//     isLoggedIn,
+//     onError,
+//     removeCommas,
+//     getStringTags,
+//     removeToReadTag,
+//     addTags,
+//     getAO3Metadata,
+//     showFlashNotice,
+//     createInlineListItem,
+//     getRandomItem,
+//     extractIdFromUrl
+// };
+//
+// window.utils = AO3TweaksUtils;

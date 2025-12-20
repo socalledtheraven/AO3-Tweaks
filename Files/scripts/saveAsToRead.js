@@ -1,4 +1,17 @@
 // CONFIG
+import {
+    extractIdFromUrl,
+    get,
+    getAO3Metadata,
+    getDocument,
+    getStringTags,
+    isLoggedIn,
+    onError,
+    post,
+    removeToReadTag,
+    showFlashNotice
+} from "./utilities.js";
+
 let ENABLE_PRIVATE_FANDOMS;
 let PRIVATE_FANDOMS;
 let SAVE_AS_TO_READ_ENABLED;
@@ -11,69 +24,7 @@ let CREATE_MARK_AS_READ_BUTTON;
 
 const URL = window.location.href;
 
-
 // LOW-LEVEL UTILITIES
-
-
-function stringify(json) {
-    // turns a JSON document into a single URL-encoded string for sending in POST requests
-    let s = "";
-    for (const [key, value] of Object.entries(json)) {
-        s += encodeURIComponent(key) + "=" + encodeURIComponent(value) + "&";
-    }
-
-    // remove the final "&" because it gets unnecessarily added
-    return s.substring(0, s.length-1)
-}
-
-function post(url, data) {
-    // a POST request with the associated headers
-    return fetch(url, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Encoding": "gzip, deflate, br, zstd",
-            "Connection": "keep-alive",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Host": "archiveofourown.org",
-            "Origin": "https://archiveofourown.org",
-            "Priority": "u=0, i",
-            "Referer": url,
-            "Sec-Fetch-Dest": "document",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-Site": "same-origin",
-            "Sec-Fetch-User": "?1",
-            "Upgrade-Insecure-Requests": "1",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
-        },
-        body: stringify(data)
-    });
-}
-
-function get(url) {
-    // a POST request with the associated headers
-    return fetch(url, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Encoding": "gzip, deflate, br, zstd",
-            "Connection": "keep-alive",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Host": "archiveofourown.org",
-            "Origin": "https://archiveofourown.org",
-            "Priority": "u=0, i",
-            "Referer": url,
-            "Sec-Fetch-Dest": "document",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-Site": "same-origin",
-            "Sec-Fetch-User": "?1",
-            "Upgrade-Insecure-Requests": "1",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
-        }
-    });
-}
 
 function isInArray(arr) {
     // an "is in list" function checking against `PRIVATE_FANDOMS`
@@ -84,18 +35,6 @@ function isInArray(arr) {
     }
     return false;
 }
-
-async function getDocument(url) {
-    // gets the HTML and document object of a url
-    let response = await fetch(url);
-
-    let navPageHTML = await response.text();
-
-    // this is standard parsing
-    let parser = new DOMParser();
-    return parser.parseFromString(navPageHTML, "text/html");
-}
-
 
 // BOOKMARK HANDLING
 
@@ -151,12 +90,7 @@ function respondToBookmark(r, type) {
     // adds a flash notice to the top of the screen and changes the text of the button
     if (r.ok) {
         // always document rather than doc because these will always be seen on the page the user is looking at
-        let notice = document.createElement("div");
-        notice.className = "flash notice";
-        notice.textContent = `Work successfully saved as "To Read".`;
-
-        let main = document.querySelector("#main");
-        main.insertAdjacentElement("afterbegin", notice);
+        showFlashNotice(`Work successfully saved as "To Read".`);
 
         let button;
         if (type.includes("to_read")) {
@@ -179,24 +113,13 @@ function respondToBookmark(r, type) {
             }
         }
     } else {
-        let notice = document.createElement("div");
-        notice.className = "flash notice error";
-        notice.textContent = "We're sorry! Something went wrong.";
-
-        let main = document.querySelector("#main");
-        main.insertAdjacentElement("afterbegin", notice);
+        showFlashNotice("We're sorry! Something went wrong.", true);
     }
 }
 
 
 // SMALL UTILITIES
 
-
-function isLoggedIn() {
-    // when used in an if, this will check for the existence of the element
-    // it's basically being cast to bool
-    return !document.querySelector("#login");
-}
 
 function isWork() {
     return URL.includes("chapters")
@@ -210,39 +133,13 @@ function isWork() {
             && !(URL === "https://archiveofourown.org/works"));
 }
 
-function getTags(doc) {
-    // gives a list of the tags, which can then be joined for a string
-    return [...doc.querySelectorAll("li.added.tag")];
-}
-
-function getStringTags(doc) {
-    return getTags(doc).map((tag) => tag.textContent.replace("×", "").trim());
-}
-
 function isMarkedForLater() {
     let tags = getStringTags(document);
     return tags.includes("To Read");
 }
 
-function removeToReadTag(doc) {
-    // removes the existing tag button
-    let tags = getTags(doc);
-
-    for (let tag of tags) {
-        if (tag.textContent.includes("To Read")) {
-            let deleteButton = tag.querySelector(".delete");
-            deleteButton.click();
-        }
-    }
-
-    // both are necessary to remove the original tag and prevent it from being readded when the bookmark is sent
-    const tagBox = doc.getElementById("bookmark_tag_string_autocomplete");
-    tagBox.value = tagBox.value.replace("To Read", "");
-}
-
 
 // BUTTON CREATION
-
 
 function createWorkToReadButton(priv, series) {
     // these will always be on the user-facing page
@@ -294,7 +191,7 @@ function createExternalToReadButton(i, url, series, priv) {
     // creates a new button
     const toReadButton = document.createElement("li");
     const child = document.createElement("a");
-    const workID = url.split("/")[4];
+    const workID = extractIdFromUrl(url);
     console.log(`SaveAsToRead: id is ${workID}`)
 
     if (priv) {
@@ -424,11 +321,13 @@ function createMarkAsReadButton() {
 function unsubscribe(doc) {
     // unsubscribes from a story, given a document
     // can probably be left as-is, because it's all self-contained and works fine
-    let token = doc.querySelector("input[name='authenticity_token']").getAttribute("value");
+    let metadata = getAO3Metadata(doc);
+    let token = metadata.token;
+
     let subWorkID = doc.querySelector("#subscription_subscribable_id").getAttribute("value");
     let subType = doc.querySelector("#subscription_subscribable_type").getAttribute("value");
     let subscriptionID = doc.querySelector("input[name='authenticity_token']").parentElement.getAttribute("id").split("_");
-    subscriptionID = subscriptionID[subscriptionID.length-1];
+    subscriptionID = subscriptionID[subscriptionID.length - 1];
     let userURL = doc.querySelector("#greeting").querySelector("ul").querySelector("li").querySelector("a").href;
 
     post(userURL + "/subscriptions/" + subscriptionID, {
@@ -438,19 +337,9 @@ function unsubscribe(doc) {
         "_method": "delete"
     }).then((r) => {
         if (r.ok) {
-            let notice = doc.createElement("div");
-            notice.className = "flash notice";
-            notice.textContent = `You have successfully unsubscribed from ${doc.querySelector(".title.heading").textContent}.`;
-
-            let main = doc.querySelector("#main");
-            main.insertAdjacentElement("afterbegin", notice);
+            showFlashNotice(`You have successfully unsubscribed from ${doc.querySelector(".title.heading").textContent}.`, false, doc);
         } else {
-            let notice = doc.createElement("div");
-            notice.className = "flash notice error";
-            notice.textContent = "We're sorry! Something went wrong.";
-
-            let main = doc.querySelector("#main");
-            main.insertAdjacentElement("afterbegin", notice);
+            showFlashNotice("We're sorry! Something went wrong.", true, doc)
         }
     });
 }
@@ -460,24 +349,16 @@ function removeFromMarkedForLater(doc, url) {
 
     get(url + "/mark_as_read").then((r) => {
         if (r.ok) {
-            let notice = doc.createElement("div");
-            notice.className = "flash notice";
-            notice.textContent = `This work was removed from your`;
+            let notice = showFlashNotice("This work was removed from your", false, doc);
+
             let listLink = doc.createElement("a");
             listLink.href = userURL + "/readings?show=to-read";
             listLink.text = "Marked for Later list";
+
             notice.childNodes.add(listLink);
             notice.insertAdjacentText("beforeend", ".");
-
-            let main = doc.querySelector("#main");
-            main.insertAdjacentElement("afterbegin", notice);
         } else {
-            let notice = doc.createElement("div");
-            notice.className = "flash notice error";
-            notice.textContent = "We're sorry! Something went wrong.";
-
-            let main = doc.querySelector("#main");
-            main.insertAdjacentElement("afterbegin", notice);
+            showFlashNotice("We're sorry! Something went wrong.", true, doc);
         }
     });
 }
@@ -554,9 +435,9 @@ function getWorkData(doc) {
 
     const bookmarkNotes = doc.getElementById("bookmark_notes").value;
 
-    let url = doc.querySelector("li.share").querySelector("a").href.split("/");
+    let url = doc.querySelector("li.share").querySelector("a").href;
     // the url gets expanded when everything is loaded, so we need to take `archiveofourown.org/works/...` into mind
-    let id = url[4];
+    let id = extractIdFromUrl(url);
 
     const tagBox = doc.getElementById("bookmark_tag_string_autocomplete");
     let bookmarkTags;
@@ -566,22 +447,26 @@ function getWorkData(doc) {
         bookmarkTags = "";
     }
 
-    let token = doc.querySelector("meta[name='csrf-token']").getAttribute("content");
-    let pseudID = doc.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
+    let metadata = getAO3Metadata(doc);
+    let token = metadata.token;
+    let pseudID = metadata.pseudID;
+
     let privacy = isPrivate ? "1" : "0"
 
     return [id, token, pseudID, bookmarkNotes, bookmarkTags, privacy];
 }
 
 function getBookmarkData(doc) {
-    let url = doc.querySelector("#bookmark-form").querySelector("form").action.split("/");
+    let url = doc.querySelector("#bookmark-form").querySelector("form").action;
     // the url gets expanded when everything is loaded, so we need to take `archiveofourown.org/works/...` into mind
-    let id = url[4];
+    let id = extractIdFromUrl(url);
     console.info(`SaveAsToRead: url: ${url}`)
     console.info(`SaveAsToRead: id: ${id}`)
 
-    let token = doc.querySelector("meta[name='csrf-token']").getAttribute("content");
-    let pseudID = doc.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
+
+    let metadata = getAO3Metadata(doc);
+    let token = metadata.token;
+    let pseudID = metadata.pseudID;
     console.info(`SaveAsToRead: pseudID: ${pseudID}`)
 
     let bookmarkNotes = doc.getElementById("bookmark_notes").value.trim();
@@ -604,8 +489,9 @@ function getBookmarkData(doc) {
 function getSeriesData(doc) {
     let id = doc.querySelector("#subscription_subscribable_id").value;
 
-    let token = doc.querySelector("meta[name='csrf-token']").getAttribute("content");
-    let pseudID = doc.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
+    let metadata = getAO3Metadata(doc);
+    let token = metadata.token;
+    let pseudID = metadata.pseudID;
 
     const notes = doc.getElementById("bookmark_notes")
     const bookmarkNotes = notes.value;
@@ -700,20 +586,16 @@ function initializeExtension(settings) {
     }
 }
 
-function onError(error) {
-    console.error(`Error: ${error}`);
-}
-
 // Get both settings at once and initialise the extension
 browser.storage.sync.get([
-        "save_as_to_read_enabled",
-        "remove_from_marked_for_later",
-        "unsub_from_works",
-        "replace_mark_for_later",
-        "add_priv_save_as",
-        "enable_private_fandoms",
-        "private_fandoms",
-        "create_mark_as_read_button"
-    ])
-    .then(initializeExtension)
-    .catch(onError);
+    "save_as_to_read_enabled",
+    "remove_from_marked_for_later",
+    "unsub_from_works",
+    "replace_mark_for_later",
+    "add_priv_save_as",
+    "enable_private_fandoms",
+    "private_fandoms",
+    "create_mark_as_read_button"
+])
+.then(initializeExtension)
+.catch(onError);

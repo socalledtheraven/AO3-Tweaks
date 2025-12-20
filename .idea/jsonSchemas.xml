@@ -7,7 +7,7 @@
           <value>
             <SchemaInfo>
               <option name="name" value="WebExtensions" />
-              <option name="relativePathToSchema" value="https://json.schemastore.org/webextension.json" />
+              <option name="relativePathToSchema" value="https://www.schemastore.org/webextension.json" />
               <option name="applicationDefined" value="true" />
               <option name="patterns">
                 <list>

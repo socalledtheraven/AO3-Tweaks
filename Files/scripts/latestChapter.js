@@ -1,11 +1,13 @@
-function overlapping(elem1, elem2) {
-    let rect1 = elem1.getBoundingClientRect();
-    let rect2 = elem2.getBoundingClientRect();
+import {isLoggedIn, onError} from "./utilities.js";
 
-    return !(rect1.right < rect2.left ||
-        rect1.left > rect2.right ||
-        rect1.bottom < rect2.top ||
-        rect1.top > rect2.bottom)
+function overlapping(elem1, elem2) {
+	let rect1 = elem1.getBoundingClientRect();
+	let rect2 = elem2.getBoundingClientRect();
+
+	return !(rect1.right < rect2.left ||
+		rect1.left > rect2.right ||
+		rect1.bottom < rect2.top ||
+		rect1.top > rect2.bottom)
 }
 
 
@@ -72,12 +74,6 @@ function main() {
 	}
 }
 
-function isLoggedIn() {
-	// when used in an if, this will check for the existence of the element
-	// it's basically being casted to bool
-	return !document.querySelector("#login");
-}
-
 console.log("loaded latestChapter.js");
 
 function initializeExtension(settings) {
@@ -93,4 +89,4 @@ function initializeExtension(settings) {
 // Get both settings at once and initialise the extension
 browser.storage.sync.get("latest_chapter_autofill")
 	.then(initializeExtension)
-    .catch(onError);
+	.catch(onError);

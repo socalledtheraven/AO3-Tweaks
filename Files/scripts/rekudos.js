@@ -1,3 +1,5 @@
+import { post, getAO3Metadata, getRandomItem, createInlineListItem, isLoggedIn, onError } from "./utilities.js";
+
 function postComment(messages, button) {
     let kudosMessage = document.querySelector("#kudos_message");
     if (!kudosMessage) {
@@ -12,8 +14,7 @@ function postComment(messages, button) {
         if (messages.length === 1) {
             comment = messages;
         } else {
-            let random = Math.floor(Math.random() * messages.length);
-            comment = messages[random];
+            comment = getRandomItem(messages);
         }
 
         sendComment(comment, button);
@@ -22,8 +23,10 @@ function postComment(messages, button) {
 
 function sendComment(comment, button) {
     let url = window.location.href + "/comments";
-    let token = document.querySelector("meta[name='csrf-token']").getAttribute("content");
-    let pseudID = document.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value");
+
+    let metadata = getAO3Metadata();
+    let token = metadata.token;
+    let pseudID = metadata.pseudID;
 
     post(url, {
         "authenticity_token": token,
@@ -37,31 +40,6 @@ function sendComment(comment, button) {
         } else {
             button.textContent = "Rekudos failed, try again later.";
         }
-    });
-}
-
-function post(url, data) {
-    // a POST request with the associated headers
-    return fetch(url, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Encoding": "gzip, deflate, br, zstd",
-            "Connection": "keep-alive",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Host": "archiveofourown.org",
-            "Origin": "https://archiveofourown.org",
-            "Priority": "u=0, i",
-            "Referer": url,
-            "Sec-Fetch-Dest": "document",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-Site": "same-origin",
-            "Sec-Fetch-User": "?1",
-            "Upgrade-Insecure-Requests": "1",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
-        },
-        body: stringify(data)
     });
 }
 
@@ -84,10 +62,7 @@ function overrideButton(oldButton, newButton) {
 }
 
 function createNewKudos(AUTO, messages) {
-    let containerLi = document.createElement("li");
-    containerLi.style.listStyle = "none"
-    containerLi.style.display = "inline"
-    containerLi.style.paddingLeft = "0.25em"
+    let containerLi = createInlineListItem();
 
     let newKudosButton = document.createElement("a");
     newKudosButton.textContent = "Kudos ♥";
@@ -114,12 +89,6 @@ function createNewKudos(AUTO, messages) {
     containerLi.appendChild(newKudosButton);
 
     return containerLi;
-}
-
-function isLoggedIn() {
-    // when used in an if, this will check for the existence of the element
-    // it's basically being cast to bool
-    return !document.querySelector("#login");
 }
 
 console.log("loaded rekudos.js")
@@ -154,10 +123,6 @@ function initializeExtension(settings) {
 
         overrideButton(kudosButton, containerLi);
     }
-}
-
-function onError(error) {
-    console.error(`Error: ${error}`);
 }
 
 // Get both settings at once and initialise the extension
