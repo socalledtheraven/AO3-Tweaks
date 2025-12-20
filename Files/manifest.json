@@ -6,45 +6,21 @@
 	"permissions": ["storage"],
 	"content_scripts": [
 		{
-			"js": ["scripts/utilities.js", "scripts/latestChapter.js"],
-			"matches": [
-				"*://archiveofourown.org/bookmarks?commit=Sort+and+Filter&bookmark_search%5Bsort_column%5D=bookmarkable_date*"
-			]
-		},
+			"js": ["scripts/loader.js"],
+			"matches": ["*://archiveofourown.org/*"]
+		}
+	],
+	"web_accessible_resources": [
 		{
-			"js": ["scripts/utilities.js", "scripts/saveAsToRead.js"],
-			"matches": [
-				"*://archiveofourown.org/*"
+			"resources": [
+				"scripts/utilities.js",
+				"scripts/latestChapter.js",
+				"scripts/saveAsToRead.js",
+				"scripts/bookmarkNotes.js",
+				"scripts/rekudos.js",
+				"scripts/comments.js"
 			],
-			"exclude_matches": [
-				"*://archiveofourown.org/*works/*/bookmarks",
-				"*://archiveofourown.org/*works/*/navigate"
-			]
-		},
-		{
-			"js": ["scripts/utilities.js", "scripts/bookmarkNotes.js"],
-			"matches": [
-				"*://archiveofourown.org/*chapters/*",
-				"*://archiveofourown.org/*works/*",
-				"*://archiveofourown.org/series/*"
-			],
-			"exclude_matches": [
-				"*://archiveofourown.org/*works/*/bookmarks",
-				"*://archiveofourown.org/*works/*/navigate",
-				"*://archiveofourown.org/*works/search*"
-			]
-		},
-		{
-			"js": ["scripts/utilities.js", "scripts/rekudos.js"],
-			"matches": [
-				"*://archiveofourown.org/*works/*"
-			]
-		},
-		{
-			"js": ["scripts/utilities.js", "scripts/comments.js"],
-			"matches": [
-				"*://archiveofourown.org/*works/*"
-			]
+			"matches": ["*://archiveofourown.org/*"]
 		}
 	],
 	"icons": {

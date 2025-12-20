@@ -2,67 +2,38 @@
 console.log("running the first time")
 // LOW-LEVEL UTILITIES
 
-function stringify(json) {
-    // turns a JSON document into a single URL-encoded string for sending in POST requests
-    let s = "";
-    for (const [key, value] of Object.entries(json)) {
-        s += encodeURIComponent(key) + "=" + encodeURIComponent(value) + "&";
-    }
-
-    // remove the final "&" because it gets unnecessarily added
-    return s.substring(0, s.length - 1)
+// turns a JSON document into a single URL-encoded string for sending in POST requests
+export function stringify(json) {
+    return new URLSearchParams(json).toString();
 }
 
-function post(url, data) {
+// Helper to create base headers (browser handles Host and User-Agent automatically)
+const AO3_HEADERS = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Upgrade-Insecure-Requests": "1"
+};
+
+export function post(url, data) {
     // a POST request with the associated headers
     return fetch(url, {
         method: "POST",
         credentials: "include",
-        headers: {
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Encoding": "gzip, deflate, br, zstd",
-            "Connection": "keep-alive",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Host": "archiveofourown.org",
-            "Origin": "https://archiveofourown.org",
-            "Priority": "u=0, i",
-            "Referer": url,
-            "Sec-Fetch-Dest": "document",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-Site": "same-origin",
-            "Sec-Fetch-User": "?1",
-            "Upgrade-Insecure-Requests": "1",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
-        },
+        headers: AO3_HEADERS,
         body: stringify(data)
     });
 }
 
-function get(url) {
+export function get(url) {
     // a GET request with the associated headers
     return fetch(url, {
         method: "GET",
         credentials: "include",
-        headers: {
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Encoding": "gzip, deflate, br, zstd",
-            "Connection": "keep-alive",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Host": "archiveofourown.org",
-            "Origin": "https://archiveofourown.org",
-            "Priority": "u=0, i",
-            "Referer": url,
-            "Sec-Fetch-Dest": "document",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-Site": "same-origin",
-            "Sec-Fetch-User": "?1",
-            "Upgrade-Insecure-Requests": "1",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
-        }
+        headers: AO3_HEADERS,
     });
 }
 
-async function getDocument(url) {
+export async function getDocument(url) {
     // gets the HTML and document object of a url
     let response = await fetch(url);
 
@@ -73,37 +44,32 @@ async function getDocument(url) {
     return parser.parseFromString(navPageHTML, "text/html");
 }
 
-function isLoggedIn() {
+export function isLoggedIn() {
     // when used in an if, this will check for the existence of the element
     // it's basically being cast to bool
     return !document.querySelector("#login");
 }
 
-function onError(error) {
+export function onError(error) {
     console.error(`Error: ${error}`);
 }
 
-function removeCommas(wordcount) {
-    if (wordcount.includes(',')) {
-        wordcount = wordcount.replace(',', '');
-        wordcount = removeCommas(wordcount);
-    }
-
-    return wordcount;
+export function removeCommas(wordcount) {
+    return wordcount.replace(",", "");
 }
 
 // BOOKMARK UTILITIES
 
-function getTags(doc) {
+export function getTags(doc) {
     // gives a list of the tags, which can then be joined for a string
     return [...doc.querySelectorAll("li.added.tag")];
 }
 
-function getStringTags(doc) {
+export function getStringTags(doc) {
     return getTags(doc).map((tag) => tag.textContent.replace("×", "").trim());
 }
 
-function removeToReadTag(doc) {
+export function removeToReadTag(doc) {
     // removes the existing tag button
     let tags = getTags(doc);
 
@@ -119,7 +85,7 @@ function removeToReadTag(doc) {
     tagBox.value = tagBox.value.replace("To Read", "");
 }
 
-function addTags(tagBox, categorySelector) {
+export function addTags(tagBox, categorySelector) {
     const categories = document.getElementsByClassName(categorySelector);
     if (categories.length > 0) {
         const categoryTags = categories[1].getElementsByClassName("tag");
@@ -131,14 +97,14 @@ function addTags(tagBox, categorySelector) {
     return tagBox;
 }
 
-function getAO3Metadata(doc = document) {
+export function getAO3Metadata(doc = document) {
     return {
-        token: doc.querySelector("meta[name='csrf-token']").getAttribute("content"),
-        pseudID: doc.querySelector("input[name='bookmark[pseud_id]']").getAttribute("value")
+        token: doc.querySelector("meta[name='csrf-token']")?.getAttribute("content"),
+        pseudID: doc.querySelector("input[name='bookmark[pseud_id]']")?.getAttribute("value")
     };
 }
 
-function showFlashNotice(message, isError = false, doc = document) {
+export function showFlashNotice(message, isError = false, doc = document) {
     let notice = doc.createElement("div");
     notice.className = isError ? "flash notice error" : "flash notice";
     notice.textContent = message;
@@ -150,7 +116,7 @@ function showFlashNotice(message, isError = false, doc = document) {
     return notice;
 }
 
-function createInlineListItem(pointer) {
+export function createInlineListItem(pointer) {
     let li = document.createElement("li");
     li.style.listStyle = "none";
     li.style.display = "inline";
@@ -163,33 +129,33 @@ function createInlineListItem(pointer) {
     return li;
 }
 
-function getRandomItem(array) {
+export function getRandomItem(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
 
-function extractIdFromUrl(url) {
-    // Handles URLs like /works/123/chapters/456 or https://archiveofourown.org/works/123
+// Handles URLs like `/works/123/chapters/456` or `https://archiveofourown.org/works/123`
+export function extractIdFromUrl(url) {
     const parts = url.split("/");
     return parts[4]; // Works for both absolute and relative URLs after split
 }
 
 // Export functions for use in other scripts
 // This allows the functions to be called from other files
-window.AO3TweaksUtils = {
-    post,
-    get,
-    getDocument,
-    isLoggedIn,
-    onError,
-    removeCommas,
-    getStringTags,
-    removeToReadTag,
-    addTags,
-    getAO3Metadata,
-    showFlashNotice,
-    createInlineListItem,
-    getRandomItem,
-    extractIdFromUrl
-};
-
-window.utils = AO3Utilities;
+// window.AO3TweaksUtils = {
+//     post,
+//     get,
+//     getDocument,
+//     isLoggedIn,
+//     onError,
+//     removeCommas,
+//     getStringTags,
+//     removeToReadTag,
+//     addTags,
+//     getAO3Metadata,
+//     showFlashNotice,
+//     createInlineListItem,
+//     getRandomItem,
+//     extractIdFromUrl
+// };
+//
+// window.utils = AO3TweaksUtils;

@@ -13,5 +13,8 @@
   "private": true,
   "dependencies": {
     "webextension-polyfill": "^0.12.0"
+  },
+  "devDependencies": {
+    "@types/firefox-webext-browser": "^143.0.0"
   }
 }

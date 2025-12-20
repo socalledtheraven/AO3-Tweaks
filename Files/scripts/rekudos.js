@@ -1,3 +1,5 @@
+import { post, getAO3Metadata, getRandomItem, createInlineListItem, isLoggedIn, onError } from "./utilities.js";
+
 function postComment(messages, button) {
     let kudosMessage = document.querySelector("#kudos_message");
 
@@ -8,7 +10,7 @@ function postComment(messages, button) {
         if (messages.length === 1) {
             comment = messages;
         } else {
-            comment = utils.getRandomItem(messages);
+            comment = getRandomItem(messages);
         }
 
         sendComment(comment, button);
@@ -18,11 +20,11 @@ function postComment(messages, button) {
 function sendComment(comment, button) {
     let url = window.location.href + "/comments";
 
-    let metadata = utils.getAO3Metadata();
+    let metadata = getAO3Metadata();
     let token = metadata.token;
     let pseudID = metadata.pseudID;
 
-    utils.post(url, {
+    post(url, {
         "authenticity_token": token,
         "comment[pseud_id]": pseudID,
         "comment[comment_content]": comment,
@@ -56,7 +58,7 @@ function overrideButton(oldButton, newButton) {
 }
 
 function createNewKudos(AUTO, messages) {
-    let containerLi = utils.createInlineListItem();
+    let containerLi = createInlineListItem();
 
     let newKudosButton = document.createElement("a");
     newKudosButton.textContent = "Kudos ♥";
@@ -100,7 +102,7 @@ function initializeExtension(settings) {
         ];
     }
 
-    if (utils.isLoggedIn() && REKUDOS_ACTIVE) {
+    if (isLoggedIn() && REKUDOS_ACTIVE) {
         // jump back to the kudos button
         let kudosButton = document.querySelector("#new_kudo");
         let containerLi = createNewKudos(REKUDOS_AUTO, messages);
@@ -112,4 +114,4 @@ function initializeExtension(settings) {
 // Get both settings at once and initialise the extension
 browser.storage.sync.get(["rekudos_enabled", "auto_rekudos_enabled", "rekudos_messages"])
     .then(initializeExtension)
-    .catch(utils.onError);
+    .catch(onError);

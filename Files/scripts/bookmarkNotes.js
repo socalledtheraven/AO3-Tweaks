@@ -2,6 +2,8 @@
 
 /*START SETTINGS: Change these to true/false based on your preferences*/
 /*SETTINGS THAT APPLY TO ALL BOOKMARKS*/
+import {addTags, isLoggedIn, onError, removeCommas} from "./utilities.js";
+
 let BOOKMARK_NOTES_ENABLED;
 
 let NOTES_APPEND_TO_PREVIOUS; // When editing a pre-existing bookmark, should the pre-existing notes be preserved?
@@ -108,31 +110,31 @@ function updateWorkBookmark(url) {
     const tagBox = document.getElementById("bookmark_tag_string_autocomplete");
 
     if (ADD_CATEGORIES) {
-        utils.addTags(tagBox, "category tags")
+        addTags(tagBox, "category tags")
     }
 
     if (ADD_FANDOM_TAGS) {
-        utils.addTags(tagBox, "fandom tags")
+        addTags(tagBox, "fandom tags")
     }
 
     if (ADD_CHARACTER_TAGS) {
-        utils.addTags(tagBox, "character tags")
+        addTags(tagBox, "character tags")
     }
 
     if (ADD_RELATIONSHIP_TAGS) {
-        utils.addTags(tagBox, "relationship tags")
+        addTags(tagBox, "relationship tags")
     }
 
     if (ADD_ADDITIONAL_TAGS) {
-        utils.addTags(tagBox, "freeform tags")
+        addTags(tagBox, "freeform tags")
     }
 
     if (ADD_RATING) {
-        utils.addTags(tagBox, "rating tags")
+        addTags(tagBox, "rating tags")
     }
 
     if (ADD_ARCHIVE_WARNINGS) {
-        utils.addTags(tagBox, "warning tags")
+        addTags(tagBox, "warning tags")
     }
 
     if (ADD_CUSTOM_TAGS) {
@@ -141,7 +143,7 @@ function updateWorkBookmark(url) {
 
     // the wordcount section begins
     let wordcount = document.getElementsByClassName("words")[1].textContent;
-    wordcount = utils.removeCommas(wordcount);
+    wordcount = removeCommas(wordcount);
 
     if (ADD_EXACT_WORDCOUNT_TAG) {
         tagBox.value += ", Word Count:" + wordcount;
@@ -223,7 +225,7 @@ function updateSeriesBookmark(url) {
 
     if (ADD_EXACT_WORDCOUNT_TAG_SERIES) {
         const wordCount = document.getElementsByClassName("words");
-        tagBox.value += ", Words in series: " + utils.removeCommas(wordCount[1].textContent);
+        tagBox.value += ", Words in series: " + removeCommas(wordCount[1].textContent);
     }
 
     if (ADD_CUSTOM_TAGS_SERIES) {
@@ -272,7 +274,7 @@ function initializeExtension(settings) {
     REC_DEFAULT_SERIES = settings["rec_default_series"] || false;
     PRIVATE_DEFAULT_SERIES = settings["private_default_series"] || false;
 
-    if (utils.isLoggedIn() && BOOKMARK_NOTES_ENABLED) {
+    if (isLoggedIn() && BOOKMARK_NOTES_ENABLED) {
         // has a problem with the variable name "url" (presumably something else is using it)
         let uri = window.location.href;
         if (uri.includes("/works/")) {
@@ -309,4 +311,4 @@ browser.storage.sync.get([
     "custom_tags"
 ])
     .then(initializeExtension)
-    .catch(utils.onError);
+    .catch(onError);

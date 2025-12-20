@@ -1,3 +1,5 @@
+import {isLoggedIn, onError} from "./utilities.js";
+
 function overlapping(elem1, elem2) {
 	let rect1 = elem1.getBoundingClientRect();
 	let rect2 = elem2.getBoundingClientRect();
@@ -55,7 +57,7 @@ console.log("loaded latestChapter.js");
 function initializeExtension(settings) {
 	const LATEST_CHAPTER_AUTOFILL = settings["latest_chapter_autofill"] || true;
 
-	if (utils.isLoggedIn() && LATEST_CHAPTER_AUTOFILL) {
+	if (isLoggedIn() && LATEST_CHAPTER_AUTOFILL) {
 		// runs it when the page loads
 		console.log("LatestChapter: loaded")
 		main();
@@ -65,4 +67,4 @@ function initializeExtension(settings) {
 // Get both settings at once and initialise the extension
 browser.storage.sync.get("latest_chapter_autofill")
 	.then(initializeExtension)
-	.catch(utils.onError);
+	.catch(onError);
