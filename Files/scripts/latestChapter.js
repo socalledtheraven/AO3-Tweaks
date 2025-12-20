@@ -12,23 +12,40 @@ function overlapping(elem1, elem2) {
 function main() {
 	// collects all the bookmarks and iterates through them
 	const bookmarks = document.querySelectorAll('[role="article"]');
+	if (bookmarks.length < 1) {
+		console.log("No bookmarks found.");
+		return;
+	}
 
 	for (const bookmark of bookmarks) {
 		let header = bookmark.querySelector(".header");
+		if (!header) {
+			console.log("No header found.");
+			continue;
+		}
+
 		let url = header.querySelector("a").href;
+		if (!url) {
+			console.log("No url found.");
+			continue;
+		}
 
 		// checks it's not a series
 		if (url.includes("works")) {
 			let latestChapter = bookmark.querySelector("dd.chapters a")
+			if (!latestChapter) {
+				console.log("No latest chapter found.");
+				continue;
+			}
 
 			// checks that it's not a single-chapter dealie
 			if (latestChapter) {
 				console.info(`LatestChapter: multiple chapters`)
 				let url = latestChapter.href;
 
-                let outerLi = document.createElement("li");
-                outerLi.className = "actions";
-                outerLi.style.margin = "0";
+				let outerLi = document.createElement("li");
+				outerLi.className = "actions";
+				outerLi.style.margin = "0";
 
 				let latest = document.createElement("a");
 				latest.href = url;
@@ -38,14 +55,19 @@ function main() {
 				latest.style.top = "45px";
 				latest.style.margin = "0";
 
-                outerLi.appendChild(latest);
+				outerLi.appendChild(latest);
 				header.insertAdjacentElement("beforeend", outerLi);
 
-                const tags = bookmark.querySelector("ul.tags.commas");
-                if (overlapping(latest, tags)) {
-                    tags.style.paddingTop = "10px";
-                }
-            }
+				const tags = bookmark.querySelector("ul.tags.commas");
+				if (!tags) {
+					console.log("No tags found.");
+					continue;
+				}
+
+				if (overlapping(latest, tags)) {
+					tags.style.paddingTop = "10px";
+				}
+			}
 		}
 	}
 }
