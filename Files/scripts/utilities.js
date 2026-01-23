@@ -97,6 +97,17 @@ export function addTags(tagBox, categorySelector) {
     return tagBox;
 }
 
+export function clearTags(doc) {
+    // clears all the applied tags, which makes sense right after a deletion
+    let tags = getTags(doc);
+
+    for (let tag of tags) {
+        console.log(tag);
+        let deleteButton = tag.querySelector(".delete");
+        deleteButton.click();
+    }
+}
+
 export function getAO3Metadata(doc = document) {
     return {
         token: doc.querySelector("meta[name='csrf-token']")?.getAttribute("content"),

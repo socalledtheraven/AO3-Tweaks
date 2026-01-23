@@ -510,6 +510,13 @@ This fish is delicious</textarea>
                         </div>
                         <p>Adds a "Mark as Read" button, which removes the "To Read" tag from the work and leaves it as an ordinary bookmark.</p>
                     </li>
+                    <li>
+                        <div class="checkbox-label-row">
+                            <input type="checkbox" checked class="sub" value="1" id="easy_delete_button">
+                            <label for="easy_delete_button">Create Easy Delete button</label>
+                        </div>
+                        <p>Adds an "Easy Delete" button, which removes the bookmark entirely, if you change your mind about wanting to read it.</p>
+                    </li>
                 </ul>
             </fieldset>
 
@@ -640,7 +647,7 @@ This fish is delicious</textarea>
                             <label for="add_work_count_tag">Add number of works</label>
                         </div>
                         <p>Add the number of works in the series to the tags.</p>
-                    </li
+                    </li>
                     <li>
                         <div class="checkbox-label-row">
                             <input type="checkbox" class="sub" value="1" id="rec_default_series">
@@ -661,7 +668,6 @@ This fish is delicious</textarea>
             <div class="flash-notice" hidden>Saved!</div>
             <button type="submit" class="save-button">Save Options</button>
         </form>
-        <!-- <script type="application/javascript" src="../node_modules/webextension-polyfill/dist/browser-polyfill.js"></script> -->
         <script src="scripts/options.js"></script>
     </body>
 </html>

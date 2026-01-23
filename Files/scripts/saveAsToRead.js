@@ -1,5 +1,6 @@
 // CONFIG
 import {
+    clearTags,
     extractIdFromUrl,
     get,
     getAO3Metadata,
@@ -20,6 +21,7 @@ let UNSUB_FROM_WORKS;
 let REPLACE_MARK_FOR_LATER;
 let ADD_PRIV_SAVE_AS;
 let CREATE_MARK_AS_READ_BUTTON;
+let EASY_DELETE_BUTTON;
 // END CONFIG
 
 const URL = window.location.href;
@@ -86,28 +88,61 @@ function updateBookmark(bookmarkID, token, pseudID, notes, tagString, privacy, r
     });
 }
 
+function deleteBookmark(button) {
+    let data = getBookmarkData(document);
+    let bookmarkID = data[0];
+    let token = data[1];
+
+    // sends a POST which deletes the bookmark
+    post("https://archiveofourown.org/bookmarks/" + bookmarkID, {
+        "_method": "delete",
+        "authenticity_token": token,
+    }).then((r) => {
+        respondToBookmark(r, button.id);
+    });
+
+    console.log("clearing tags");
+    clearTags(document);
+}
+
 function respondToBookmark(r, type) {
     // adds a flash notice to the top of the screen and changes the text of the button
     if (r.ok) {
-        // always document rather than doc because these will always be seen on the page the user is looking at
-        showFlashNotice(`Work successfully saved as "To Read".`);
-
         let button;
+
         if (type.includes("to_read")) {
             button = document.querySelector(`#${type}`).children[0];
             button.textContent = "Saved as \"To Read\"!";
+            // always document rather than doc because these will always be seen on the page the user is looking at
+            showFlashNotice(`Work successfully saved as "To Read".`);
+
             button.onclick = function () {
                 return false;
             }
         } else if (type.includes("priv_to_read")) {
             button = document.querySelector(`#${type}`).children[0];
             button.textContent = "Saved privately as \"To Read\"!";
+            // always document rather than doc because these will always be seen on the page the user is looking at
+            showFlashNotice(`Work successfully saved as "To Read".`);
+
             button.onclick = function () {
                 return false;
             }
         } else if (type === "mark_as_read") {
             button = document.querySelector(`#${type}`).children[0];
             button.textContent = "Marked as Read!";
+            // always document rather than doc because these will always be seen on the page the user is looking at
+            showFlashNotice(`Work successfully marked as read.`);
+
+            button.onclick = function () {
+                return false;
+            }
+        } else if (type === "easy_delete") {
+            button = document.querySelector(`#${type}`).children[0];
+            button.textContent = "Deleted!";
+            // always document rather than doc because these will always be seen on the page the user is looking at
+            showFlashNotice(`Bookmark was successfully deleted.`);
+
             button.onclick = function () {
                 return false;
             }
@@ -181,6 +216,7 @@ function createWorkToReadButton(priv, series) {
         child.onclick = function () {
             bookmarkWork(document, toReadButton, priv);
             createMarkAsReadButton();
+            createEasyDeleteButton();
 
             let button = document.querySelector("#to_read");
 
@@ -284,7 +320,7 @@ function createMarkAsReadButton() {
         const markAsReadButton = document.createElement("li");
         markAsReadButton.id = "mark_as_read";
         const child3 = document.createElement("a");
-        child3.text = 'Mark as Read'
+        child3.text = "Mark as Read";
 
         // makes it a link in all the important CSS ways
         child3.href = "#mark_as_read";
@@ -318,17 +354,55 @@ function createMarkAsReadButton() {
         kudosButton.parentElement.insertAdjacentElement("afterend", markAsReadButton);
     }
 
-    // needs to come first so it doesn't end after that return in the second if
-    if (REPLACE_MARK_FOR_LATER) {
-        const navbar = document.querySelector("ul.navigation.actions.work");
-        const markForLaterButton = navbar.querySelector(".mark");
-        markForLaterButton.remove();
+    let button = createButton();
+    addMarkAsReadButton(button);
+}
+
+function createEasyDeleteButton() {
+    function createButton() {
+        const easyDeleteButton = document.createElement("li");
+        easyDeleteButton.id = "easy_delete";
+        const child = document.createElement("a");
+        child.text = "Easy Delete";
+
+        // makes it a link in all the important CSS ways
+        child.href = "#easy_delete";
+        child.onclick = function () {
+            deleteBookmark(easyDeleteButton);
+
+            addSaveButton(false);
+
+            if (ADD_PRIV_SAVE_AS) {
+                addSaveButton(false, true);
+            }
+
+            let button = document.querySelector("#easy_delete");
+
+            // we add a delay so the user can see the "deleted" message before the button disappears
+            setTimeout(function () {
+                button.remove();
+            }, 3 * 1000);
+
+            return false;
+        }
+
+        easyDeleteButton.appendChild(child);
+
+        return easyDeleteButton;
     }
 
-    if (CREATE_MARK_AS_READ_BUTTON) {
-        let button = createButton();
-        addMarkAsReadButton(button);
+    function addEasyDeleteButton(easyDeleteButton) {
+        let navbar = document.querySelector("ul.navigation.actions.work");
+
+        if (!navbar) {
+            console.log("navbar selector broke :(")
+        }
+
+        navbar.appendChild(easyDeleteButton);
     }
+
+    let button = createButton();
+    addEasyDeleteButton(button);
 }
 
 
@@ -582,14 +656,28 @@ function initializeExtension(settings) {
     ENABLE_PRIVATE_FANDOMS = settings["enable_private_fandoms"] || false;
     PRIVATE_FANDOMS = settings["private_fandoms"] || [];
     CREATE_MARK_AS_READ_BUTTON = settings["create_mark_as_read_button"] || true;
+    EASY_DELETE_BUTTON = settings["easy_delete_button"] || true;
 
     if (isLoggedIn() && SAVE_AS_TO_READ_ENABLED) {
         if (isWork()) {
             console.log(`SaveAsToRead: this is a work`)
             // the whole idea here is to not show redundant buttons - save as buttons only when it's not already saved, and mark as button only when it can be marked as read
             if (isMarkedForLater()) {
-                console.log(`SaveAsToRead: currently marked for later, adding mark as read button`)
-                createMarkAsReadButton();
+                if (REPLACE_MARK_FOR_LATER) {
+                    const navbar = document.querySelector("ul.navigation.actions.work");
+                    const markForLaterButton = navbar.querySelector(".mark");
+                    markForLaterButton.remove();
+                }
+
+                if (CREATE_MARK_AS_READ_BUTTON) {
+                    console.log(`SaveAsToRead: currently marked for later, adding mark as read button`)
+                    createMarkAsReadButton();
+                }
+
+                if (EASY_DELETE_BUTTON) {
+                    console.log(`SaveAsToRead: currently marked for later, adding an easy-delete button`)
+                    createEasyDeleteButton();
+                }
             } else {
                 console.log(`SaveAsToRead: not marked for later, adding save as to read buttons`)
 

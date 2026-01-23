@@ -15,6 +15,7 @@ const booleanSettingMappings = {
     enable_private_fandoms: "#enable_private_fandoms",
     private_fandoms: "#private_fandoms",
     create_mark_as_read_button: "#create_mark_as_read_button",
+    easy_delete_button: "#easy_delete_button",
     bookmark_notes_enabled: "#bookmark_notes_enabled",
     notes_append_to_previous: "#notes_append_to_previous",
     add_url_and_username: "#add_url_and_username",
