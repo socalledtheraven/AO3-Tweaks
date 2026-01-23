@@ -209,7 +209,7 @@ function createExternalToReadButton(i, url, series, priv) {
     // creates a new button
     const toReadButton = document.createElement("li");
     const child = document.createElement("a");
-    const workID = extractIdFromCollectionUrl(url);
+    const workID = extractIdFromUrl(url);
     console.log(`SaveAsToRead: id is ${workID}`)
 
     if (priv) {
@@ -540,8 +540,15 @@ function addButtonsToMultiWorkPage() {
 
     for (const work of works) {
         let header = work.querySelector(".header");
-        let url = header.querySelector("a").href;
-        console.log(url);
+        let url;
+        if (header) {
+            url = header.querySelector("a").href;
+            console.log(url);
+        } else {
+            // we hit some kind of issue with the header of this one, but the next might be fine
+            console.error(`SaveAsToRead: header of work ${i} has no link, skipping`);
+            continue;
+        }
         let ul = document.createElement("ul");
         ul.style.display = "flex";
 

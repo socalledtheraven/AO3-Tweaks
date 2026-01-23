@@ -136,12 +136,10 @@ export function getRandomItem(array) {
 // Handles URLs like `/works/123/chapters/456` or `https://archiveofourown.org/works/123`
 export function extractIdFromUrl(url) {
     const parts = url.split("/");
-    console.log(parts)
     return parts[4]; // Works for both absolute and relative URLs after split
 }
 
 export function extractIdFromCollectionUrl(url) {
     const parts = url.split("/");
-    console.log(parts)
     return parts[6];
 }
