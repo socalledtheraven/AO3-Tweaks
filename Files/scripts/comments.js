@@ -12,7 +12,7 @@ async function fullTextCommentBoxes() {
     // checks if the "chapter by chapter" button is present (to indicate it is currently in fulltext mode
     const fullText = document.querySelector(".chapter.bychapter");
     if (!fullText) {
-        console.log("")
+        console.log("not full text")
         return;
     }
 

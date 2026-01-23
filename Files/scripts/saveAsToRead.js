@@ -1,5 +1,6 @@
 // CONFIG
 import {
+    extractIdFromCollectionUrl,
     extractIdFromUrl,
     get,
     getAO3Metadata,
@@ -122,15 +123,32 @@ function respondToBookmark(r, type) {
 
 
 function isWork() {
-    return URL.includes("chapters")
-        || (URL.includes("series")
-            && !URL.includes("tags"))
-        || (URL.includes("works")
-            && !URL.includes("search")
-            && !URL.includes("users")
-            && !URL.includes("tags")
-            && !URL.includes("collections")
-            && !(URL === "https://archiveofourown.org/works"));
+    if (URL.includes("collections")) {
+        // not work:
+        // https://archiveofourown.org/collections/yuletide2025
+        // https://archiveofourown.org/collections/yuletide2025/works
+        // work:
+        // https://archiveofourown.org/collections/yuletide2025/works/76350276
+
+        let parts = URL.split("/");
+        console.log(parts)
+        console.log(parts[6])
+        console.log(/[0-9]+/.test(parts[6]))
+        if (!parts) {
+            return false;
+        } else {
+            return /[0-9]+/.test(parts[6]);
+        }
+    } else {
+        return URL.includes("chapters")
+            || (URL.includes("series")
+                && !URL.includes("tags"))
+            || (URL.includes("works")
+                && !URL.includes("search")
+                && !URL.includes("users")
+                && !URL.includes("tags")
+                && !(URL === "https://archiveofourown.org/works"));
+    }
 }
 
 function isMarkedForLater() {
@@ -191,7 +209,7 @@ function createExternalToReadButton(i, url, series, priv) {
     // creates a new button
     const toReadButton = document.createElement("li");
     const child = document.createElement("a");
-    const workID = extractIdFromUrl(url);
+    const workID = extractIdFromCollectionUrl(url);
     console.log(`SaveAsToRead: id is ${workID}`)
 
     if (priv) {
@@ -523,6 +541,7 @@ function addButtonsToMultiWorkPage() {
     for (const work of works) {
         let header = work.querySelector(".header");
         let url = header.querySelector("a").href;
+        console.log(url);
         let ul = document.createElement("ul");
         ul.style.display = "flex";
 

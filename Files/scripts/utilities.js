@@ -136,26 +136,12 @@ export function getRandomItem(array) {
 // Handles URLs like `/works/123/chapters/456` or `https://archiveofourown.org/works/123`
 export function extractIdFromUrl(url) {
     const parts = url.split("/");
+    console.log(parts)
     return parts[4]; // Works for both absolute and relative URLs after split
 }
 
-// Export functions for use in other scripts
-// This allows the functions to be called from other files
-// window.AO3TweaksUtils = {
-//     post,
-//     get,
-//     getDocument,
-//     isLoggedIn,
-//     onError,
-//     removeCommas,
-//     getStringTags,
-//     removeToReadTag,
-//     addTags,
-//     getAO3Metadata,
-//     showFlashNotice,
-//     createInlineListItem,
-//     getRandomItem,
-//     extractIdFromUrl
-// };
-//
-// window.utils = AO3TweaksUtils;
+export function extractIdFromCollectionUrl(url) {
+    const parts = url.split("/");
+    console.log(parts)
+    return parts[6];
+}
