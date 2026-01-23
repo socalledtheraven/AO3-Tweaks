@@ -1,5 +1,3 @@
-// import * as browser from "webextension-polyfill";
-
 const booleanSettingMappings = {
     rekudos_enabled: "#rekudos_enabled",
     auto_rekudos_enabled: "#auto_rekudos_enabled",
@@ -32,11 +30,9 @@ const booleanSettingMappings = {
     add_archive_warnings: "#add_archive_warnings",
     add_custom_tags: "#add_custom_tags",
     custom_tags: "#custom_tags",
-    add_exact_wordcount_tag: "#add_exact_wordcount_tag",
     series_notes_enabled: "#series_notes_enabled",
     add_series_url_and_username: "#add_series_url_and_username",
     add_work_count_tag: "#add_work_count_tag",
-    add_exact_wordcount_tag_series: "#add_exact_wordcount_tag_series",
     rec_default_series: "#rec_default_series",
     private_default_series: "#private_default_series"
 }

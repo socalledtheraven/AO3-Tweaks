@@ -28,20 +28,13 @@ let ADD_RATING; // Add a copy of the rating (with "Rating: " before it) to the b
 let ADD_ARCHIVE_WARNINGS; // Add a copy of the archive warnings to the bookmarker tag list
 let ADD_CUSTOM_TAGS; // Add set default tags to bookmarker tag list, default tags listed below
 let CUSTOM_TAGS = "TBR, Example Tag, Example Tag 2"; // List of the default tags the bookmark will be given, comma seperated.
-let ADD_EXACT_WORDCOUNT_TAG; // Add a tag with the exact word count
-let ADD_WORDCOUNT_TAG; // Add a tag for the word count from the following set
-//Word count will be split up into 7 groups, edit the list below to change the ranges (default: 1000, 10000, 20000, 50000, 100000, 150000)
-//the ranges will be < the first number, first number - second number, second number - third number, etc and finally > the last number
-let WORDCOUNTS = [1000, 10000, 20000, 50000, 100000, 150000];
-let ADD_EXACT_WORDCOUNT_TAG_LIST; // Add a tag for special case word counts (ie. 100 words, 1000 words, etc) Does not have to be 3, can be any number of special cases
-let EXACT_WORDCOUNT_TAG_LIST = ["100", "1000", "10000"]
+
 
 /*SERIES BOOKMARK SETTINGS*/
 let SERIES_NOTES_ENABLED;
 let ADD_SERIES_URL_AND_USERNAME; // Add the title of the series and the username(s) (and pseud(s) if applicable) of the creator(s) with relevant links to each to the bookmark notes.
 //Highly recommended
 let ADD_WORK_COUNT_TAG; // Add the number of works in the series to the tags
-let ADD_EXACT_WORDCOUNT_TAG_SERIES; // Add a tag with the exact word count
 let ADD_CUSTOM_TAGS_SERIES; // Add set default tags to bookmarker tag list, default tags listed below
 let CUSTOM_TAGS_SERIES = "TBR S, Example Tag S, Example Tag 2 S"; // List of the default tags the bookmark will be given, comma seperated.
 let ADD_CUSTOM_TAGS_FOR_WORKS; //Add the custom tags that are listed for work bookmarks to series bookmarks too
@@ -141,41 +134,6 @@ function updateWorkBookmark(url) {
         tagBox.value += ", " + CUSTOM_TAGS
     }
 
-    // the wordcount section begins
-    let wordcount = document.getElementsByClassName("words")[1].textContent;
-    wordcount = removeCommas(wordcount);
-
-    if (ADD_EXACT_WORDCOUNT_TAG) {
-        tagBox.value += ", Word Count:" + wordcount;
-    }
-
-    if (ADD_WORDCOUNT_TAG) {
-        for (let i = 0; i < WORDCOUNTS.length - 1; i++) {
-            if (wordcount >= WORDCOUNTS[i] && wordcount < WORDCOUNTS[i + 1]) {
-                tagBox.value += ", Word Count: " + WORDCOUNTS[i] + "-" + WORDCOUNTS[i + 1];
-                break;
-            }
-        }
-
-        // handle when the wordcount is less than the smallest wordcount
-        if (wordcount >= WORDCOUNTS[WORDCOUNTS.length - 1]) {
-            tagBox.value += ", Word Count: > " + WORDCOUNTS[WORDCOUNTS.length - 1];
-        }
-
-        // handle when the wordcount is higher than the largest amount
-        if (wordcount < WORDCOUNTS[0]) {
-            tagBox.value += ", Word Count: < " + WORDCOUNTS[0];
-        }
-    }
-
-    if (ADD_EXACT_WORDCOUNT_TAG_LIST) {
-        for (let exactWordcountTag of EXACT_WORDCOUNT_TAG_LIST) {
-            if (wordcount === exactWordcountTag) {
-                tagBox.value += ", Word Count: " + exactWordcountTag;
-            }
-        }
-    }
-
     tagBox.value += ", "
 }
 
@@ -223,11 +181,6 @@ function updateSeriesBookmark(url) {
         tagBox.value += ", Works in series: " + workCount[1].textContent;
     }
 
-    if (ADD_EXACT_WORDCOUNT_TAG_SERIES) {
-        const wordCount = document.getElementsByClassName("words");
-        tagBox.value += ", Words in series: " + removeCommas(wordCount[1].textContent);
-    }
-
     if (ADD_CUSTOM_TAGS_SERIES) {
         tagBox.value += ", " + CUSTOM_TAGS_SERIES;
     }
@@ -265,12 +218,10 @@ function initializeExtension(settings) {
     ADD_ARCHIVE_WARNINGS = settings["add_archive_warnings"] || false;
     ADD_CUSTOM_TAGS = settings["add_custom_tags"] || false;
     CUSTOM_TAGS = settings["custom_tags"] || false;
-    ADD_EXACT_WORDCOUNT_TAG = settings["add_exact_wordcount_tag"] || false;
 
     SERIES_NOTES_ENABLED = settings["series_notes_enabled"] || true;
     ADD_SERIES_URL_AND_USERNAME = settings["add_series_url_and_username"] || true;
     ADD_WORK_COUNT_TAG = settings["add_work_count_tag"] || true;
-    ADD_EXACT_WORDCOUNT_TAG_SERIES = settings["add_exact_wordcount_tag_series"] || false;
     REC_DEFAULT_SERIES = settings["rec_default_series"] || false;
     PRIVATE_DEFAULT_SERIES = settings["private_default_series"] || false;
 
@@ -300,11 +251,9 @@ browser.storage.sync.get([
     "add_additional_tags",
     "add_rating",
     "add_archive_warnings",
-    "add_exact_wordcount_tag",
     "series_notes_enabled",
     "add_series_url_and_username",
     "add_work_count_tag",
-    "add_exact_wordcount_tag_series",
     "rec_default_series",
     "private_default_series",
     "add_custom_tags",
