@@ -1,6 +1,5 @@
 // CONFIG
 import {
-    extractIdFromCollectionUrl,
     extractIdFromUrl,
     get,
     getAO3Metadata,
