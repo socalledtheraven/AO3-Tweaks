@@ -200,10 +200,10 @@ function autofillComment(parentContainer, templates) {
 console.log("loaded comments.js");
 
 function initializeExtension(settings) {
-    let COMMENT_TEMPLATES = settings["comment_templates"] || true;
+    let COMMENT_TEMPLATES = settings["comment_templates"] ?? true;
     COMMENT_TEMPLATES = false;
-    let EXTRA_COMMENT_BOXES = settings["extra_comment_boxes"] || true;
-    let TEMPLATE_COMMENTS = settings["template_comments"] || [
+    let EXTRA_COMMENT_BOXES = settings["extra_comment_boxes"] ?? true;
+    let TEMPLATE_COMMENTS = settings["template_comments"] ?? [
         "[lavish praise]",
         "[inside fandom joke]",
         "[quote fave part] [fill in keysmash]",
@@ -309,7 +309,7 @@ function initializeExtension(settings) {
         "The [emotion] in this story really resonated with me because […]",
         "[Plot point/Character] felt realistic to me because of my experience with […]"
     ];
-    let PREWRITTEN_COMMENTS = settings["prewritten_comments"] || [
+    let PREWRITTEN_COMMENTS = settings["prewritten_comments"] ?? [
         "I love you",
         "*assorted keysmashing*",
         "h OW DA RE",

@@ -94,8 +94,8 @@ function createNewKudos(AUTO, messages) {
 console.log("loaded rekudos.js")
 
 function initializeExtension(settings) {
-    let REKUDOS_ACTIVE = settings["rekudos_enabled"] || true;
-    let REKUDOS_AUTO = settings["auto_rekudos_enabled"] || false;
+    let REKUDOS_ACTIVE = settings["rekudos_enabled"] ?? true;
+    let REKUDOS_AUTO = settings["auto_rekudos_enabled"] ?? false;
     let messages;
     if (settings["rekudos_messages"]) {
         messages = settings["rekudos_messages"].split("\n");

@@ -203,27 +203,27 @@ function updateSeriesBookmark(url) {
 console.log("loaded bookmarkNotes.js");
 
 function initializeExtension(settings) {
-    BOOKMARK_NOTES_ENABLED = settings["bookmark_notes_enabled"] || true;
-    NOTES_APPEND_TO_PREVIOUS = settings["notes_append_to_previous"] || true;
-    ADD_URL_AND_USERNAME = settings["add_url_and_username"] || true;
-    ADD_SUMMARY = settings["add_summary"] || true;
-    REC_DEFAULT = settings["rec_default"] || false;
-    PRIVATE_DEFAULT = settings["private_default"] || false;
-    ADD_CATEGORIES = settings["add_categories"] || false;
-    ADD_FANDOM_TAGS = settings["add_fandom_tags"] || true;
-    ADD_CHARACTER_TAGS = settings["add_character_tags"] || false;
-    ADD_RELATIONSHIP_TAGS = settings["add_relationship_tags"] || false;
-    ADD_ADDITIONAL_TAGS = settings["add_additional_tags"] || false;
-    ADD_RATING = settings["add_rating"] || false;
-    ADD_ARCHIVE_WARNINGS = settings["add_archive_warnings"] || false;
-    ADD_CUSTOM_TAGS = settings["add_custom_tags"] || false;
-    CUSTOM_TAGS = settings["custom_tags"] || false;
+    BOOKMARK_NOTES_ENABLED = settings["bookmark_notes_enabled"] ?? true;
+    NOTES_APPEND_TO_PREVIOUS = settings["notes_append_to_previous"] ?? true;
+    ADD_URL_AND_USERNAME = settings["add_url_and_username"] ?? true;
+    ADD_SUMMARY = settings["add_summary"] ?? true;
+    REC_DEFAULT = settings["rec_default"] ?? false;
+    PRIVATE_DEFAULT = settings["private_default"] ?? false;
+    ADD_CATEGORIES = settings["add_categories"] ?? false;
+    ADD_FANDOM_TAGS = settings["add_fandom_tags"] ?? true;
+    ADD_CHARACTER_TAGS = settings["add_character_tags"] ?? false;
+    ADD_RELATIONSHIP_TAGS = settings["add_relationship_tags"] ?? false;
+    ADD_ADDITIONAL_TAGS = settings["add_additional_tags"] ?? false;
+    ADD_RATING = settings["add_rating"] ?? false;
+    ADD_ARCHIVE_WARNINGS = settings["add_archive_warnings"] ?? false;
+    ADD_CUSTOM_TAGS = settings["add_custom_tags"] ?? false;
+    CUSTOM_TAGS = settings["custom_tags"] ?? false;
 
-    SERIES_NOTES_ENABLED = settings["series_notes_enabled"] || true;
-    ADD_SERIES_URL_AND_USERNAME = settings["add_series_url_and_username"] || true;
-    ADD_WORK_COUNT_TAG = settings["add_work_count_tag"] || true;
-    REC_DEFAULT_SERIES = settings["rec_default_series"] || false;
-    PRIVATE_DEFAULT_SERIES = settings["private_default_series"] || false;
+    SERIES_NOTES_ENABLED = settings["series_notes_enabled"] ?? true;
+    ADD_SERIES_URL_AND_USERNAME = settings["add_series_url_and_username"] ?? true;
+    ADD_WORK_COUNT_TAG = settings["add_work_count_tag"] ?? true;
+    REC_DEFAULT_SERIES = settings["rec_default_series"] ?? false;
+    PRIVATE_DEFAULT_SERIES = settings["private_default_series"] ?? false;
 
     if (isLoggedIn() && BOOKMARK_NOTES_ENABLED) {
         // has a problem with the variable name "url" (presumably something else is using it)
