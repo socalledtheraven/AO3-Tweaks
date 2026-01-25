@@ -145,7 +145,9 @@ export function getRandomItem(array) {
 }
 
 // Handles URLs like `/works/123/chapters/456` or `https://archiveofourown.org/works/123`
+// should hopefully also work for download links
 export function extractIdFromUrl(url) {
+    // the url gets expanded when everything is loaded, so we need to take `archiveofourown.org/works/...` into mind
     const parts = url.split("/");
     if (url.includes("collections")) {
         return parts[6];

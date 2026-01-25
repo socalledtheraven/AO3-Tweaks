@@ -526,8 +526,12 @@ function getWorkData(doc) {
 
     const bookmarkNotes = doc.getElementById("bookmark_notes").value;
 
-    let url = doc.querySelector("li.share").querySelector("a").href;
-    // the url gets expanded when everything is loaded, so we need to take `archiveofourown.org/works/...` into mind
+    let downloadButton = doc.querySelector("li.download");
+    if (!downloadButton) {
+        console.error("No download button found");
+    }
+    let linkElem = downloadButton.querySelector("ul").querySelector("li").querySelector("a");
+    let url = linkElem.href;
     let id = extractIdFromUrl(url);
 
     const tagBox = doc.getElementById("bookmark_tag_string_autocomplete");
