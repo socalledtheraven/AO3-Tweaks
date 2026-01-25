@@ -1,5 +1,6 @@
 // CONFIG
 import {
+    addSavedWorkToStorage,
     clearTags,
     extractIdFromUrl,
     get,
@@ -40,16 +41,23 @@ function isInArray(arr) {
 
 // BOOKMARK HANDLING
 
-function createSeriesBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privacy, buttonID) {
-    _createBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privacy, buttonID, true);
+function createSeriesBookmark(data, buttonID) {
+    _createBookmark(data, buttonID, true);
 }
 
-function createWorkBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privacy, buttonID) {
-    _createBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privacy, buttonID, false)
+function createWorkBookmark(data, buttonID) {
+    _createBookmark(data, buttonID, false)
 }
 
-function _createBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privacy, buttonID, series) {
+function _createBookmark(data, buttonID, series) {
     // sends off the bookmark request with the data provided
+
+    let id = data[0];
+    let token = data[1];
+    let pseudID = data[2];
+    let bookmarkNotes = data[3];
+    let bookmarkTags = data[4];
+    let privacy = data[5];
 
     let url;
     if (series) {
@@ -57,6 +65,7 @@ function _createBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privac
     } else {
         url = "https://archiveofourown.org/works/" + id + "/bookmarks";
     }
+
     post(url, {
         "authenticity_token": token,
         "bookmark[pseud_id]": pseudID,
@@ -71,7 +80,15 @@ function _createBookmark(id, token, pseudID, bookmarkNotes, bookmarkTags, privac
     });
 }
 
-function updateBookmark(bookmarkID, token, pseudID, notes, tagString, privacy, rec, buttonID) {
+function updateBookmark(data, buttonID) {
+    let bookmarkID = data[0];
+    let token = data[1];
+    let pseudID = data[2];
+    let notes = data[3];
+    let tagString = data[4];
+    let privacy = data[5];
+    let rec = data[6];
+
     // sends an update request with the data
     post("https://archiveofourown.org/bookmarks/" + bookmarkID, {
         "_method": "put",
@@ -460,8 +477,7 @@ function markAsRead(button) {
 
     removeToReadTag(doc);
 
-    let data = getBookmarkData(doc);
-    updateBookmark(data[0], data[1], data[2], data[3], data[4], data[5], data[6], button.id);
+    updateBookmark(getBookmarkData(doc), button.id);
 }
 
 function bookmarkWork(doc, button, priv, url = URL) {
@@ -488,13 +504,20 @@ function bookmarkWork(doc, button, priv, url = URL) {
 
     if (isBookmark) {
         console.log(`SaveAsToRead: currently bookmarked, updating`)
+
         let data = getBookmarkData(doc);
         data[4] += ", To Read";
-        updateBookmark(data[0], data[1], data[2], data[3], data[4], data[5], data[6], button.id);
+
+        updateBookmark(data, button.id);
+
+        addSavedWorkToStorage(data[0]).then(r => {
+            console.log(`${id} sent to storage`);
+        });
     } else {
         let data = getWorkData(doc);
         data[4] += ", To Read";
-        createWorkBookmark(data[0], data[1], data[2], data[3], data[4], data[5], button.id, false);
+
+        createWorkBookmark(data, button.id);
     }
 }
 
@@ -508,9 +531,10 @@ function bookmarkSeries(doc, button, priv) {
     bookmarkTags.value += ", To Read";
 
     console.log(`SaveAsToRead: this is a series`)
+
     let data = getSeriesData(doc);
     data[4] += ", To Read";
-    createSeriesBookmark(data[0], data[1], data[2], data[3], data[4], data[5], button.id, true);
+    createSeriesBookmark(data, button.id);
 }
 
 
