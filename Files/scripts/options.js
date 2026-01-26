@@ -42,10 +42,16 @@ function saveOptions() {
     for (let [key, value] of Object.entries(booleanSettingMappings)) {
         if (document.querySelector(value).type === "checkbox") {
             console.log(`Options: setting key ${key} to ${document.querySelector(value).checked}`)
-            browser.storage.sync.set({[key]: document.querySelector(value).checked});
+
+            browser.storage.sync.set({
+                [key]: document.querySelector(value).checked
+            });
         } else if (document.querySelector(value).type === "textarea") {
             console.log(`Options: setting key ${key} to ${document.querySelector(value).textContent}`)
-            browser.storage.sync.set({[key]: document.querySelector(value).textContent});
+
+            browser.storage.sync.set({
+                [key]: document.querySelector(value).textContent
+            });
         }
     }
 }

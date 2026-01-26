@@ -1,5 +1,6 @@
 // CONFIG
 import {
+    addSavedSeriesToStorage,
     addSavedWorkToStorage,
     clearTags,
     extractIdFromUrl,
@@ -10,8 +11,8 @@ import {
     isLoggedIn,
     onError,
     post,
-    removeToReadTag,
-    showFlashNotice
+    removeToReadTag, seriesAlreadySaved,
+    showFlashNotice, workAlreadySaved
 } from "./utilities.js";
 
 let ENABLE_PRIVATE_FANDOMS;
@@ -43,10 +44,14 @@ function isInArray(arr) {
 
 function createSeriesBookmark(data, buttonID) {
     _createBookmark(data, buttonID, true);
+
+    addSavedSeriesToStorage(data[0]);
 }
 
 function createWorkBookmark(data, buttonID) {
     _createBookmark(data, buttonID, false)
+
+    addSavedWorkToStorage(data[0]);
 }
 
 function _createBookmark(data, buttonID, series) {
@@ -502,19 +507,16 @@ function bookmarkWork(doc, button, priv, url = URL) {
 
     let isBookmark = doc.querySelector(".bookmark_form_placement_open").textContent.includes("Edit");
 
+    let data;
     if (isBookmark) {
         console.log(`SaveAsToRead: currently bookmarked, updating`)
 
-        let data = getBookmarkData(doc);
+        data = getBookmarkData(doc);
         data[4] += ", To Read";
 
         updateBookmark(data, button.id);
-
-        addSavedWorkToStorage(data[0]).then(r => {
-            console.log(`${id} sent to storage`);
-        });
     } else {
-        let data = getWorkData(doc);
+        data = getWorkData(doc);
         data[4] += ", To Read";
 
         createWorkBookmark(data, button.id);
@@ -635,21 +637,33 @@ function getSeriesData(doc) {
 // MAIN CODE
 
 
-function addButtonsToMultiWorkPage() {
+async function addButtonsToMultiWorkPage() {
     const works = document.querySelectorAll('li[role="article"]');
     let i = 1;
 
     for (const work of works) {
         let header = work.querySelector(".header");
-        let url;
-        if (header) {
-            url = header.querySelector("a").href;
-            console.log(url);
-        } else {
+
+        if (!header) {
             // we hit some kind of issue with the header of this one, but the next might be fine
             console.error(`SaveAsToRead: header of work ${i} has no link, skipping`);
             continue;
         }
+
+        let url = header.querySelector("a").href;
+
+        const id = extractIdFromUrl(url);
+        let x = await workAlreadySaved(id);
+        console.log(`x: ${x}`)
+        let y = await seriesAlreadySaved(id);
+        console.log(`y: ${y}`)
+        if (x || y) {
+            console.log(`SaveAsToRead: ${i} already saved, add border`);
+            header.parentElement.style.border = "3px solid #63f542";
+        } else {
+            console.log(`SaveAsToRead: ${i} not saved, no border`);
+        }
+
         let ul = document.createElement("ul");
         ul.style.display = "flex";
 
@@ -718,11 +732,11 @@ function initializeExtension(settings) {
 
                 // add save as to read buttons for the series before adding all the individual ones
                 if (isSeries) {
-                    addButtonsToMultiWorkPage();
+                    addButtonsToMultiWorkPage().then();
                 }
             }
         } else {
-            addButtonsToMultiWorkPage()
+            addButtonsToMultiWorkPage().then();
         }
     }
 }

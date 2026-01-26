@@ -155,3 +155,51 @@ export function extractIdFromUrl(url) {
         return parts[4]; // Works for both absolute and relative URLs after split
     }
 }
+
+export function addSavedWorkToStorage(id) {
+    addItemToStorage("savedWorks", id).then(() => console.log(`${id} sent to storage`));
+}
+
+export function addSavedSeriesToStorage(id) {
+    addItemToStorage("savedSeries", id).then(() => console.log(`${id} sent to storage`));;
+}
+
+async function addItemToStorage(key, value) {
+    await browser.storage.sync.get(key).then(
+        async (result) => {
+            let items = result[key];
+
+            if (!items || items.length === 0) {
+                items = new Set([value]);
+                console.log("Persistent saved works created");
+            } else {
+                items = new Set(items);
+                items.add(value);
+                console.log(`Saved work ${value} added to persistent storage`);
+                console.log(items)
+            }
+
+            await browser.storage.sync.set({
+                [key]: Array.from(items)
+            });
+        }
+    );
+}
+
+export async function workAlreadySaved(id) {
+    return await isItemSaved("savedWorks", id);
+}
+
+export async function seriesAlreadySaved(id) {
+    return await isItemSaved("savedSeries", id);
+}
+
+async function isItemSaved(key, value) {
+    const result = await browser.storage.sync.get(key);
+
+    if (!result || result[key] === undefined) {
+        return false;
+    }
+
+    return result[key].includes(`${value}`);
+}
