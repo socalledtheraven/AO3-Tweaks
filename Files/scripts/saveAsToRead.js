@@ -653,13 +653,15 @@ async function addButtonsToMultiWorkPage() {
         let url = header.querySelector("a").href;
 
         const id = extractIdFromUrl(url);
-        let x = await workAlreadySaved(id);
-        console.log(`x: ${x}`)
-        let y = await seriesAlreadySaved(id);
-        console.log(`y: ${y}`)
-        if (x || y) {
+        let isWorkSaved = await workAlreadySaved(id);
+        console.log(`isWorkSaved: ${isWorkSaved}`)
+
+        let isSeriesSaved = await seriesAlreadySaved(id);
+        console.log(`isSeriesSaved: ${isSeriesSaved}`)
+
+        if (isWorkSaved || isSeriesSaved) {
             console.log(`SaveAsToRead: ${i} already saved, add border`);
-            header.parentElement.style.border = "3px solid #63f542";
+            // header.parentElement.style.border = "3px solid #63f542";
         } else {
             console.log(`SaveAsToRead: ${i} not saved, no border`);
         }
