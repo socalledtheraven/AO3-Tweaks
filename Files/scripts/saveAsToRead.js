@@ -218,15 +218,14 @@ function isMarkedForLater() {
 function createWorkToReadButton(priv, series) {
     // these will always be on the user-facing page
     const toReadButton = document.createElement("li");
-    const child = document.createElement("a");
+    const child = document.createElement("button");
+    child.type = "button";
     if (priv) {
         toReadButton.id = "priv_to_read";
-        child.text = 'Save privately as "To Read"'
-        child.href = "#priv_to_read";
+        child.textContent = 'Save privately as "To Read"';
     } else {
         toReadButton.id = "to_read";
-        child.text = 'Save as "To Read"'
-        child.href = "#to_read";
+        child.textContent = 'Save as "To Read"';
     }
 
     if (series) {
@@ -265,18 +264,17 @@ function createWorkToReadButton(priv, series) {
 function createExternalToReadButton(i, url, series, priv) {
     // creates a new button
     const toReadButton = document.createElement("li");
-    const child = document.createElement("a");
+    const child = document.createElement("button");
+    child.type = "button";
     const workID = extractIdFromUrl(url);
     console.log(`SaveAsToRead: id is ${workID}`)
 
     if (priv) {
         toReadButton.id = "priv_to_read_" + workID;
-        child.text = 'Save privately as "To Read"'
-        child.href = "#priv_to_read_" + workID;
+        child.textContent = 'Save privately as "To Read"';
     } else {
         toReadButton.id = "to_read_" + workID;
-        child.text = 'Save as "To Read"'
-        child.href = "#to_read_" + workID;
+        child.textContent = 'Save as "To Read"';
     }
 
     child.onclick = async function () {
@@ -341,12 +339,13 @@ function createMarkAsReadButton() {
     function createButton() {
         const markAsReadButton = document.createElement("li");
         markAsReadButton.id = "mark_as_read";
-        const child3 = document.createElement("a");
-        child3.text = "Mark as Read";
+        const child = document.createElement("button");
+        child.type = "button";
+        child.textContent = "Mark as Read";
 
         // makes it a link in all the important CSS ways
-        child3.href = "#mark_as_read";
-        child3.onclick = function () {
+        child.href = "#mark_as_read";
+        child.onclick = function () {
             markAsRead(markAsReadButton);
 
             addSaveButton(false);
@@ -365,7 +364,7 @@ function createMarkAsReadButton() {
             return false;
         }
 
-        markAsReadButton.appendChild(child3);
+        markAsReadButton.appendChild(child);
 
         return markAsReadButton;
     }
@@ -384,8 +383,9 @@ function createEasyDeleteButton() {
     function createButton() {
         const easyDeleteButton = document.createElement("li");
         easyDeleteButton.id = "easy_delete";
-        const child = document.createElement("a");
-        child.text = "Easy Delete";
+        const child = document.createElement("button");
+        child.type = "button";
+        child.textContent = "Easy Delete";
 
         // makes it a link in all the important CSS ways
         child.href = "#easy_delete";
@@ -462,7 +462,7 @@ function removeFromMarkedForLater(doc, url) {
 
     get(url + "/mark_as_read").then((r) => {
         if (r.ok) {
-            let notice = showFlashNotice("This work was removed from your", false, doc);
+            let notice = showFlashNotice("This work was removed from your marked for later.", false, doc);
 
             let listLink = doc.createElement("a");
             listLink.href = userURL + "/readings?show=to-read";

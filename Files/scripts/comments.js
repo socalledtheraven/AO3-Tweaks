@@ -94,10 +94,10 @@ async function appendCommentBox(i, url, chapters, chapterNode) {
         console.log("No button element found.");
     }
 
-    let newButton = document.createElement("a");
+    let newButton = document.createElement("button");
+    newButton.type = "button";
     newButton.textContent = "Comment";
     newButton.id = "comment_button_" + i;
-    newButton.href = "#comment_button_" + i;
 
     newButton.onclick = function () {
         let metadata = getAO3Metadata();
@@ -157,7 +157,8 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
         let containerLi1 = createInlineListItem();
         containerLi1.style.cursor = "pointer";
 
-        let commentTemplateButton = document.createElement("a");
+        let commentTemplateButton = document.createElement("button");
+        commentTemplateButton.type = "button";
         commentTemplateButton.textContent = "Fill comment template";
         commentTemplateButton.onclick = function () {
             autofillComment(container, TEMPLATE_COMMENTS);
@@ -169,7 +170,8 @@ function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
 
         let containerLi2 = createInlineListItem(true);
 
-        let premadeCommentButton = document.createElement("a");
+        let premadeCommentButton = document.createElement("button");
+        premadeCommentButton.type = "button";
         premadeCommentButton.textContent = "Fill prewritten comment";
         premadeCommentButton.onclick = function () {
             autofillComment(container, PREWRITTEN_COMMENTS);

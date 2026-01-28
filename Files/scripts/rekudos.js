@@ -64,10 +64,10 @@ function overrideButton(oldButton, newButton) {
 function createNewKudos(AUTO, messages) {
     let containerLi = createInlineListItem();
 
-    let newKudosButton = document.createElement("a");
+    let newKudosButton = document.createElement("button");
+    newKudosButton.type = "button";
     newKudosButton.textContent = "Kudos ♥";
     newKudosButton.id = "#kudos";
-    newKudosButton.href = "#kudos";
 
     newKudosButton.onclick = function () {
         let oldKudosButton = document.querySelector("#kudo_submit");
