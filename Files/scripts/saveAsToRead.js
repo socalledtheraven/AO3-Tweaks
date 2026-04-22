@@ -668,6 +668,7 @@ async function addButtonsToMultiWorkPage() {
 
         let ul = document.createElement("ul");
         ul.style.display = "flex";
+        ul.style.justifyContent = "space-evenly";
 
         let toReadButton = createExternalToReadButton(i, url, url.includes("series"), false);
         toReadButton.className = "actions";
