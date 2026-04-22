@@ -50,8 +50,12 @@ export function isLoggedIn() {
     return !document.querySelector("#login");
 }
 
-export function onError(error) {
+export function onError(error, DEBUG_ENABLED = false) {
     console.error(`Error: ${error}`);
+
+    if (DEBUG_ENABLED) {
+        alert(`An error occurred: ${error}`);
+    }
 }
 
 export function removeCommas(wordcount) {

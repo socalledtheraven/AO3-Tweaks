@@ -691,7 +691,7 @@ async function addButtonsToMultiWorkPage() {
 
 console.log("loaded saveAsToRead.js");
 
-function initializeExtension(settings) {
+function initialiseExtension(settings) {
     // needs to be global variables because they are referenced everywhere
     SAVE_AS_TO_READ_ENABLED = settings["save_as_to_read_enabled"] ?? true;
     REMOVE_FROM_MARKED_FOR_LATER = settings["remove_from_marked_for_later"] ?? false;
@@ -744,16 +744,21 @@ function initializeExtension(settings) {
     }
 }
 
-// Get both settings at once and initialise the extension
-browser.storage.sync.get([
-    "save_as_to_read_enabled",
-    "remove_from_marked_for_later",
-    "unsub_from_works",
-    "replace_mark_for_later",
-    "add_priv_save_as",
-    "enable_private_fandoms",
-    "private_fandoms",
-    "create_mark_as_read_button"
-])
-.then(initializeExtension)
-.catch(onError);
+let debugEnabled = false;
+
+browser.storage.sync.get("debug_enabled")
+    .then((result) => {
+        debugEnabled = result.debug_enabled ?? false;
+        return browser.storage.sync.get([
+            "save_as_to_read_enabled",
+            "remove_from_marked_for_later",
+            "unsub_from_works",
+            "replace_mark_for_later",
+            "add_priv_save_as",
+            "enable_private_fandoms",
+            "private_fandoms",
+            "create_mark_as_read_button"
+        ]);
+    })
+    .then(initialiseExtension)
+    .catch((error) => onError(error, debugEnabled));

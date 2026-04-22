@@ -201,7 +201,7 @@ function autofillComment(parentContainer, templates) {
 
 console.log("loaded comments.js");
 
-function initializeExtension(settings) {
+function initialiseExtension(settings) {
     let COMMENT_TEMPLATES = settings["comment_templates"] ?? true;
     COMMENT_TEMPLATES = false;
     let EXTRA_COMMENT_BOXES = settings["extra_comment_boxes"] ?? true;
@@ -395,7 +395,12 @@ function initializeExtension(settings) {
     }
 }
 
-// Get both settings at once and initialise the extension
-browser.storage.sync.get(["comment_templates", "extra_comment_boxes", "template_comments", "prewritten_comments"])
-    .then(initializeExtension)
-    .catch(onError);
+let debugEnabled = false;
+
+browser.storage.sync.get("debug_enabled")
+    .then((result) => {
+        debugEnabled = result.debug_enabled ?? false;
+        return browser.storage.sync.get(["comment_templates", "extra_comment_boxes", "template_comments", "prewritten_comments"]);
+    })
+    .then(initialiseExtension)
+    .catch((error) => onError(error, debugEnabled));

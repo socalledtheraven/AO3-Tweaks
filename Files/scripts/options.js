@@ -35,7 +35,8 @@ const booleanSettingMappings = {
     add_series_url_and_username: "#add_series_url_and_username",
     add_work_count_tag: "#add_work_count_tag",
     rec_default_series: "#rec_default_series",
-    private_default_series: "#private_default_series"
+    private_default_series: "#private_default_series",
+    debug_enabled: "#debug_enabled"
 }
 
 function saveOptions() {

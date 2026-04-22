@@ -202,7 +202,7 @@ function updateSeriesBookmark(url) {
 
 console.log("loaded bookmarkNotes.js");
 
-function initializeExtension(settings) {
+function initialiseExtension(settings) {
     BOOKMARK_NOTES_ENABLED = settings["bookmark_notes_enabled"] ?? true;
     NOTES_APPEND_TO_PREVIOUS = settings["notes_append_to_previous"] ?? true;
     ADD_URL_AND_USERNAME = settings["add_url_and_username"] ?? true;
@@ -236,28 +236,33 @@ function initializeExtension(settings) {
     }
 }
 
-// Get both settings at once and initialise the extension
-browser.storage.sync.get([
-    "bookmark_notes_enabled",
-    "notes_append_to_previous",
-    "add_url_and_username",
-    "add_summary",
-    "rec_default",
-    "private_default",
-    "add_categories",
-    "add_fandom_tags",
-    "add_character_tags",
-    "add_relationship_tags",
-    "add_additional_tags",
-    "add_rating",
-    "add_archive_warnings",
-    "series_notes_enabled",
-    "add_series_url_and_username",
-    "add_work_count_tag",
-    "rec_default_series",
-    "private_default_series",
-    "add_custom_tags",
-    "custom_tags"
-])
-    .then(initializeExtension)
-    .catch(onError);
+let debugEnabled = false;
+
+browser.storage.sync.get("debug_enabled")
+    .then((result) => {
+        debugEnabled = result.debug_enabled ?? false;
+        return browser.storage.sync.get([
+            "bookmark_notes_enabled",
+            "notes_append_to_previous",
+            "add_url_and_username",
+            "add_summary",
+            "rec_default",
+            "private_default",
+            "add_categories",
+            "add_fandom_tags",
+            "add_character_tags",
+            "add_relationship_tags",
+            "add_additional_tags",
+            "add_rating",
+            "add_archive_warnings",
+            "series_notes_enabled",
+            "add_series_url_and_username",
+            "add_work_count_tag",
+            "rec_default_series",
+            "private_default_series",
+            "add_custom_tags",
+            "custom_tags"
+        ]);
+    })
+    .then(initialiseExtension)
+    .catch((error) => onError(error, debugEnabled));

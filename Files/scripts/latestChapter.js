@@ -76,7 +76,7 @@ function main() {
 
 console.log("loaded latestChapter.js");
 
-function initializeExtension(settings) {
+function initialiseExtension(settings) {
 	const LATEST_CHAPTER_AUTOFILL = settings["latest_chapter_autofill"] ?? true;
 
 	if (isLoggedIn() && LATEST_CHAPTER_AUTOFILL) {
@@ -86,7 +86,12 @@ function initializeExtension(settings) {
 	}
 }
 
-// Get both settings at once and initialise the extension
-browser.storage.sync.get("latest_chapter_autofill")
-	.then(initializeExtension)
-	.catch(onError);
+let debugEnabled = false;
+
+browser.storage.sync.get("debug_enabled")
+	.then((result) => {
+		debugEnabled = result.debug_enabled ?? false;
+		return browser.storage.sync.get("latest_chapter_autofill");
+	})
+	.then(initialiseExtension)
+	.catch((error) => onError(error, debugEnabled));
