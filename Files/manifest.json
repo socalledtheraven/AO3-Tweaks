@@ -24,10 +24,10 @@
 		}
 	],
 	"icons": {
-		"16": "images/logo_16.png",
-		"32": "images/logo_32.png",
-		"48": "images/logo_48.png",
-		"96": "images/logo_96.png"
+		"16": "images/icon16.png",
+		"32": "images/icon32.png",
+		"48": "images/icon48.png",
+		"96": "images/icon128.png"
 	},
 	"options_ui": {
 		"page": "options.html"
