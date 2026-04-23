@@ -203,7 +203,6 @@ console.log("loaded comments.js");
 
 function initialiseExtension(settings) {
     let COMMENT_TEMPLATES = settings["comment_templates"] ?? true;
-    COMMENT_TEMPLATES = false;
     let EXTRA_COMMENT_BOXES = settings["extra_comment_boxes"] ?? true;
     let TEMPLATE_COMMENTS = settings["template_comments"] ?? [
         "[lavish praise]",

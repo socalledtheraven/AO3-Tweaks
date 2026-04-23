@@ -93,7 +93,7 @@ export function removeToReadTag(doc) {
 
 export function addTags(tagBox, categorySelector) {
     const categories = document.getElementsByClassName(categorySelector);
-    if (categories.length > 0) {
+    if (categories.length > 1) {
         const categoryTags = categories[1].getElementsByClassName("tag");
         for (let tag of categoryTags) {
             tagBox.value += ", " + tag.textContent;
@@ -171,7 +171,7 @@ export function addSavedSeriesToStorage(id) {
 }
 
 async function addItemToStorage(key, value) {
-    await extensionApi.storage.sync.get(key).then(
+    await extensionApi.storage.local.get(key).then(
         async (result) => {
             let items = result[key];
 
@@ -185,7 +185,7 @@ async function addItemToStorage(key, value) {
                 console.log(items)
             }
 
-            await extensionApi.storage.sync.set({
+            await extensionApi.storage.local.set({
                 [key]: Array.from(items)
             });
         }
@@ -201,7 +201,7 @@ export async function seriesAlreadySaved(id) {
 }
 
 async function isItemSaved(key, value) {
-    const result = await extensionApi.storage.sync.get(key);
+    const result = await extensionApi.storage.local.get(key);
 
     if (!result || result[key] === undefined) {
         return false;
@@ -215,10 +215,10 @@ export function setup(keys, func) {
 
     let debugEnabled = false;
 
-    extensionApi.storage.sync.get("debug_enabled")
+    extensionApi.storage.local.get("debug_enabled")
         .then((result) => {
             debugEnabled = result.debug_enabled ?? false;
-            return extensionApi.storage.sync.get(keys);
+            return extensionApi.storage.local.get(keys);
         })
         .then(func)
         .catch((error) => onError(error, debugEnabled));

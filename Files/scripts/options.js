@@ -94,6 +94,7 @@ function restoreOptions() {
                 }
             }
         } else if (elem.tagName === "TEXTAREA") {
+            // we can't have empty textareas with this, but that's fine
             result = result || elem.value;
             console.log(`Options: setting id ${id} to ${result}`);
             elem.value = result;

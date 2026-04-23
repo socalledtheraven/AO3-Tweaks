@@ -67,7 +67,7 @@ function createNewKudos(AUTO, messages) {
     let newKudosButton = document.createElement("button");
     newKudosButton.type = "button";
     newKudosButton.textContent = "Kudos ♥";
-    newKudosButton.id = "#kudos";
+    newKudosButton.id = "kudos";
 
     newKudosButton.onclick = function () {
         let oldKudosButton = document.querySelector("#kudo_submit");

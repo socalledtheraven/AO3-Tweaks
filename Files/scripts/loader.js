@@ -18,7 +18,7 @@
     }
 
     // 2. Define exclusions (works/ID/bookmarks and works/ID/navigate)
-    const isExcluded = !url.search(/works\/[0-9]+\/bookmarks/) || url.includes("/navigate");
+    const isExcluded = (url.search(/works\/[0-9]+\/bookmarks/) === -1) || url.includes("/navigate");
     const isSearch = url.includes("/works/search");
 
     // 3. SaveAsToRead (Matches all AO3 except exclusions)

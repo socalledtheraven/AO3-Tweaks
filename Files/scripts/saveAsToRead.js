@@ -530,7 +530,6 @@ function bookmarkSeries(doc, button, priv) {
     }
 
     let bookmarkTags = doc.querySelector("#bookmark_tag_string").value.trim();
-    bookmarkTags.value += ", To Read";
 
     console.log(`SaveAsToRead: this is a series`)
 
