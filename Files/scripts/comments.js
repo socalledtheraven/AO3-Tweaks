@@ -30,6 +30,8 @@ async function fullTextCommentBoxes() {
     for (let i = chaptersLength; i > 0; i--) {
         await appendCommentBox(i, chapterUrls[i - 1], chapters, chapterNodes[i]);
     }
+
+    console.log("Finished adding comment boxes.");
 }
 
 async function getChapterUrls() {
@@ -139,7 +141,9 @@ async function appendCommentBox(i, url, chapters, chapterNode) {
 // Code for comment templates begins
 
 function templateComments(TEMPLATE_COMMENTS, PREWRITTEN_COMMENTS) {
-    let commentButtons = document.querySelectorAll("input[value='Comment']");
+    let commentButtons = document.querySelectorAll("input[value='Comment']:not(.aes-hidden), button[id^='comment_button_']");
+    console.log(commentButtons)
+
     if (commentButtons.length < 1) {
         console.log("No comment button elements found.");
         return;
