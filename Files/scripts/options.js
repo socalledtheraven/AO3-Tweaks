@@ -41,19 +41,20 @@ const booleanSettingMappings = {
 
 function saveOptions() {
     for (let [key, value] of Object.entries(booleanSettingMappings)) {
+        let setting_value;
         if (document.querySelector(value).type === "checkbox") {
-            console.log(`Options: setting key ${key} to ${document.querySelector(value).checked}`)
-
-            browser.storage.sync.set({
-                [key]: document.querySelector(value).checked
-            });
+            setting_value = document.querySelector(value).checked;
         } else if (document.querySelector(value).type === "textarea") {
-            console.log(`Options: setting key ${key} to ${document.querySelector(value).textContent}`)
-
-            browser.storage.sync.set({
-                [key]: document.querySelector(value).textContent
-            });
+            setting_value = document.querySelector(value).value;
         }
+
+        console.log(`Options: setting key ${key} to ${setting_value}, type is ${typeof setting_value}`)
+
+        browser.storage.local.set({
+            [key]: setting_value
+        });
+
+        console.log(browser.storage.local.getBytesInUse());
     }
 }
 
@@ -78,7 +79,7 @@ function handleSaveButtonClick(e) {
 function restoreOptions() {
     function setCurrentChoice(result, id) {
         let elem = document.querySelector(id);
-        if (elem.tagName === "CHECKBOX") {
+        if (elem.tagName === "INPUT") {
             console.log(`Options: Setting id ${id} to ${result}`);
             elem.checked = result;
 
@@ -95,15 +96,15 @@ function restoreOptions() {
                 }
             }
         } else if (elem.tagName === "TEXTAREA") {
-            result = result || elem.textContent;
+            result = result || elem.value;
             console.log(`Options: setting id ${id} to ${result}`);
-            elem.textContent = result;
+            elem.value = result;
         }
     }
 
     for (let [key, value] of Object.entries(booleanSettingMappings)) {
         console.log(`Options: getting key ${key}`);
-        browser.storage.sync.get(key).then(
+        browser.storage.local.get(key).then(
             (result) => setCurrentChoice(result[key], value),
             (e) => {
                 console.error(e);
