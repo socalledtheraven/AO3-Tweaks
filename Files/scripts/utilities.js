@@ -1,9 +1,7 @@
 // noinspection JSUnusedLocalSymbols
 console.log("running the first time")
 
-if (typeof browser === "undefined") {
-    let browser = chrome;
-}
+const extensionApi = globalThis.browser ?? globalThis.chrome;
 // LOW-LEVEL UTILITIES
 
 // turns a JSON document into a single URL-encoded string for sending in POST requests
@@ -173,7 +171,7 @@ export function addSavedSeriesToStorage(id) {
 }
 
 async function addItemToStorage(key, value) {
-    await browser.storage.sync.get(key).then(
+    await extensionApi.storage.sync.get(key).then(
         async (result) => {
             let items = result[key];
 
@@ -187,7 +185,7 @@ async function addItemToStorage(key, value) {
                 console.log(items)
             }
 
-            await browser.storage.sync.set({
+            await extensionApi.storage.sync.set({
                 [key]: Array.from(items)
             });
         }
@@ -203,11 +201,25 @@ export async function seriesAlreadySaved(id) {
 }
 
 async function isItemSaved(key, value) {
-    const result = await browser.storage.sync.get(key);
+    const result = await extensionApi.storage.sync.get(key);
 
     if (!result || result[key] === undefined) {
         return false;
     }
 
     return result[key].includes(`${value}`);
+}
+
+export function setup(keys, func) {
+    const extensionApi = globalThis.browser ?? globalThis.chrome;
+
+    let debugEnabled = false;
+
+    extensionApi.storage.sync.get("debug_enabled")
+        .then((result) => {
+            debugEnabled = result.debug_enabled ?? false;
+            return extensionApi.storage.sync.get(keys);
+        })
+        .then(func)
+        .catch((error) => onError(error, debugEnabled));
 }

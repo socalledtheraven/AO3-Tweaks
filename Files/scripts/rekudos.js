@@ -1,4 +1,4 @@
-import { post, getAO3Metadata, getRandomItem, createInlineListItem, isLoggedIn, onError } from "./utilities.js";
+import {post, getAO3Metadata, getRandomItem, createInlineListItem, isLoggedIn, onError, setup} from "./utilities.js";
 
 function postComment(messages, button) {
     let kudosMessage = document.querySelector("#kudos_message");
@@ -125,17 +125,4 @@ function initialiseExtension(settings) {
     }
 }
 
-
-if (typeof browser === "undefined") {
-    let browser = chrome;
-}
-
-let debugEnabled = false;
-
-browser.storage.sync.get("debug_enabled")
-    .then((result) => {
-        debugEnabled = result.debug_enabled ?? false;
-        return browser.storage.sync.get(["rekudos_enabled", "auto_rekudos_enabled", "rekudos_messages"]);
-    })
-    .then(initialiseExtension)
-    .catch((error) => onError(error, debugEnabled));
+setup(["rekudos_enabled", "auto_rekudos_enabled", "rekudos_messages"], initialiseExtension);

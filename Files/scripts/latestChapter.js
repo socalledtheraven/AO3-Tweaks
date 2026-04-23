@@ -1,4 +1,4 @@
-import {isLoggedIn, onError} from "./utilities.js";
+import {isLoggedIn, onError, setup} from "./utilities.js";
 
 function overlapping(elem1, elem2) {
 	let rect1 = elem1.getBoundingClientRect();
@@ -86,17 +86,4 @@ function initialiseExtension(settings) {
 	}
 }
 
-
-if (typeof browser === "undefined") {
-	let browser = chrome;
-}
-
-let debugEnabled = false;
-
-browser.storage.sync.get("debug_enabled")
-	.then((result) => {
-		debugEnabled = result.debug_enabled ?? false;
-		return browser.storage.sync.get("latest_chapter_autofill");
-	})
-	.then(initialiseExtension)
-	.catch((error) => onError(error, debugEnabled));
+setup("latest_chapter_autofill", initialiseExtension);

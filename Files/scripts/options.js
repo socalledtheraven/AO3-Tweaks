@@ -50,11 +50,9 @@ function saveOptions() {
 
         console.log(`Options: setting key ${key} to ${setting_value}, type is ${typeof setting_value}`)
 
-        browser.storage.local.set({
+        extensionApi.storage.local.set({
             [key]: setting_value
         });
-
-        console.log(browser.storage.local.getBytesInUse());
     }
 }
 
@@ -104,7 +102,7 @@ function restoreOptions() {
 
     for (let [key, value] of Object.entries(booleanSettingMappings)) {
         console.log(`Options: getting key ${key}`);
-        browser.storage.local.get(key).then(
+        extensionApi.storage.local.get(key).then(
             (result) => setCurrentChoice(result[key], value),
             (e) => {
                 console.error(e);
@@ -117,9 +115,7 @@ console.log("loaded options.js")
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.querySelector("form").addEventListener("submit", handleSaveButtonClick);
 
-if (typeof browser === "undefined") {
-    let browser = chrome;
-}
+const extensionApi = globalThis.browser ?? globalThis.chrome;
 
 for (let value of Object.values(booleanSettingMappings)) {
     let elem = document.querySelector(value);

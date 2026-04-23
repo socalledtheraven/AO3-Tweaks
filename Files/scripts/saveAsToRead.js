@@ -11,7 +11,7 @@ import {
     isLoggedIn,
     onError,
     post,
-    removeToReadTag, seriesAlreadySaved,
+    removeToReadTag, seriesAlreadySaved, setup,
     showFlashNotice, workAlreadySaved
 } from "./utilities.js";
 
@@ -744,25 +744,13 @@ function initialiseExtension(settings) {
     }
 }
 
-if (typeof browser === "undefined") {
-    let browser = chrome;
-}
-
-let debugEnabled = false;
-
-browser.storage.sync.get("debug_enabled")
-    .then((result) => {
-        debugEnabled = result.debug_enabled ?? false;
-        return browser.storage.sync.get([
-            "save_as_to_read_enabled",
-            "remove_from_marked_for_later",
-            "unsub_from_works",
-            "replace_mark_for_later",
-            "add_priv_save_as",
-            "enable_private_fandoms",
-            "private_fandoms",
-            "create_mark_as_read_button"
-        ]);
-    })
-    .then(initialiseExtension)
-    .catch((error) => onError(error, debugEnabled));
+setup([
+    "save_as_to_read_enabled",
+    "remove_from_marked_for_later",
+    "unsub_from_works",
+    "replace_mark_for_later",
+    "add_priv_save_as",
+    "enable_private_fandoms",
+    "private_fandoms",
+    "create_mark_as_read_button"
+], initialiseExtension);

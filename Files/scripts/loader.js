@@ -1,14 +1,11 @@
 (async () => {
     const url = window.location.href;
-
-    if (typeof browser === "undefined") {
-        let browser = chrome;
-    }
+    const extensionApi = globalThis.browser ?? globalThis.chrome;
 
     // Helper to load a module
     const loadModule = async (path) => {
         try {
-            const src = browser.runtime.getURL(path);
+            const src = extensionApi.runtime.getURL(path);
             return await import(src);
         } catch (err) {
             console.error(`Failed to load module: ${path}`, err);

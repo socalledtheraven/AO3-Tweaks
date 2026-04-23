@@ -2,7 +2,7 @@
 
 /*START SETTINGS: Change these to true/false based on your preferences*/
 /*SETTINGS THAT APPLY TO ALL BOOKMARKS*/
-import {addTags, isLoggedIn, onError, removeCommas} from "./utilities.js";
+import {addTags, isLoggedIn, onError, removeCommas, setup} from "./utilities.js";
 
 let BOOKMARK_NOTES_ENABLED;
 
@@ -237,37 +237,25 @@ function initialiseExtension(settings) {
 }
 
 
-if (typeof browser === "undefined") {
-    let browser = chrome;
-}
-
-let debugEnabled = false;
-
-browser.storage.sync.get("debug_enabled")
-    .then((result) => {
-        debugEnabled = result.debug_enabled ?? false;
-        return browser.storage.sync.get([
-            "bookmark_notes_enabled",
-            "notes_append_to_previous",
-            "add_url_and_username",
-            "add_summary",
-            "rec_default",
-            "private_default",
-            "add_categories",
-            "add_fandom_tags",
-            "add_character_tags",
-            "add_relationship_tags",
-            "add_additional_tags",
-            "add_rating",
-            "add_archive_warnings",
-            "series_notes_enabled",
-            "add_series_url_and_username",
-            "add_work_count_tag",
-            "rec_default_series",
-            "private_default_series",
-            "add_custom_tags",
-            "custom_tags"
-        ]);
-    })
-    .then(initialiseExtension)
-    .catch((error) => onError(error, debugEnabled));
+setup([
+    "bookmark_notes_enabled",
+    "notes_append_to_previous",
+    "add_url_and_username",
+    "add_summary",
+    "rec_default",
+    "private_default",
+    "add_categories",
+    "add_fandom_tags",
+    "add_character_tags",
+    "add_relationship_tags",
+    "add_additional_tags",
+    "add_rating",
+    "add_archive_warnings",
+    "series_notes_enabled",
+    "add_series_url_and_username",
+    "add_work_count_tag",
+    "rec_default_series",
+    "private_default_series",
+    "add_custom_tags",
+    "custom_tags"
+], initialiseExtension);

@@ -395,16 +395,4 @@ function initialiseExtension(settings) {
     }
 }
 
-if (typeof browser === "undefined") {
-    let browser = chrome;
-}
-
-let debugEnabled = false;
-
-browser.storage.sync.get("debug_enabled")
-    .then((result) => {
-        debugEnabled = result.debug_enabled ?? false;
-        return browser.storage.sync.get(["comment_templates", "extra_comment_boxes", "template_comments", "prewritten_comments"]);
-    })
-    .then(initialiseExtension)
-    .catch((error) => onError(error, debugEnabled));
+setup(["comment_templates", "extra_comment_boxes", "template_comments", "prewritten_comments"], initialiseExtension);
