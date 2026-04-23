@@ -4,7 +4,7 @@ import {
     getDocument,
     getRandomItem,
     isLoggedIn,
-    onError,
+    setup,
     post
 } from "./utilities.js";
 

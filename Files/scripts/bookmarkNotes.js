@@ -2,7 +2,7 @@
 
 /*START SETTINGS: Change these to true/false based on your preferences*/
 /*SETTINGS THAT APPLY TO ALL BOOKMARKS*/
-import {addTags, isLoggedIn, onError, removeCommas, setup} from "./utilities.js";
+import {addTags, isLoggedIn, setup} from "./utilities.js";
 
 let BOOKMARK_NOTES_ENABLED;
 

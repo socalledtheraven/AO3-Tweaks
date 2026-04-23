@@ -1,4 +1,4 @@
-import {isLoggedIn, onError, setup} from "./utilities.js";
+import {isLoggedIn, setup} from "./utilities.js";
 
 function overlapping(elem1, elem2) {
 	let rect1 = elem1.getBoundingClientRect();

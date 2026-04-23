@@ -9,7 +9,6 @@ import {
     getDocument,
     getStringTags,
     isLoggedIn,
-    onError,
     post,
     removeToReadTag, seriesAlreadySaved, setup,
     showFlashNotice, workAlreadySaved

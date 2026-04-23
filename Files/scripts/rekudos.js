@@ -1,4 +1,4 @@
-import {post, getAO3Metadata, getRandomItem, createInlineListItem, isLoggedIn, onError, setup} from "./utilities.js";
+import {post, getAO3Metadata, getRandomItem, createInlineListItem, isLoggedIn, setup} from "./utilities.js";
 
 function postComment(messages, button) {
     let kudosMessage = document.querySelector("#kudos_message");
