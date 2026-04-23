@@ -1,6 +1,10 @@
 (async () => {
     const url = window.location.href;
 
+    if (typeof browser === "undefined") {
+        let browser = chrome;
+    }
+
     // Helper to load a module
     const loadModule = async (path) => {
         try {

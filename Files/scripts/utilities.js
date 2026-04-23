@@ -1,5 +1,9 @@
 // noinspection JSUnusedLocalSymbols
 console.log("running the first time")
+
+if (typeof browser === "undefined") {
+    let browser = chrome;
+}
 // LOW-LEVEL UTILITIES
 
 // turns a JSON document into a single URL-encoded string for sending in POST requests

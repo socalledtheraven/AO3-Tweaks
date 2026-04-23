@@ -117,6 +117,9 @@ console.log("loaded options.js")
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.querySelector("form").addEventListener("submit", handleSaveButtonClick);
 
+if (typeof browser === "undefined") {
+    let browser = chrome;
+}
 
 for (let value of Object.values(booleanSettingMappings)) {
     let elem = document.querySelector(value);

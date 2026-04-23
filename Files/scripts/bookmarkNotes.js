@@ -236,6 +236,11 @@ function initialiseExtension(settings) {
     }
 }
 
+
+if (typeof browser === "undefined") {
+    let browser = chrome;
+}
+
 let debugEnabled = false;
 
 browser.storage.sync.get("debug_enabled")
