@@ -67,9 +67,9 @@ function createNewKudos(AUTO, messages) {
     let newKudosButton = document.createElement("button");
     newKudosButton.type = "button";
     newKudosButton.textContent = "Kudos ♥";
-    newKudosButton.id = "kudos";
+    newKudosButton.id = "kudos-button";
 
-    newKudosButton.onclick = function () {
+    newKudosButton.addEventListener("click", function () {
         let oldKudosButton = document.querySelector("#kudo_submit");
         if (!oldKudosButton) {
             console.log("No old kudos button found");
@@ -84,7 +84,7 @@ function createNewKudos(AUTO, messages) {
             editKudosButton(newKudosButton, messages);
         }
         return false;
-    };
+    });
 
     containerLi.appendChild(newKudosButton);
 
